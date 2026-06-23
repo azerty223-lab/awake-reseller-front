@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, MapPin, Calendar } from "lucide-react";
 import { CountdownTimer } from "@/frontend/components/ui/CountdownTimer";
+import { getPossibleInstrumentationHookFilenames } from "next/dist/build/utils";
 
 const FESTIVAL_DATE = new Date("2026-07-10T15:00:00+02:00");
 
@@ -38,7 +39,7 @@ export function HeroSection() {
         >
           <span className="w-2 h-2 rounded-full bg-[#c9a84c] animate-pulse" />
           <span className="text-[#c9a84c] text-xs font-semibold tracking-widest uppercase">
-            Official Ticket Resale — 2026
+             Ticket Resale — 2026
           </span>
         </motion.div>
 
@@ -120,7 +121,7 @@ export function HeroSection() {
           transition={{ duration: 0.6, delay: 1 }}
           className="mt-8 text-zinc-600 text-xs"
         >
-          Verified seller · Stripe secured · Name transfer guaranteed
+          Verified seller · Secured Payment · Name transfer guaranteed
         </motion.p>
       </div>
 

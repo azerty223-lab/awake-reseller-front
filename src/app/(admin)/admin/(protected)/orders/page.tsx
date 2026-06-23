@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { formatPrice, formatDate } from "@/backend/lib/utils";
 import { Badge } from "@/frontend/components/ui/Badge";
 import { Button } from "@/frontend/components/ui/Button";
-import { CheckCircle, RefreshCw, Loader2 } from "lucide-react";
+import { CheckCircle, RefreshCw, Loader2, Send } from "lucide-react";
 
 interface OrderItem {
   id: string;
@@ -101,6 +101,16 @@ export default function AdminOrdersPage() {
     fetchOrders();
   };
 
+  const sendTicket = async (id: string) => {
+    setUpdating(id);
+    const res = await fetch(`/api/orders/${id}/send-ticket`, { method: "POST" });
+    const data = await res.json() as { error?: string };
+    if (!res.ok) alert(data.error ?? "Failed to send ticket");
+    else alert("Ticket sent successfully — order marked as Delivered.");
+    setUpdating(null);
+    fetchOrders();
+  };
+
   return (
     <div className="p-6 lg:p-8 pt-20 lg:pt-8">
       <div className="flex items-center justify-between mb-8">
@@ -192,23 +202,14 @@ export default function AdminOrdersPage() {
                             Confirm Payment
                           </button>
                         )}
-                        {order.status === "PAID" && (
+                        {(order.status === "PAID" || order.status === "PROCESSING") && (
                           <button
-                            onClick={() => updateStatus(order.id, "PROCESSING")}
-                            disabled={updating === order.id}
-                            className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/25 text-blue-400 text-xs font-medium hover:bg-blue-500/20 transition-colors disabled:opacity-50"
-                          >
-                            Process
-                          </button>
-                        )}
-                        {order.status === "PROCESSING" && (
-                          <button
-                            onClick={() => updateStatus(order.id, "DELIVERED")}
+                            onClick={() => sendTicket(order.id)}
                             disabled={updating === order.id}
                             className="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-colors disabled:opacity-50 flex items-center gap-1"
                           >
-                            <CheckCircle className="w-3 h-3" />
-                            Delivered
+                            <Send className="w-3 h-3" />
+                            Send Ticket
                           </button>
                         )}
                         {(order.status === "PAID" || order.status === "PROCESSING") && (

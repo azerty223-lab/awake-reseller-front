@@ -152,3 +152,98 @@ export async function sendInquiryConfirmation(data: InquiryConfirmationData) {
            <p style="white-space:pre-wrap;">${data.message}</p>`,
   });
 }
+
+interface TicketEmailData {
+  to: string;
+  customerName: string;
+  orderNumber: string;
+  ticketTypes: string;
+  ticketUrl: string;
+  qrDataUri: string;
+}
+
+export async function sendTicketEmail(data: TicketEmailData) {
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:40px 16px;background:#f0f0f0;font-family:Arial,sans-serif;">
+  <div style="max-width:520px;margin:0 auto;">
+
+    <!-- Header -->
+    <div style="background:#0a0a0a;border-radius:16px 16px 0 0;padding:28px 32px;text-align:center;">
+      <p style="color:#c9a84c;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin:0 0 6px;">Official Resale</p>
+      <h1 style="color:#c9a84c;font-size:26px;margin:0;letter-spacing:.08em;font-weight:900;">AW TICKETS</h1>
+    </div>
+
+    <!-- Body -->
+    <div style="background:#fff;padding:32px;">
+      <p style="color:#888;font-size:13px;margin:0 0 6px;">Your personal ticket for</p>
+      <h2 style="color:#0a0a0a;font-size:20px;font-weight:800;margin:0 0 24px;line-height:1.3;">Awakenings Festival 2026</h2>
+
+      <hr style="border:none;border-top:1px solid #eee;margin:0 0 24px;">
+
+      <!-- Date row -->
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <div style="background:#0a0a0a;border-radius:10px;padding:8px 14px;text-align:center;min-width:44px;">
+          <div style="font-size:9px;color:#c9a84c;text-transform:uppercase;letter-spacing:.1em;">Jul</div>
+          <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.1;">10</div>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#0a0a0a;">July 10–12, 2026</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">12:00 → Jul 12 · 23:59</div>
+        </div>
+      </div>
+
+      <!-- Location row -->
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+        <div style="width:44px;text-align:center;font-size:22px;">📍</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#c9a84c;">Hilvarenbeek</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">Hilvarenbeek Recreation Area, Netherlands</div>
+        </div>
+      </div>
+
+      <!-- Attendee card -->
+      <div style="background:#f8f8f8;border-radius:10px;padding:14px 16px;margin-bottom:24px;">
+        <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;">Attendee</div>
+        <div style="font-size:15px;font-weight:700;color:#0a0a0a;">${data.customerName}</div>
+        <div style="font-size:12px;color:#888;margin-top:3px;">${data.ticketTypes}</div>
+      </div>
+
+      <!-- Buttons -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+        <tr>
+          <td style="padding-right:6px;">
+            <a href="${data.ticketUrl}" style="display:block;background:#c9a84c;color:#000;text-align:center;padding:13px 8px;border-radius:10px;text-decoration:none;font-weight:800;font-size:13px;">Access my ticket →</a>
+          </td>
+          <td style="padding-left:6px;">
+            <a href="https://www.awakenings.com/en/events/2026/07/awakenings-festival/378057/" style="display:block;background:#0a0a0a;color:#fff;text-align:center;padding:13px 8px;border-radius:10px;text-decoration:none;font-weight:700;font-size:13px;">Event Page</a>
+          </td>
+        </tr>
+      </table>
+
+      <!-- QR code -->
+      <div style="border:1.5px solid #eee;border-radius:14px;padding:24px;text-align:center;">
+        <img src="${data.qrDataUri}" width="190" height="190" alt="Entry QR Code" style="display:block;margin:0 auto 14px;">
+        <div style="font-family:monospace;font-size:13px;color:#555;letter-spacing:.08em;">${data.orderNumber}</div>
+        <p style="font-size:11px;color:#aaa;margin:10px 0 0;line-height:1.5;">This QR code is your entry pass.<br>Have it ready and accessible on your mobile device.</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="background:#0a0a0a;border-radius:0 0 16px 16px;padding:16px 32px;text-align:center;">
+      <p style="color:#555;font-size:11px;margin:0;">Awakenings Festival 2026 · July 10–12 · Hilvarenbeek</p>
+      <p style="margin:6px 0 0;"><a href="mailto:${ADMIN}" style="color:#c9a84c;font-size:11px;text-decoration:none;">${ADMIN}</a></p>
+    </div>
+  </div>
+</body></html>`;
+
+  const { error } = await getResend().emails.send({
+    from: FROM,
+    replyTo: ADMIN,
+    to: data.to,
+    subject: `Ticket of "${data.customerName}" for Awakenings 2026`,
+    html,
+  });
+
+  if (error) throw new Error(error.message);
+}
