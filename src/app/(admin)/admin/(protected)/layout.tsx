@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
+﻿import { redirect } from "next/navigation";
+import { auth } from "@/backend/lib/auth";
+import { AdminSidebar } from "@/frontend/components/admin/AdminSidebar";
 
 export default async function ProtectedAdminLayout({
   children,

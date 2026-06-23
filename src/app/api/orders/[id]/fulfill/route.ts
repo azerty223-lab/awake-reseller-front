@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { sendOrderConfirmation } from "@/lib/email";
+﻿import { NextRequest } from "next/server";
+import { prisma } from "@/backend/lib/prisma";
+import { auth } from "@/backend/lib/auth";
+import { sendOrderConfirmation } from "@/backend/lib/email";
 
 export async function POST(
   _req: NextRequest,

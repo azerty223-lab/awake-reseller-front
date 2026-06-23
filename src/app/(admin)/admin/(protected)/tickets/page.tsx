@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { formatPrice } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { formatPrice } from "@/backend/lib/utils";
+import { Badge } from "@/frontend/components/ui/Badge";
+import { Button } from "@/frontend/components/ui/Button";
 import {
   Eye, EyeOff, Star, StarOff, Pencil, Trash2, Plus, Loader2, RefreshCw
 } from "lucide-react";

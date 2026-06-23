@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Ticket, Lock, Mail, Eye, EyeOff } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/frontend/components/ui/Button";
 
 export default function AdminLoginPage() {
   const router = useRouter();

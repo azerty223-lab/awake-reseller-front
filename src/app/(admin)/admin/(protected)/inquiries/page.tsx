@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { formatDate } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { formatDate } from "@/backend/lib/utils";
+import { Badge } from "@/frontend/components/ui/Badge";
+import { Button } from "@/frontend/components/ui/Button";
 import { RefreshCw, Loader2, ChevronDown, ChevronUp, Mail } from "lucide-react";
 
 interface Inquiry {

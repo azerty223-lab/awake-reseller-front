@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/Toaster";
+import { Toaster } from "@/frontend/components/ui/Toaster";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",

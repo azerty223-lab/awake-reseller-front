@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+﻿import { NextRequest } from "next/server";
+import { prisma } from "@/backend/lib/prisma";
+import { auth } from "@/backend/lib/auth";
 
 export async function PATCH(
   request: NextRequest,

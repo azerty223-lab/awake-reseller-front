@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { formatPrice, formatDate } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { formatPrice, formatDate } from "@/backend/lib/utils";
+import { Badge } from "@/frontend/components/ui/Badge";
+import { Button } from "@/frontend/components/ui/Button";
 import { CheckCircle, RefreshCw, Loader2 } from "lucide-react";
 
 interface OrderItem {

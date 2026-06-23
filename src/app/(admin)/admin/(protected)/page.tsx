@@ -1,8 +1,8 @@
-export const dynamic = "force-dynamic";
+﻿export const dynamic = "force-dynamic";
 
-import { prisma } from "@/lib/prisma";
-import { formatPrice, formatDate } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
+import { prisma } from "@/backend/lib/prisma";
+import { formatPrice, formatDate } from "@/backend/lib/utils";
+import { Badge } from "@/frontend/components/ui/Badge";
 import { TrendingUp, Ticket, Package, Clock, MessageSquare, ArrowRight } from "lucide-react";
 import Link from "next/link";
 

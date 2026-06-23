@@ -1,9 +1,9 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { sendInquiryConfirmation } from "@/lib/email";
-import { getIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
-import { verifyTurnstile } from "@/lib/turnstile";
+﻿import { NextRequest } from "next/server";
+import { prisma } from "@/backend/lib/prisma";
+import { auth } from "@/backend/lib/auth";
+import { sendInquiryConfirmation } from "@/backend/lib/email";
+import { getIp, rateLimit, tooManyRequests } from "@/backend/lib/rate-limit";
+import { verifyTurnstile } from "@/backend/lib/turnstile";
 
 export async function POST(request: NextRequest) {
   const { allowed } = await rateLimit(`inquiries:${getIp(request)}`, { windowSeconds: 60, maxRequests: 3 });

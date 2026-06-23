@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
+﻿import { NextRequest } from "next/server";
 import { z } from "zod/v4";
-import { getEnabledWallets, buildQuote } from "@/payments/static/service";
+import { getEnabledWallets, buildQuote } from "@/backend/payments/static/service";
 
 const schema = z.object({
   currency: z.string(),

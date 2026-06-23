@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/backend/lib/prisma";
 
 export const dynamic = "force-dynamic";
-import { TicketDetailPage } from "@/components/tickets/TicketDetailPage";
+import { TicketDetailPage } from "@/frontend/components/tickets/TicketDetailPage";
 
 export async function generateMetadata({
   params,

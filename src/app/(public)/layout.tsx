@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { CartDrawer } from "@/components/layout/CartDrawer";
+import { Navbar } from "@/frontend/components/layout/Navbar";
+import { Footer } from "@/frontend/components/layout/Footer";
+import { CartDrawer } from "@/frontend/components/layout/CartDrawer";
 
 export default function PublicLayout({
   children,

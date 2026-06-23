@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server";
+﻿import { NextRequest } from "next/server";
 import { z } from "zod/v4";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { prisma } from "@/backend/lib/prisma";
+import { auth } from "@/backend/lib/auth";
 
 const schema = z.object({
   items: z.array(z.object({

@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+﻿import type { Metadata } from "next";
+import { prisma } from "@/backend/lib/prisma";
 
 export const dynamic = "force-dynamic";
-import { TicketGrid } from "@/components/tickets/TicketGrid";
+import { TicketGrid } from "@/frontend/components/tickets/TicketGrid";
 import { Ticket as TicketIcon, Calendar, MapPin } from "lucide-react";
 
 export const metadata: Metadata = {

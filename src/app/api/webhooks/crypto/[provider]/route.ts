@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
-import { PaymentService } from "@/payments/service";
-import { WebhookVerificationError } from "@/payments/errors";
+﻿import { NextRequest } from "next/server";
+import { PaymentService } from "@/backend/payments/service";
+import { WebhookVerificationError } from "@/backend/payments/errors";
 import type { CryptoProviderName } from "@prisma/client";
 
 const VALID_PROVIDERS: CryptoProviderName[] = ["COINBASE_COMMERCE", "BTCPAY", "MOCK"];

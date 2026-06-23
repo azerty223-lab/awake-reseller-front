@@ -1,12 +1,12 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { Mail, MessageSquare, Send, CheckCircle, Phone } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Turnstile } from "@/components/ui/Turnstile";
+import { Button } from "@/frontend/components/ui/Button";
+import { Turnstile } from "@/frontend/components/ui/Turnstile";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),

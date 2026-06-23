@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
-import { PaymentService } from "@/payments/service";
-import { InvoiceNotFoundError } from "@/payments/errors";
+﻿import { NextRequest } from "next/server";
+import { PaymentService } from "@/backend/payments/service";
+import { InvoiceNotFoundError } from "@/backend/payments/errors";
 
 export async function GET(
   _req: NextRequest,

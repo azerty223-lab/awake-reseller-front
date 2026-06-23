@@ -1,9 +1,9 @@
-import { NextRequest } from "next/server";
+﻿import { NextRequest } from "next/server";
 import { headers } from "next/headers";
 import { z } from "zod/v4";
-import { auth } from "@/lib/auth";
-import { PaymentService } from "@/payments/service";
-import { RateLimitError } from "@/payments/errors";
+import { auth } from "@/backend/lib/auth";
+import { PaymentService } from "@/backend/payments/service";
+import { RateLimitError } from "@/backend/payments/errors";
 
 const createInvoiceSchema = z.object({
   orderId: z.string().min(1, "orderId is required"),

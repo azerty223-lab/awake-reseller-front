@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCartStore } from "@/store/cart";
-import { formatPrice } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
-import { StaticCryptoCheckout } from "@/components/crypto/StaticCryptoCheckout";
+import { useCartStore } from "@/frontend/store/cart";
+import { formatPrice } from "@/backend/lib/utils";
+import { Button } from "@/frontend/components/ui/Button";
+import { StaticCryptoCheckout } from "@/frontend/components/crypto/StaticCryptoCheckout";
 import { ArrowLeft, ShoppingCart, Bitcoin } from "lucide-react";
 
 function CryptoCheckoutInner() {

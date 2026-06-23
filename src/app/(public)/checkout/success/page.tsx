@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle, ArrowRight, Loader2, Mail } from "lucide-react";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/backend/lib/utils";
 
 interface OrderItem {
   id: string;

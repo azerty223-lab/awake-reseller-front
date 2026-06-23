@@ -1,7 +1,7 @@
-export const dynamic = "force-dynamic";
+﻿export const dynamic = "force-dynamic";
 
 import { notFound, redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/backend/lib/prisma";
 import {
   TicketCategory,
   DeliveryMethod,

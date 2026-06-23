@@ -1,16 +1,16 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useCartStore } from "@/store/cart";
-import { formatPrice } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { useCartStore } from "@/frontend/store/cart";
+import { formatPrice } from "@/backend/lib/utils";
+import { Button } from "@/frontend/components/ui/Button";
+import { Badge } from "@/frontend/components/ui/Badge";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { ShoppingCart, User, CreditCard, ArrowRight, ArrowLeft, Trash2, Shield, Bitcoin } from "lucide-react";
-import { Turnstile } from "@/components/ui/Turnstile";
+import { Turnstile } from "@/frontend/components/ui/Turnstile";
 
 const checkoutSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),

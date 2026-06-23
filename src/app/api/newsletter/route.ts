@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
+﻿import { NextRequest } from "next/server";
+import { prisma } from "@/backend/lib/prisma";
+import { getIp, rateLimit, tooManyRequests } from "@/backend/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   const { allowed } = await rateLimit(`newsletter:${getIp(request)}`, { windowSeconds: 60, maxRequests: 5 });

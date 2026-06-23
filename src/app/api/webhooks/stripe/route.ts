@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server";
-import { stripe } from "@/lib/stripe";
-import { prisma } from "@/lib/prisma";
-import { sendOrderConfirmation } from "@/lib/email";
+﻿import { NextRequest } from "next/server";
+import { stripe } from "@/backend/lib/stripe";
+import { prisma } from "@/backend/lib/prisma";
+import { sendOrderConfirmation } from "@/backend/lib/email";
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
