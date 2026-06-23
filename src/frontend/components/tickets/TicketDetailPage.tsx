@@ -31,12 +31,10 @@ interface TicketDetailPageProps {
 
 export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
   const addItem = useCartStore((s) => s.addItem);
-  const items = useCartStore((s) => s.items);
   const [added, setAdded] = useState(false);
   const [qty, setQty] = useState(1);
 
   const available = ticket.quantity - ticket.sold;
-  const inCart = items.find((i) => i.ticketId === ticket.id);
 
   const handleAddToCart = () => {
     addItem({
@@ -99,7 +97,7 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
             {/* Includes */}
             {ticket.includes.length > 0 && (
               <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl p-6">
-                <h2 className="text-white font-semibold mb-4">What's included</h2>
+                <h2 className="text-white font-semibold mb-4">What&apos;s included</h2>
                 <ul className="space-y-3">
                   {ticket.includes.map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-sm text-zinc-400">

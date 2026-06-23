@@ -4,9 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Ticket, ShoppingBag, MessageSquare, Settings,
+  LayoutDashboard, Ticket, ShoppingBag, MessageSquare,
   Menu, X, LogOut, Ticket as TicketIcon
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/backend/lib/utils";
 import { signOut } from "next-auth/react";
 
@@ -17,18 +18,14 @@ const navItems = [
   { href: "/admin/inquiries", label: "Inquiries", icon: MessageSquare },
 ];
 
-export function AdminSidebar() {
-  const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
+interface SidebarContentProps {
+  isActive: (href: string, exact?: boolean) => boolean;
+  onNavigate: () => void;
+}
 
-  const isActive = (href: string, exact?: boolean) => {
-    if (exact) return pathname === href;
-    return pathname.startsWith(href);
-  };
-
-  const SidebarContent = () => (
+function SidebarContent({ isActive, onNavigate }: SidebarContentProps) {
+  return (
     <div className="flex flex-col h-full">
-      {/* Logo */}
       <div className="flex items-center gap-2 px-6 py-5 border-b border-[#1a1a1a]">
         <div className="w-7 h-7 rounded-lg bg-[#c9a84c] flex items-center justify-center">
           <TicketIcon className="w-3.5 h-3.5 text-black" />
@@ -39,13 +36,12 @@ export function AdminSidebar() {
         </div>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 p-4 space-y-1">
-        {navItems.map(({ href, label, icon: Icon, exact }) => (
+        {navItems.map(({ href, label, icon: Icon, exact }: { href: string; label: string; icon: LucideIcon; exact?: boolean }) => (
           <Link
             key={href}
             href={href}
-            onClick={() => setMobileOpen(false)}
+            onClick={onNavigate}
             className={cn(
               "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
               isActive(href, exact)
@@ -59,7 +55,6 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      {/* Footer */}
       <div className="p-4 border-t border-[#1a1a1a]">
         <button
           onClick={() => signOut({ callbackUrl: "/admin/login" })}
@@ -71,12 +66,22 @@ export function AdminSidebar() {
       </div>
     </div>
   );
+}
+
+export function AdminSidebar() {
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const isActive = (href: string, exact?: boolean) => {
+    if (exact) return pathname === href;
+    return pathname.startsWith(href);
+  };
 
   return (
     <>
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-64 bg-[#0a0a0a] border-r border-[#1a1a1a] z-30">
-        <SidebarContent />
+        <SidebarContent isActive={isActive} onNavigate={() => setMobileOpen(false)} />
       </aside>
 
       {/* Mobile top bar */}
@@ -100,7 +105,7 @@ export function AdminSidebar() {
         <div className="lg:hidden fixed inset-0 z-40">
           <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
           <aside className="absolute left-0 top-0 h-full w-64 bg-[#0a0a0a] border-r border-[#1a1a1a]">
-            <SidebarContent />
+            <SidebarContent isActive={isActive} onNavigate={() => setMobileOpen(false)} />
           </aside>
         </div>
       )}

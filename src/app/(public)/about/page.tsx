@@ -43,7 +43,7 @@ export default function AboutPage() {
               </p>
               <p>
                 Our mission is to provide a trustworthy, transparent, and secure resale experience
-                for Awakenings Festival tickets — including proper handling of the official name
+                for Awakenings Festival tickets, including proper handling of the official name
                 transfer process required by the festival organizer.
               </p>
             </div>
@@ -74,7 +74,7 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="text-white font-medium mb-1">5. Ticket Transfer</h3>
-                <p>Awakenings tickets are personalized. We manage the official name change process through the festival's authorized transfer system. Transfer completion is subject to the festival organizer's processing times (typically 3–5 business days).</p>
+                <p>Awakenings tickets are personalized. We manage the official name change process through the festival&apos;s authorized transfer system. Transfer completion is subject to the festival organizer&apos;s processing times (typically 3-5 business days).</p>
               </div>
             </div>
           </section>
@@ -113,7 +113,7 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-4 text-zinc-400 text-sm leading-relaxed">
               <p>
-                Awakenings Festival personalizes all tickets to a specific attendee's name.
+                Awakenings Festival personalizes all tickets to a specific attendee&apos;s name.
                 This is an anti-scalping measure by the organizer. We are fully compliant
                 with this policy and manage the transfer process transparently.
               </p>
@@ -121,8 +121,8 @@ export default function AboutPage() {
                 <h3 className="text-white font-medium mb-2">How it works:</h3>
                 <ol className="space-y-2 list-decimal list-inside">
                   <li>You complete your purchase and provide your full name and email.</li>
-                  <li>We initiate the official name change request through Awakenings' authorized transfer portal.</li>
-                  <li>The festival organizer processes the transfer (typically 3–5 business days).</li>
+                  <li>We initiate the official name change request through Awakenings&apos; authorized transfer portal.</li>
+                  <li>The festival organizer processes the transfer (typically 3-5 business days).</li>
                   <li>You receive your personalized e-ticket via email.</li>
                   <li>Present your e-ticket at the festival entrance with matching ID.</li>
                 </ol>
@@ -141,7 +141,7 @@ export default function AboutPage() {
               <p>We collect only the information necessary to process your order and complete the ticket transfer: your name, email, and phone (optional).</p>
               <p>Your payment information is handled entirely by Stripe and is never stored on our servers.</p>
               <p>We do not sell or share your personal data with third parties, except as required to process the ticket transfer with the festival organizer.</p>
-              <p>By purchasing, you consent to us sharing your name and email with Awakenings Festival's official transfer system for the purpose of completing your ticket transfer.</p>
+              <p>By purchasing, you consent to us sharing your name and email with Awakenings Festival&apos;s official transfer system for the purpose of completing your ticket transfer.</p>
             </div>
           </section>
         </div>

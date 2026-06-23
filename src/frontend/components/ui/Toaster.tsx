@@ -6,7 +6,7 @@ import {
   createContext,
   useContext,
   useCallback,
-  useRef,
+  useEffect,
 } from "react";
 import { X, CheckCircle, AlertCircle, Info } from "lucide-react";
 import { cn } from "@/backend/lib/utils";
@@ -51,8 +51,12 @@ export function Toaster() {
     }, 5000);
   }, []);
 
-  // Register global
-  _globalToast = addToast;
+  useEffect(() => {
+    _globalToast = addToast;
+    return () => {
+      if (_globalToast === addToast) _globalToast = null;
+    };
+  }, [addToast]);
 
   const icons = {
     success: <CheckCircle className="w-5 h-5 text-emerald-400" />,

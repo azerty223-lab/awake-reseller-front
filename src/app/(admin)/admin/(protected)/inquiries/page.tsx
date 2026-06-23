@@ -37,16 +37,40 @@ export default function AdminInquiriesPage() {
   const [filter, setFilter] = useState("ALL");
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  const fetchInquiries = useCallback(async () => {
-    setLoading(true);
-    const url = filter === "ALL" ? "/api/inquiries" : `/api/inquiries?status=${filter}`;
+  const loadInquiries = useCallback(async (status: string) => {
+    const url = status === "ALL" ? "/api/inquiries" : `/api/inquiries?status=${status}`;
     const res = await fetch(url);
     const data = await res.json();
-    setInquiries(Array.isArray(data) ? data : []);
-    setLoading(false);
-  }, [filter]);
+    return Array.isArray(data) ? data : [];
+  }, []);
 
-  useEffect(() => { fetchInquiries(); }, [fetchInquiries]);
+  const fetchInquiries = useCallback(async () => {
+    setLoading(true);
+    try {
+      setInquiries(await loadInquiries(filter));
+    } finally {
+      setLoading(false);
+    }
+  }, [filter, loadInquiries]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const data = await loadInquiries(filter);
+        if (!cancelled) setInquiries(data);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filter, loadInquiries]);
 
   const updateStatus = async (id: string, status: string) => {
     await fetch(`/api/inquiries/${id}`, {
@@ -74,7 +98,10 @@ export default function AdminInquiriesPage() {
         {STATUS_OPTIONS.map((s) => (
           <button
             key={s}
-            onClick={() => setFilter(s)}
+            onClick={() => {
+              setLoading(true);
+              setFilter(s);
+            }}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               filter === s
                 ? "bg-[#c9a84c] text-black"

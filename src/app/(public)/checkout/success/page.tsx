@@ -31,13 +31,11 @@ export default function CheckoutSuccessPage({
 }) {
   const { session_id: sessionId } = use(searchParams);
   const [order, setOrder] = useState<Order | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(Boolean(sessionId));
+  const [error, setError] = useState(sessionId ? "" : "No session ID provided");
 
   useEffect(() => {
     if (!sessionId) {
-      setError("No session ID provided");
-      setLoading(false);
       return;
     }
 
@@ -144,7 +142,7 @@ export default function CheckoutSuccessPage({
             </li>
             <li className="flex items-start gap-3">
               <span className="w-5 h-5 rounded-full bg-[#c9a84c]/10 border border-[#c9a84c]/30 text-[#c9a84c] text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
-              <span>You'll receive a confirmation email once the transfer is complete.</span>
+              <span>You&apos;ll receive a confirmation email once the transfer is complete.</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="w-5 h-5 rounded-full bg-[#c9a84c]/10 border border-[#c9a84c]/30 text-[#c9a84c] text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>

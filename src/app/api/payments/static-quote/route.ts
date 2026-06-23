@@ -9,7 +9,12 @@ const schema = z.object({
 });
 
 export async function GET() {
-  const wallets = getEnabledWallets().map(({ address: _a, ...rest }) => rest);
+  const wallets = getEnabledWallets().map((wallet) => ({
+    currency: wallet.currency,
+    network: wallet.network,
+    label: wallet.label,
+    networkLabel: wallet.networkLabel,
+  }));
   return Response.json({ wallets });
 }
 

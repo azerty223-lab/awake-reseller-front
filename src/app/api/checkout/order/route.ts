@@ -1,16 +1,17 @@
-﻿import { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { z } from "zod/v4";
 import { prisma } from "@/backend/lib/prisma";
 import { auth } from "@/backend/lib/auth";
+import { CheckoutValidationError, resolveCheckoutItems } from "@/backend/lib/checkout";
 
 const schema = z.object({
   items: z.array(z.object({
-    ticketId: z.string(),
+    ticketId: z.string().min(1),
     quantity: z.number().int().positive(),
-    unitPrice: z.number().positive(),
+    unitPrice: z.number().positive().optional(),
   })).min(1),
-  totalAmount: z.number().positive(),
-  currency: z.string().default("EUR"),
+  totalAmount: z.number().positive().optional(),
+  currency: z.string().optional(),
   guestEmail: z.string().email().optional(),
   guestName: z.string().optional(),
 });
@@ -23,21 +24,17 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    const { items, totalAmount, currency, guestEmail, guestName } = parsed.data;
+    const { items, guestEmail, guestName } = parsed.data;
     const session = await auth();
 
-    // Verify all tickets exist and have available stock
-    for (const item of items) {
-      const ticket = await prisma.ticket.findUnique({
-        where: { id: item.ticketId },
-        select: { id: true, quantity: true, sold: true, isVisible: true },
-      });
-      if (!ticket || !ticket.isVisible) {
-        return Response.json({ error: `Ticket not found: ${item.ticketId}` }, { status: 404 });
+    let resolved;
+    try {
+      resolved = await resolveCheckoutItems(items);
+    } catch (err) {
+      if (err instanceof CheckoutValidationError) {
+        return Response.json({ error: err.message }, { status: err.status });
       }
-      if (ticket.quantity - ticket.sold < item.quantity) {
-        return Response.json({ error: "Insufficient ticket availability" }, { status: 409 });
-      }
+      throw err;
     }
 
     const order = await prisma.order.create({
@@ -45,11 +42,11 @@ export async function POST(req: NextRequest) {
         userId: session?.user?.id ?? null,
         guestEmail: guestEmail ?? (session?.user?.email ?? null),
         guestName: guestName ?? (session?.user?.name ?? null),
-        totalAmount,
-        currency,
+        totalAmount: resolved.totalAmount,
+        currency: resolved.currency,
         status: "PENDING",
         orderItems: {
-          create: items.map((item) => ({
+          create: resolved.items.map((item) => ({
             ticketId: item.ticketId,
             quantity: item.quantity,
             unitPrice: item.unitPrice,

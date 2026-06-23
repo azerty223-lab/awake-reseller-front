@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCartStore } from "@/frontend/store/cart";
 import { formatPrice } from "@/backend/lib/utils";
@@ -12,20 +12,9 @@ function CryptoCheckoutInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { items, total } = useCartStore();
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => { setHydrated(true); }, []);
 
   const customerName  = searchParams.get("name")  ?? "";
   const customerEmail = searchParams.get("email") ?? "";
-
-  if (!hydrated) {
-    return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#c9a84c] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   if (items.length === 0) {
     return (

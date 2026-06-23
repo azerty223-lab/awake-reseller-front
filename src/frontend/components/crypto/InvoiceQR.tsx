@@ -92,13 +92,15 @@ export function InvoiceQR({
   }, [invoiceId, router]);
 
   useEffect(() => {
-    // Poll immediately, then every 5 seconds
-    void pollStatus();
+    const pollTimeout = setTimeout(() => {
+      void pollStatus();
+    }, 0);
     intervalRef.current = setInterval(() => {
       void pollStatus();
     }, 5000);
 
     return () => {
+      clearTimeout(pollTimeout);
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }

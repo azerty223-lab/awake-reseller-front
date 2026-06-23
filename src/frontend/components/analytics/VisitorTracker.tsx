@@ -22,7 +22,7 @@ export function VisitorTracker() {
         page: pathname,
       }),
     }).catch(() => {});
-  }, []);
+  }, [pathname]);
 
   return null;
 }

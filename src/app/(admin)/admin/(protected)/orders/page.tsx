@@ -42,16 +42,40 @@ export default function AdminOrdersPage() {
   const [filter, setFilter] = useState("ALL");
   const [updating, setUpdating] = useState<string | null>(null);
 
-  const fetchOrders = useCallback(async () => {
-    setLoading(true);
-    const url = filter === "ALL" ? "/api/orders" : `/api/orders?status=${filter}`;
+  const loadOrders = useCallback(async (status: string) => {
+    const url = status === "ALL" ? "/api/orders" : `/api/orders?status=${status}`;
     const res = await fetch(url);
     const data = await res.json();
-    setOrders(Array.isArray(data) ? data : []);
-    setLoading(false);
-  }, [filter]);
+    return Array.isArray(data) ? data : [];
+  }, []);
 
-  useEffect(() => { fetchOrders(); }, [fetchOrders]);
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
+    try {
+      setOrders(await loadOrders(filter));
+    } finally {
+      setLoading(false);
+    }
+  }, [filter, loadOrders]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const data = await loadOrders(filter);
+        if (!cancelled) setOrders(data);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filter, loadOrders]);
 
   const updateStatus = async (id: string, status: string) => {
     setUpdating(id);
@@ -94,7 +118,10 @@ export default function AdminOrdersPage() {
         {STATUS_OPTIONS.map((s) => (
           <button
             key={s}
-            onClick={() => setFilter(s)}
+            onClick={() => {
+              setLoading(true);
+              setFilter(s);
+            }}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               filter === s
                 ? "bg-[#c9a84c] text-black"

@@ -100,7 +100,7 @@ export default function ContactPage() {
             </div>
             <h2 className="text-white font-bold text-xl mb-2">Message Sent!</h2>
             <p className="text-zinc-400 text-sm mb-6">
-              We've received your message and will reply to your email within a few hours.
+              We&apos;ve received your message and will reply to your email within a few hours.
             </p>
             <Button variant="outline" onClick={() => setSubmitted(false)}>
               Send another message

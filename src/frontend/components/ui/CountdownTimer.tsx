@@ -33,25 +33,13 @@ interface CountdownTimerProps {
 
 export function CountdownTimer({ targetDate, className }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(targetDate));
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft(targetDate));
     }, 1000);
     return () => clearInterval(timer);
   }, [targetDate]);
-
-  if (!mounted) {
-    return (
-      <div className={cn("flex gap-4", className)}>
-        {["Days", "Hours", "Mins", "Secs"].map((label) => (
-          <TimeUnit key={label} value={0} label={label} />
-        ))}
-      </div>
-    );
-  }
 
   const units = [
     { value: timeLeft.days, label: "Days" },

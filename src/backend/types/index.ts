@@ -1,4 +1,4 @@
-import type { Ticket, Order, OrderItem, User, Inquiry, TicketCategory, DeliveryMethod, PersonalizationStatus, OrderStatus, InquiryStatus, Role } from "@prisma/client";
+import type { Ticket, Order, OrderItem, User, TicketCategory, DeliveryMethod, PersonalizationStatus, OrderStatus, InquiryStatus, Role } from "@prisma/client";
 
 export type { TicketCategory, DeliveryMethod, PersonalizationStatus, OrderStatus, InquiryStatus, Role };
 

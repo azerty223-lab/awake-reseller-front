@@ -14,8 +14,8 @@ const COINGECKO_IDS: Record<CryptoCurrency, string> = {
 const FALLBACK_RATES: Record<CryptoCurrency, number> = {
   USDC: 0.92,
   USDT: 0.92,
-  ETH: 0.00033,
-  BTC: 0.000014,
+  ETH: 2500,
+  BTC: 85000,
 };
 
 export class PriceLockService {

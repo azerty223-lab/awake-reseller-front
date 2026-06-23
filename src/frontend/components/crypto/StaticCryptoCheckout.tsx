@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { cn } from "@/backend/lib/utils";
 
 interface CartItem {
@@ -55,34 +55,16 @@ export function StaticCryptoCheckout({ fiatAmount, cartItems, customerName, cust
   const [wallets, setWallets]         = useState<WalletOption[]>([]);
   const [selected, setSelected]       = useState<WalletOption | null>(null);
   const [quote, setQuote]             = useState<Quote | null>(null);
-  const [orderId, setOrderId]         = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [loading, setLoading]         = useState(false);
   const [walletsLoading, setWalletsLoading] = useState(true);
   const [error, setError]             = useState("");
   const [copied, setCopied]           = useState(false);
+  const initialLoadRef = useRef(false);
 
   // Inline name/email form (when arriving directly without going through checkout)
   const [name, setName]   = useState(customerName);
   const [email, setEmail] = useState(customerEmail);
-
-  useEffect(() => {
-    void (async () => {
-      try {
-        const res = await fetch("/api/payments/static-quote");
-        const data = await res.json() as { wallets: WalletOption[] };
-        setWallets(data.wallets);
-        if (data.wallets.length > 0) {
-          setSelected(data.wallets[0]);
-          void fetchQuote(data.wallets[0]);
-        }
-      } catch {
-        setError("Failed to load payment options");
-      } finally {
-        setWalletsLoading(false);
-      }
-    })();
-  }, []);
 
   const fetchQuote = useCallback(async (wallet: WalletOption) => {
     setLoading(true);
@@ -119,7 +101,6 @@ export function StaticCryptoCheckout({ fiatAmount, cartItems, customerName, cust
         })
           .then((r) => r.json())
           .then((d: { orderId?: string; orderNumber?: string }) => {
-            if (d.orderId)     setOrderId(d.orderId);
             if (d.orderNumber) setOrderNumber(d.orderNumber);
           })
           .catch(() => { /* order tracking failed silently — QR still works */ });
@@ -131,10 +112,30 @@ export function StaticCryptoCheckout({ fiatAmount, cartItems, customerName, cust
     }
   }, [name, email, cartItems, fiatAmount]);
 
+  useEffect(() => {
+    if (initialLoadRef.current) return;
+    initialLoadRef.current = true;
+
+    void (async () => {
+      try {
+        const res = await fetch("/api/payments/static-quote");
+        const data = await res.json() as { wallets: WalletOption[] };
+        setWallets(data.wallets);
+        if (data.wallets.length > 0) {
+          setSelected(data.wallets[0]);
+          void fetchQuote(data.wallets[0]);
+        }
+      } catch {
+        setError("Failed to load payment options");
+      } finally {
+        setWalletsLoading(false);
+      }
+    })();
+  }, [fetchQuote]);
+
   const handleSelect = (wallet: WalletOption) => {
     setSelected(wallet);
     setQuote(null);
-    setOrderId(null);
     setOrderNumber(null);
     setError("");
     void fetchQuote(wallet);
@@ -327,7 +328,7 @@ export function StaticCryptoCheckout({ fiatAmount, cartItems, customerName, cust
 
           <button
             type="button"
-            onClick={() => { setQuote(null); setOrderId(null); setOrderNumber(null); setError(""); }}
+            onClick={() => { setQuote(null); setOrderNumber(null); setError(""); }}
             className="text-zinc-600 text-xs hover:text-zinc-400 transition-colors w-full text-center"
           >
             ← Change currency

@@ -26,15 +26,39 @@ export default function AdminTicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchTickets = useCallback(async () => {
-    setLoading(true);
+  const loadTickets = useCallback(async () => {
     const res = await fetch("/api/tickets");
     const data = await res.json();
-    setTickets(Array.isArray(data) ? data : []);
-    setLoading(false);
+    return Array.isArray(data) ? data : [];
   }, []);
 
-  useEffect(() => { fetchTickets(); }, [fetchTickets]);
+  const fetchTickets = useCallback(async () => {
+    setLoading(true);
+    try {
+      setTickets(await loadTickets());
+    } finally {
+      setLoading(false);
+    }
+  }, [loadTickets]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const data = await loadTickets();
+        if (!cancelled) setTickets(data);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [loadTickets]);
 
   const toggle = async (id: string, field: "isVisible" | "isFeatured", current: boolean) => {
     await fetch(`/api/tickets/${id}`, {

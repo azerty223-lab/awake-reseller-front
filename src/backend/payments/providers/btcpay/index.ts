@@ -1,4 +1,3 @@
-import * as crypto from "crypto";
 import type { CreateInvoiceInput, ProviderInvoice, ProviderInvoiceStatus, WebhookEvent } from "../../types";
 import { BasePaymentProvider } from "../base";
 import { BTCPayClient } from "./client";

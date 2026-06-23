@@ -3,7 +3,6 @@ import type { CryptoInvoice } from "@prisma/client";
 import type { NormalizedPaymentStatus, PaymentStateEvent, StateTransitionResult } from "../types";
 import { VALID_TRANSITIONS, TERMINAL_STATES } from "./transitions";
 import { InvalidTransitionError } from "../errors";
-import { AuditLogger } from "../audit/logger";
 
 export class StateMachine {
   canTransition(from: NormalizedPaymentStatus, event: PaymentStateEvent): boolean {

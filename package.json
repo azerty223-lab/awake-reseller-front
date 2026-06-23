@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "workers": "jiti src/payments/queues/worker-boot.ts"
+    "workers": "jiti src/backend/payments/queues/worker-boot.ts"
   },
   "prisma": {
     "seed": "jiti prisma/seed.ts"

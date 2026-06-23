@@ -103,13 +103,13 @@ export function Footer() {
               <strong className="text-zinc-500">Legal Disclaimer:</strong> AW Tickets is an independent ticket resale service.
               We are not affiliated with Stichting Awakenings, ID&T, or any official festival organizer.
               All tickets are legally owned and sold at market resale prices. Ticket transfers are processed
-              in compliance with Awakenings Festival's official name change and transfer policy.
+              in compliance with Awakenings Festival&apos;s official name change and transfer policy.
               We do not guarantee availability of specific tickets from the official organizer.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-zinc-600 text-xs">
-              © {currentYear} AW Tickets. All rights reserved.
+              &copy; {currentYear} AW Tickets. All rights reserved.
             </p>
             <p className="text-zinc-600 text-xs">
               Secured Payments

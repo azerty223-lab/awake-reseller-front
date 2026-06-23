@@ -1,61 +1,58 @@
-﻿import { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
+import { z } from "zod/v4";
 import { stripe } from "@/backend/lib/stripe";
-import { prisma } from "@/backend/lib/prisma";
 import { getIp, rateLimit, tooManyRequests } from "@/backend/lib/rate-limit";
 import { verifyTurnstile } from "@/backend/lib/turnstile";
+import { CheckoutValidationError, resolveCheckoutItems } from "@/backend/lib/checkout";
 
-interface CartItem {
-  ticketId: string;
-  name: string;
-  quantity: number;
-  resalePrice: number;
-  currency: string;
-}
+const schema = z.object({
+  items: z.array(z.object({
+    ticketId: z.string().min(1),
+    quantity: z.number().int().positive(),
+  }).passthrough()).min(1),
+  customerEmail: z.string().email().optional(),
+  customerName: z.string().max(100).optional(),
+  customerPhone: z.string().max(50).optional(),
+  turnstileToken: z.string().optional(),
+});
 
 export async function POST(request: NextRequest) {
   const { allowed } = await rateLimit(`checkout:${getIp(request)}`, { windowSeconds: 60, maxRequests: 10 });
   if (!allowed) return tooManyRequests();
 
-  const body = await request.json();
-  const { items, customerEmail, customerName, customerPhone, turnstileToken } = body as {
-    items: CartItem[];
-    customerEmail?: string;
-    customerName?: string;
-    customerPhone?: string;
-    turnstileToken?: string;
-  };
+  const body = await request.json() as unknown;
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    return Response.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  const { items, customerEmail, customerName, customerPhone, turnstileToken } = parsed.data;
 
   const humanVerified = await verifyTurnstile(turnstileToken ?? "");
   if (!humanVerified) {
     return Response.json({ error: "Bot check failed. Please try again." }, { status: 403 });
   }
 
-  if (!items || items.length === 0) {
-    return Response.json({ error: "No items in cart" }, { status: 400 });
+  let resolved;
+  try {
+    resolved = await resolveCheckoutItems(items);
+  } catch (err) {
+    if (err instanceof CheckoutValidationError) {
+      return Response.json({ error: err.message }, { status: err.status });
+    }
+    throw err;
   }
 
-  // Verify tickets exist and are available
-  for (const item of items) {
-    const ticket = await prisma.ticket.findUnique({
-      where: { id: item.ticketId },
-    });
-    if (!ticket) {
-      return Response.json({ error: `Ticket ${item.ticketId} not found` }, { status: 400 });
-    }
-    if (ticket.quantity - ticket.sold < item.quantity) {
-      return Response.json(
-        { error: `Not enough availability for ${ticket.name}` },
-        { status: 400 }
-      );
-    }
-  }
+  const origin =
+    request.headers.get("origin") ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "http://localhost:3000";
 
-  const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
-  const lineItems = items.map((item) => ({
+  const lineItems = resolved.items.map((item) => ({
     price_data: {
       currency: item.currency.toLowerCase(),
-      unit_amount: Math.round(item.resalePrice * 100),
+      unit_amount: Math.round(item.unitPrice * 100),
       product_data: {
         name: item.name,
         description: `Awakenings Festival 2026 — ${item.name}`,
@@ -75,7 +72,11 @@ export async function POST(request: NextRequest) {
     metadata: {
       customerName: customerName ?? "",
       customerPhone: customerPhone ?? "",
-      items: JSON.stringify(items.map((i) => ({ ticketId: i.ticketId, quantity: i.quantity, unitPrice: i.resalePrice }))),
+      items: JSON.stringify(resolved.items.map((i) => ({
+        ticketId: i.ticketId,
+        quantity: i.quantity,
+        unitPrice: i.unitPrice,
+      }))),
     },
   });
 

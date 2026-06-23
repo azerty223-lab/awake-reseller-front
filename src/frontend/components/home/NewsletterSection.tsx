@@ -54,7 +54,7 @@ export function NewsletterSection() {
             Stay in the Loop
           </h2>
           <p className="text-zinc-500 text-sm mb-8 max-w-md mx-auto">
-            Get notified when new tickets drop, price updates, and festival news. No spam —
+            Get notified when new tickets drop, price updates, and festival news. No spam,
             just the essentials.
           </p>
 
@@ -66,7 +66,7 @@ export function NewsletterSection() {
             >
               <CheckCircle className="w-5 h-5 text-emerald-400" />
               <p className="text-emerald-400 font-medium">
-                You're on the list! We'll keep you posted.
+                You&apos;re on the list! We&apos;ll keep you posted.
               </p>
             </motion.div>
           ) : (

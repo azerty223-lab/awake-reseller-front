@@ -1,11 +1,10 @@
 ﻿"use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/frontend/store/cart";
 import { formatPrice } from "@/backend/lib/utils";
 import { Button } from "@/frontend/components/ui/Button";
-import { Badge } from "@/frontend/components/ui/Badge";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
@@ -69,7 +68,7 @@ export default function CheckoutPage() {
   const [cardName, setCardName] = useState("");
   const [cardNumberError, setCardNumberError] = useState<string | null>(null);
   const [cardExpiryError, setCardExpiryError] = useState<string | null>(null);
-  const leadSavedRef = useRef(false);
+  const [leadSaved, setLeadSaved] = useState(false);
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 16);
@@ -152,7 +151,26 @@ export default function CheckoutPage() {
     if (!cardName.trim()) { setError("Please enter the cardholder name."); return; }
     setError("");
     setPaymentState("processing");
+    void onSubmit(getValues());
     setTimeout(() => setPaymentState("declined"), 5000);
+  };
+
+  const handleDetailsSubmit = async (data: CheckoutForm) => {
+    if (!leadSaved) {
+      setLeadSaved(true);
+      fetch("/api/checkout/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((i) => ({ ticketId: i.ticketId, quantity: i.quantity, unitPrice: i.resalePrice })),
+          totalAmount: total,
+          currency: "EUR",
+          guestName: data.name,
+          guestEmail: data.email,
+        }),
+      }).catch(() => { setLeadSaved(false); });
+    }
+    setStep(2);
   };
 
   if (items.length === 0 && step === 0) {
@@ -273,24 +291,7 @@ export default function CheckoutPage() {
 
         {/* Step 1: Customer details */}
         {step === 1 && (
-          <form className="space-y-5" onSubmit={handleSubmit(async (data) => {
-            // Save lead once — create PENDING order so admin can see name/email immediately
-            if (!leadSavedRef.current) {
-              leadSavedRef.current = true;
-              fetch("/api/checkout/order", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  items: items.map((i) => ({ ticketId: i.ticketId, quantity: i.quantity, unitPrice: i.resalePrice })),
-                  totalAmount: total,
-                  currency: "EUR",
-                  guestName: data.name,
-                  guestEmail: data.email,
-                }),
-              }).catch(() => { leadSavedRef.current = false; });
-            }
-            setStep(2);
-          })}>
+          <form className="space-y-5" onSubmit={handleSubmit(handleDetailsSubmit)}>
             <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl p-6 space-y-5">
               <div className="flex items-center gap-2 mb-2">
                 <User className="w-4 h-4 text-[#c9a84c]" />

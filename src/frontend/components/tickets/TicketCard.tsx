@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { ShoppingCart, Eye, Truck, Edit3, Clock, Tag } from "lucide-react";
+import { ShoppingCart, Eye, Truck, Edit3, Tag } from "lucide-react";
 import { Badge } from "@/frontend/components/ui/Badge";
 import { Button } from "@/frontend/components/ui/Button";
 import { useCartStore } from "@/frontend/store/cart";
@@ -76,8 +76,6 @@ export function TicketCard({ ticket }: TicketCardProps) {
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
-
-  const margin = ((ticket.resalePrice - ticket.originalPrice) / ticket.originalPrice * 100).toFixed(0);
 
   return (
     <motion.div

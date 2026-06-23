@@ -4,7 +4,7 @@ import { prisma } from "@/backend/lib/prisma";
 import { stateMachine } from "../../state-machine";
 import { AuditLogger } from "../../audit/logger";
 import { InvalidTransitionError } from "../../errors";
-import type { WebhookJobPayload, PaymentStateEvent, NormalizedPaymentStatus } from "../../types";
+import type { PaymentStateEvent, NormalizedPaymentStatus } from "../../types";
 
 function statusToEvent(
   status: NormalizedPaymentStatus,

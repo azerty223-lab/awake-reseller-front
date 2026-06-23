@@ -58,7 +58,7 @@ export function FestivalInfo() {
             Awakenings 2026
           </h2>
           <p className="text-zinc-500 text-sm max-w-xl mx-auto leading-relaxed">
-            Europe's leading techno festival returns to Hilvarenbeek for another unforgettable
+            Europe&apos;s leading techno festival returns to Hilvarenbeek for another unforgettable
             edition. Three days of world-class electronic music across five stages.
           </p>
         </div>

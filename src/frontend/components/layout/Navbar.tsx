@@ -31,10 +31,6 @@ export function Navbar({ onCartOpen }: NavbarProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
   return (
     <>
       <header
@@ -63,6 +59,7 @@ export function Navbar({ onCartOpen }: NavbarProps) {
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={() => setMobileOpen(false)}
                   className={cn(
                     "text-sm font-medium transition-colors tracking-wide",
                     pathname === link.href

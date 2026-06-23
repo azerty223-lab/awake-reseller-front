@@ -12,7 +12,7 @@ const trustItems = [
     icon: CreditCard,
     title: "Secure Payments",
     description:
-      "Payments processed exclusively through Stripe — the most trusted payment infrastructure in the world.",
+      "Payments processed exclusively through Stripe, the most trusted payment infrastructure in the world.",
     color: "#3b82f6",
   },
   {
@@ -46,7 +46,7 @@ export function TrustSection() {
             Buy With Confidence
           </h2>
           <p className="text-zinc-500 text-sm max-w-lg mx-auto">
-            We've built a resale experience you can trust — from verified tickets to secure checkout.
+            We&apos;ve built a resale experience you can trust, from verified tickets to secure checkout.
           </p>
         </div>
 

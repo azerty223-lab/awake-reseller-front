@@ -1,5 +1,5 @@
 // Entry point to start all BullMQ workers
-// Run as: jiti src/payments/queues/worker-boot.ts
+// Run as: jiti src/backend/payments/queues/worker-boot.ts
 // Or call startWorkers() from a custom Next.js server
 
 import { createWebhookWorker } from "./workers/webhook-worker";
