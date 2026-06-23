@@ -1,0 +1,41 @@
+import type { NormalizedPaymentStatus, PaymentStateEvent } from "../types";
+
+type TransitionMap = Record<
+  NormalizedPaymentStatus,
+  Partial<Record<PaymentStateEvent, NormalizedPaymentStatus>>
+>;
+
+export const VALID_TRANSITIONS: TransitionMap = {
+  WAITING_PAYMENT: {
+    PAYMENT_BROADCAST: "PAYMENT_DETECTED",
+    INVOICE_EXPIRED: "EXPIRED",
+    PAYMENT_FAILED: "FAILED",
+  },
+  PAYMENT_DETECTED: {
+    CONFIRMATION_RECEIVED: "PAYMENT_PENDING_CONFIRMATION",
+    THRESHOLD_MET: "PAID",
+    UNDERPAYMENT_DETECTED: "UNDERPAID",
+    OVERPAYMENT_DETECTED: "OVERPAID",
+    PAYMENT_FAILED: "FAILED",
+    INVOICE_EXPIRED: "EXPIRED",
+  },
+  PAYMENT_PENDING_CONFIRMATION: {
+    CONFIRMATION_RECEIVED: "PAYMENT_PENDING_CONFIRMATION",
+    THRESHOLD_MET: "PAID",
+    PAYMENT_FAILED: "FAILED",
+  },
+  PAID: {},
+  EXPIRED: {},
+  FAILED: {},
+  UNDERPAID: {
+    PAYMENT_BROADCAST: "PAYMENT_DETECTED",
+    THRESHOLD_MET: "PAID",
+    INVOICE_EXPIRED: "EXPIRED",
+  },
+  OVERPAID: {
+    THRESHOLD_MET: "PAID",
+    INVOICE_EXPIRED: "EXPIRED",
+  },
+};
+
+export const TERMINAL_STATES: NormalizedPaymentStatus[] = ["PAID", "EXPIRED", "FAILED"];

@@ -1,0 +1,292 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          Role      @default(CUSTOMER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  orders        Order[]
+  inquiries     Inquiry[]
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Ticket {
+  id                    String                @id @default(cuid())
+  name                  String
+  slug                  String                @unique
+  description           String                @db.Text
+  category              TicketCategory
+  dayLabel              String?
+  originalPrice         Float
+  resalePrice           Float
+  currency              String                @default("EUR")
+  quantity              Int                   @default(1)
+  sold                  Int                   @default(0)
+  isVisible             Boolean               @default(true)
+  isFeatured            Boolean               @default(false)
+  deliveryMethod        DeliveryMethod        @default(DIGITAL)
+  personalizationStatus PersonalizationStatus @default(PENDING)
+  includes              String[]
+  imageUrl              String?
+  pdfUrl                String?
+  stripeProductId       String?
+  stripePriceId         String?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  orderItems            OrderItem[]
+  @@map("tickets")
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique @default(cuid())
+  userId          String?
+  guestEmail      String?
+  guestName       String?
+  guestPhone      String?
+  status          OrderStatus @default(PENDING)
+  totalAmount     Float
+  currency        String      @default("EUR")
+  stripeSessionId String?     @unique
+  stripePaymentId String?
+  notes           String?     @db.Text
+  deliveredAt     DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  user            User?       @relation(fields: [userId], references: [id])
+  orderItems      OrderItem[]
+  cryptoInvoice   CryptoInvoice?
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  ticketId  String
+  quantity  Int    @default(1)
+  unitPrice Float
+  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  ticket    Ticket @relation(fields: [ticketId], references: [id])
+  @@map("order_items")
+}
+
+model Inquiry {
+  id        String        @id @default(cuid())
+  userId    String?
+  name      String
+  email     String
+  subject   String
+  message   String        @db.Text
+  status    InquiryStatus @default(OPEN)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      User?         @relation(fields: [userId], references: [id])
+  @@map("inquiries")
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  @@map("newsletter_subscribers")
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum TicketCategory {
+  WEEKEND
+  SATURDAY
+  SUNDAY
+  CAMPING
+  COMFORT_CAMPING
+  CAR_CAMPING
+  PREMIUM
+  ACCOMMODATION
+}
+
+enum DeliveryMethod {
+  DIGITAL
+  PHYSICAL
+  NAME_CHANGE
+}
+
+enum PersonalizationStatus {
+  PENDING
+  COMPLETED
+  NOT_REQUIRED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum InquiryStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum CryptoPaymentStatus {
+  WAITING_PAYMENT
+  PAYMENT_DETECTED
+  PAYMENT_PENDING_CONFIRMATION
+  PAID
+  EXPIRED
+  FAILED
+  UNDERPAID
+  OVERPAID
+}
+
+enum CryptoNetwork {
+  ETHEREUM
+  BITCOIN
+  POLYGON
+  BASE
+}
+
+enum CryptoCurrency {
+  USDC
+  USDT
+  ETH
+  BTC
+}
+
+enum CryptoProviderName {
+  COINBASE_COMMERCE
+  BTCPAY
+  MOCK
+}
+
+enum PaymentLogEvent {
+  INVOICE_CREATED
+  WEBHOOK_RECEIVED
+  STATUS_TRANSITION
+  CONFIRMATION_UPDATE
+  EXPIRY_TRIGGERED
+  PROVIDER_ERROR
+  IDEMPOTENCY_SKIP
+  RATE_LIMIT_HIT
+  ORDER_FULFILLED
+}
+
+model CryptoInvoice {
+  id                    String              @id @default(cuid())
+  orderId               String              @unique
+  provider              CryptoProviderName
+  providerInvoiceId     String              @unique
+  providerHostedUrl     String?
+  status                CryptoPaymentStatus @default(WAITING_PAYMENT)
+  fiatAmount            Float
+  fiatCurrency          String              @default("EUR")
+  cryptoCurrency        CryptoCurrency
+  cryptoNetwork         CryptoNetwork
+  cryptoAmount          String
+  exchangeRateSnapshot  String
+  exchangeRateSource    String
+  paymentAddress        String
+  paymentUri            String              @db.Text
+  txHash                String?
+  confirmations         Int                 @default(0)
+  requiredConfirmations Int
+  receivedAmount        String?
+  blockHeight           Int?
+  priceLockExpiresAt    DateTime
+  paymentDetectedAt     DateTime?
+  confirmedAt           DateTime?
+  expiresAt             DateTime
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  order                 Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  paymentLogs           CryptoPaymentLog[]
+  @@index([status])
+  @@index([providerInvoiceId])
+  @@index([expiresAt])
+  @@map("crypto_invoices")
+}
+
+model CryptoPaymentLog {
+  id              String               @id @default(cuid())
+  cryptoInvoiceId String
+  event           PaymentLogEvent
+  fromStatus      CryptoPaymentStatus?
+  toStatus        CryptoPaymentStatus?
+  rawPayload      Json?
+  webhookEventId  String?
+  providerName    CryptoProviderName?
+  confirmations   Int?
+  txHash          String?
+  errorCode       String?
+  errorMessage    String?              @db.Text
+  metadata        Json?
+  createdAt       DateTime             @default(now())
+  cryptoInvoice   CryptoInvoice        @relation(fields: [cryptoInvoiceId], references: [id], onDelete: Cascade)
+  @@index([cryptoInvoiceId])
+  @@index([createdAt])
+  @@map("crypto_payment_logs")
+}
+
+model WebhookIdempotency {
+  id          String             @id @default(cuid())
+  eventId     String             @unique
+  provider    CryptoProviderName
+  processedAt DateTime           @default(now())
+  @@index([processedAt])
+  @@map("webhook_idempotency")
+}
