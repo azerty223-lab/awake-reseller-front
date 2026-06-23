@@ -1,6 +1,5 @@
 ﻿import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { prisma } from "@/backend/lib/prisma";
 import { getRedis } from "@/backend/payments/queues/connection";
@@ -9,7 +8,6 @@ const MAX_ATTEMPTS = 5;
 const LOCKOUT_SECONDS = 15 * 60;
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
   },
