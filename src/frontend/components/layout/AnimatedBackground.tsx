@@ -19,7 +19,7 @@ export function AnimatedBackground() {
   const indigoOp  = useTransform(scrollYProgress, [0.84, 0.93, 1.0 ], [0,   1,   0.5]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -1, contain: "layout style paint" }}>
 
       {/* ── Base animated gradient mesh ─────────────────── */}
       <div
@@ -97,7 +97,7 @@ export function AnimatedBackground() {
 
       {/* Violet — top right */}
       <div
-        className="absolute rounded-full animate-orb-a parallax-layer"
+        className="absolute rounded-full animate-orb-a "
         style={{
           width: 700,
           height: 700,
@@ -111,7 +111,7 @@ export function AnimatedBackground() {
 
       {/* Amber — center left */}
       <div
-        className="absolute rounded-full animate-orb-b parallax-layer"
+        className="absolute rounded-full animate-orb-b "
         style={{
           width: 550,
           height: 550,
@@ -125,7 +125,7 @@ export function AnimatedBackground() {
 
       {/* Electric blue — bottom right */}
       <div
-        className="absolute rounded-full animate-orb-c parallax-layer"
+        className="absolute rounded-full animate-orb-c "
         style={{
           width: 600,
           height: 600,
@@ -139,7 +139,7 @@ export function AnimatedBackground() {
 
       {/* Magenta — lower left */}
       <div
-        className="absolute rounded-full animate-orb-d parallax-layer"
+        className="absolute rounded-full animate-orb-d "
         style={{
           width: 450,
           height: 450,
@@ -153,7 +153,7 @@ export function AnimatedBackground() {
 
       {/* Gold — top center */}
       <div
-        className="absolute rounded-full animate-orb-b parallax-layer"
+        className="absolute rounded-full animate-orb-b "
         style={{
           width: 400,
           height: 400,

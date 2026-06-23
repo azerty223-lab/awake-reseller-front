@@ -226,47 +226,32 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-@keyframes orb-drift-a {
-  0%,  100% { transform: translate(0px, 0px) scale(1); }
-  20%        { transform: translate(45px, -40px) scale(1.07); }
-  45%        { transform: translate(20px, -80px) scale(0.93); }
-  65%        { transform: translate(-35px, -55px) scale(1.04); }
-  85%        { transform: translate(-15px, -20px) scale(0.97); }
+/* Orbs: opacity-only animation — transform on blurred elements is very expensive */
+@keyframes orb-pulse-a {
+  0%, 100% { opacity: 0.10; }
+  50%       { opacity: 0.16; }
+}
+@keyframes orb-pulse-b {
+  0%, 100% { opacity: 0.07; }
+  50%       { opacity: 0.12; }
+}
+@keyframes orb-pulse-c {
+  0%, 100% { opacity: 0.05; }
+  50%       { opacity: 0.09; }
 }
 
-@keyframes orb-drift-b {
-  0%,  100% { transform: translate(0px, 0px) scale(1); }
-  30%        { transform: translate(-60px, 50px) scale(1.09); }
-  55%        { transform: translate(35px, 95px) scale(0.91); }
-  80%        { transform: translate(70px, 40px) scale(1.05); }
-}
-
-@keyframes orb-drift-c {
-  0%,  100% { transform: translate(0px, 0px) scale(1); }
-  35%        { transform: translate(80px, -60px) scale(1.06); }
-  70%        { transform: translate(-50px, 35px) scale(0.94); }
-}
-
+/* Grain — static, no animation needed */
 @keyframes grain-move {
-  0%   { transform: translate(0, 0); }
-  10%  { transform: translate(-1%, -1%); }
-  20%  { transform: translate(1%, 0); }
-  30%  { transform: translate(0, 1%); }
-  40%  { transform: translate(-1%, 0); }
-  50%  { transform: translate(0, -1%); }
-  60%  { transform: translate(1%, 1%); }
-  70%  { transform: translate(0, 0); }
-  80%  { transform: translate(-1%, 1%); }
-  90%  { transform: translate(1%, -1%); }
-  100% { transform: translate(0, 0); }
+  0%, 100% { opacity: 0.045; }
+  50%       { opacity: 0.03; }
 }
 
-.animate-orb-a { animation: orb-drift-a 28s ease-in-out infinite; }
-.animate-orb-b { animation: orb-drift-b 36s ease-in-out infinite; }
-.animate-orb-c { animation: orb-drift-c 30s ease-in-out infinite; }
-.animate-orb-d { animation: orb-drift-a 40s ease-in-out infinite reverse; }
+.animate-orb-a { animation: orb-pulse-a 18s ease-in-out infinite; will-change: opacity; }
+.animate-orb-b { animation: orb-pulse-b 24s ease-in-out infinite; will-change: opacity; }
+.animate-orb-c { animation: orb-pulse-c 20s ease-in-out infinite; will-change: opacity; }
+.animate-orb-d { animation: orb-pulse-a 30s ease-in-out infinite reverse; will-change: opacity; }
 .animate-mesh  { animation: gradient-mesh 22s ease infinite; background-size: 400% 400%; }
-.animate-grain { animation: grain-move 8s steps(1) infinite; }
+.animate-grain { animation: grain-move 6s ease-in-out infinite; }
 
 /* Parallax will-change hint */
 .parallax-layer { will-change: transform; }

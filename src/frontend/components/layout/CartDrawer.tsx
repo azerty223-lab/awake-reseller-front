@@ -3,9 +3,8 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useCartStore } from "@/frontend/store/cart";
 import { formatPrice } from "@/backend/lib/utils";
-import { X, Minus, Plus, ShoppingCart, Trash2, ArrowRight, Ticket } from "lucide-react";
+import { X, Minus, Plus, ShoppingCart, ArrowRight, Ticket } from "lucide-react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/frontend/components/ui/Badge";
 
 interface CartDrawerProps {
@@ -13,248 +12,277 @@ interface CartDrawerProps {
   onClose: () => void;
 }
 
-const panelVariants = {
-  hidden: { x: "100%" },
-  visible: {
-    x: 0,
-    transition: { duration: 0.32, ease: [0.32, 0.72, 0, 1] as const },
-  },
-  exit: {
-    x: "100%",
-    transition: { duration: 0.24, ease: [0.32, 0, 0.67, 0] as const },
-  },
-};
-
-const overlayVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.2 } },
-  exit: { opacity: 0, transition: { duration: 0.2 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, x: 24 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.28, ease: "easeOut" as const } },
-  exit: { opacity: 0, x: -16, scale: 0.97, transition: { duration: 0.18 } },
-};
-
 export function CartDrawer({ open, onClose }: CartDrawerProps) {
   const { items, updateQuantity, removeItem, total, itemCount } = useCartStore();
 
   return (
     <Dialog.Root open={open} onOpenChange={(v) => !v && onClose()}>
       <Dialog.Portal>
-        <AnimatePresence>
-          {open && (
-            <>
-              {/* Overlay — no backdrop-blur, just opacity */}
-              <Dialog.Overlay asChild forceMount>
-                <motion.div
-                  className="fixed inset-0 bg-black/75 z-[60]"
-                  variants={overlayVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                />
-              </Dialog.Overlay>
 
-              {/* Panel — solid background, no backdrop-blur, will-change for GPU hint */}
-              <Dialog.Content asChild forceMount>
-                <motion.div
-                  className="fixed right-0 top-0 h-full w-full max-w-sm bg-[#0E0E11] border-l border-white/[0.07] z-[70] flex flex-col shadow-2xl outline-none"
-                  style={{ willChange: "transform" }}
-                  variants={panelVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                >
-                  {/* Header */}
-                  <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.07]">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#C9A84C]/20 to-[#E4BA65]/10 border border-[#C9A84C]/20 flex items-center justify-center">
-                        <ShoppingCart className="w-4 h-4 text-[#C9A84C]" />
-                      </div>
-                      <Dialog.Title className="text-white font-bold text-lg tracking-tight">
-                        Your Cart
-                      </Dialog.Title>
-                      <AnimatePresence>
-                        {itemCount > 0 && (
-                          <motion.span
-                            key="badge"
-                            initial={{ scale: 0.6, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.6, opacity: 0 }}
-                            className="bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] text-black text-[11px] font-bold px-2 py-0.5 rounded-full min-w-[22px] text-center"
-                          >
-                            {itemCount}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                    <Dialog.Close className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/[0.07] border border-transparent hover:border-white/[0.07] transition-all duration-200">
-                      <X className="w-4 h-4" />
-                    </Dialog.Close>
-                  </div>
+        {/* Overlay — pure CSS opacity, no Framer Motion */}
+        <Dialog.Overlay
+          forceMount
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.75)",
+            zIndex: 60,
+            opacity: open ? 1 : 0,
+            transition: "opacity 200ms ease",
+            pointerEvents: open ? "auto" : "none",
+          }}
+        />
 
-                  {/* Items */}
-                  <div className="flex-1 overflow-y-auto py-5 px-5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
-                    {items.length === 0 ? (
-                      /* Empty State */
-                      <div className="flex flex-col items-center justify-center h-full gap-5 text-center py-20">
-                        <div className="relative">
-                          <div className="w-20 h-20 rounded-2xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center">
-                            <Ticket className="w-8 h-8 text-zinc-600" />
-                          </div>
-                          <div className="absolute inset-0 rounded-2xl bg-[#C9A84C]/5 blur-xl" />
-                        </div>
-                        <div className="space-y-1.5">
-                          <p className="text-white font-semibold text-base">Your cart is empty</p>
-                          <p className="text-zinc-500 text-sm leading-relaxed">
-                            Find the perfect tickets and<br />add them here
-                          </p>
-                        </div>
-                        <Dialog.Close asChild>
-                          <Link
-                            href="/tickets"
-                            className="mt-1 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] text-black text-sm font-bold hover:shadow-[0_0_30px_rgba(201,168,76,0.35)] transition-all duration-300"
-                          >
-                            Browse Tickets
-                            <ArrowRight className="w-4 h-4" />
-                          </Link>
-                        </Dialog.Close>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        <AnimatePresence mode="popLayout">
-                          {items.map((item) => (
-                            <motion.div
-                              key={item.ticketId}
-                              variants={itemVariants}
-                              initial="hidden"
-                              animate="visible"
-                              exit="exit"
-                              className="group bg-white/[0.05] border border-white/[0.07] rounded-2xl p-4 hover:bg-white/[0.08] hover:border-white/[0.12] transition-colors duration-200"
-                            >
-                              <div className="flex items-start justify-between gap-3">
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-white font-semibold text-sm truncate mb-0.5 leading-snug">
-                                    {item.name}
-                                  </p>
-                                  {item.dayLabel && (
-                                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-zinc-500 mb-2.5">
-                                      {item.dayLabel}
-                                    </p>
-                                  )}
-                                  <p className="bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] bg-clip-text text-transparent font-bold text-base">
-                                    {formatPrice(item.resalePrice * item.quantity)}
-                                  </p>
-                                  {item.quantity > 1 && (
-                                    <p className="text-zinc-600 text-xs mt-0.5">
-                                      {formatPrice(item.resalePrice)} each
-                                    </p>
-                                  )}
-                                </div>
+        {/* Panel — pure CSS translateX, no Framer Motion, will-change pre-promoted */}
+        <Dialog.Content
+          forceMount
+          aria-describedby={undefined}
+          style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            height: "100%",
+            width: "100%",
+            maxWidth: "384px",
+            background: "#0E0E11",
+            borderLeft: "1px solid rgba(255,255,255,0.07)",
+            zIndex: 70,
+            display: "flex",
+            flexDirection: "column",
+            outline: "none",
+            transform: open ? "translateX(0)" : "translateX(100%)",
+            transition: "transform 320ms cubic-bezier(0.32, 0.72, 0, 1)",
+            willChange: "transform",
+          }}
+        >
 
-                                <div className="flex items-center gap-2 mt-0.5">
-                                  {/* Quantity pill controls */}
-                                  <div className="flex items-center gap-0.5 bg-black/40 rounded-full border border-white/[0.07] p-0.5">
-                                    <button
-                                      onClick={() =>
-                                        updateQuantity(item.ticketId, item.quantity - 1)
-                                      }
-                                      className="w-7 h-7 rounded-full flex items-center justify-center text-zinc-400 hover:text-[#C9A84C] hover:bg-[#C9A84C]/10 transition-all duration-200"
-                                      aria-label="Decrease quantity"
-                                    >
-                                      <Minus className="w-3 h-3" />
-                                    </button>
-                                    <span className="text-white text-sm font-semibold w-6 text-center tabular-nums">
-                                      {item.quantity}
-                                    </span>
-                                    <button
-                                      onClick={() =>
-                                        updateQuantity(item.ticketId, item.quantity + 1)
-                                      }
-                                      disabled={item.quantity >= item.maxQuantity}
-                                      className="w-7 h-7 rounded-full flex items-center justify-center text-zinc-400 hover:text-[#C9A84C] hover:bg-[#C9A84C]/10 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-                                      aria-label="Increase quantity"
-                                    >
-                                      <Plus className="w-3 h-3" />
-                                    </button>
-                                  </div>
+          {/* Header */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "20px 24px",
+            borderBottom: "1px solid rgba(255,255,255,0.07)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: 8,
+                background: "rgba(201,168,76,0.08)",
+                border: "1px solid rgba(201,168,76,0.18)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <ShoppingCart size={16} color="#C9A84C" />
+              </div>
+              <Dialog.Title style={{ color: "#fff", fontWeight: 700, fontSize: 17, margin: 0 }}>
+                Your Cart
+              </Dialog.Title>
+              {itemCount > 0 && (
+                <span style={{
+                  background: "linear-gradient(135deg, #C9A84C, #E4BA65)",
+                  color: "#000",
+                  fontSize: 11,
+                  fontWeight: 800,
+                  padding: "2px 8px",
+                  borderRadius: 99,
+                }}>
+                  {itemCount}
+                </span>
+              )}
+            </div>
+            <Dialog.Close style={{
+              width: 32, height: 32, borderRadius: 8, border: "none",
+              background: "transparent", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "#71717A",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#fff"; (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.06)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#71717A"; (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+            >
+              <X size={16} />
+            </Dialog.Close>
+          </div>
 
-                                  {/* Remove */}
-                                  <button
-                                    onClick={() => removeItem(item.ticketId)}
-                                    className="w-7 h-7 rounded-full flex items-center justify-center text-zinc-600 hover:text-red-400 hover:bg-red-400/10 border border-transparent hover:border-red-400/20 transition-all duration-200"
-                                    aria-label="Remove item"
-                                  >
-                                    <X className="w-3.5 h-3.5" />
-                                  </button>
-                                </div>
-                              </div>
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Footer */}
-                  <AnimatePresence>
-                    {items.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 16 }}
-                        transition={{ duration: 0.22 }}
-                        className="border-t border-white/[0.07] px-5 py-5 space-y-4 bg-[#0A0A0C]"
-                      >
-                        {/* Subtotal row */}
-                        <div className="flex items-end justify-between">
-                          <div>
-                            <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-zinc-500 mb-1">
-                              Subtotal
-                            </p>
-                            <p className="bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] bg-clip-text text-transparent text-2xl font-bold leading-none">
-                              {formatPrice(total)}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-zinc-500 text-xs mb-1">
-                              {itemCount} ticket{itemCount !== 1 ? "s" : ""}
-                            </p>
-                            <Badge variant="success" size="sm">Secure checkout</Badge>
-                          </div>
-                        </div>
-
-                        {/* Checkout CTA */}
-                        <Dialog.Close asChild>
-                          <Link
-                            href="/checkout"
-                            className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] text-black font-bold text-base hover:shadow-[0_0_40px_rgba(201,168,76,0.4)] active:scale-[0.98] transition-all duration-300"
-                          >
-                            Proceed to Checkout
-                            <ArrowRight className="w-4 h-4" />
-                          </Link>
-                        </Dialog.Close>
-
-                        {/* Continue shopping ghost button */}
-                        <Dialog.Close asChild>
-                          <button className="w-full py-2.5 rounded-xl border border-white/20 text-white text-sm font-medium hover:bg-white/[0.07] hover:border-white/40 transition-all duration-300">
-                            Continue Shopping
-                          </button>
-                        </Dialog.Close>
-
-                        <p className="text-center text-zinc-600 text-[11px]">
-                          Powered by Stripe · Secure &amp; Encrypted
+          {/* Items area */}
+          <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
+            {items.length === 0 ? (
+              <div style={{
+                display: "flex", flexDirection: "column", alignItems: "center",
+                justifyContent: "center", height: "100%", gap: 20, textAlign: "center",
+                padding: "60px 0",
+              }}>
+                <div style={{
+                  width: 72, height: 72, borderRadius: 16,
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <Ticket size={28} color="#3F3F46" />
+                </div>
+                <div>
+                  <p style={{ color: "#fff", fontWeight: 600, marginBottom: 6 }}>Cart is empty</p>
+                  <p style={{ color: "#52525B", fontSize: 13 }}>Add tickets to get started</p>
+                </div>
+                <Dialog.Close asChild>
+                  <Link href="/tickets" style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    padding: "10px 20px", borderRadius: 12, fontSize: 13, fontWeight: 700,
+                    background: "linear-gradient(135deg, #C9A84C, #E4BA65)", color: "#000",
+                    textDecoration: "none",
+                  }}>
+                    Browse Tickets <ArrowRight size={14} />
+                  </Link>
+                </Dialog.Close>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {items.map((item) => (
+                  <div
+                    key={item.ticketId}
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      borderRadius: 16,
+                      padding: 16,
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{
+                          color: "#fff", fontWeight: 600, fontSize: 14,
+                          marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                        }}>
+                          {item.name}
                         </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              </Dialog.Content>
-            </>
+                        {item.dayLabel && (
+                          <p style={{
+                            color: "#52525B", fontSize: 10, fontWeight: 600,
+                            textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: 8,
+                          }}>
+                            {item.dayLabel}
+                          </p>
+                        )}
+                        <p style={{
+                          fontWeight: 700, fontSize: 15,
+                          background: "linear-gradient(135deg, #C9A84C, #E4BA65)",
+                          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                        }}>
+                          {formatPrice(item.resalePrice * item.quantity)}
+                        </p>
+                        {item.quantity > 1 && (
+                          <p style={{ color: "#52525B", fontSize: 11, marginTop: 2 }}>
+                            {formatPrice(item.resalePrice)} each
+                          </p>
+                        )}
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        {/* Quantity */}
+                        <div style={{
+                          display: "flex", alignItems: "center", gap: 2,
+                          background: "rgba(0,0,0,0.4)", borderRadius: 99,
+                          border: "1px solid rgba(255,255,255,0.07)", padding: "2px 4px",
+                        }}>
+                          <button
+                            onClick={() => updateQuantity(item.ticketId, item.quantity - 1)}
+                            style={{
+                              width: 28, height: 28, borderRadius: "50%", border: "none",
+                              background: "transparent", cursor: "pointer", color: "#71717A",
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                            }}
+                          >
+                            <Minus size={12} />
+                          </button>
+                          <span style={{ color: "#fff", fontSize: 13, fontWeight: 600, width: 22, textAlign: "center" }}>
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(item.ticketId, item.quantity + 1)}
+                            disabled={item.quantity >= item.maxQuantity}
+                            style={{
+                              width: 28, height: 28, borderRadius: "50%", border: "none",
+                              background: "transparent", cursor: item.quantity >= item.maxQuantity ? "not-allowed" : "pointer",
+                              color: item.quantity >= item.maxQuantity ? "#3F3F46" : "#71717A",
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                            }}
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
+
+                        {/* Remove */}
+                        <button
+                          onClick={() => removeItem(item.ticketId)}
+                          style={{
+                            width: 28, height: 28, borderRadius: "50%", border: "none",
+                            background: "transparent", cursor: "pointer", color: "#52525B",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                          }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#f87171"; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#52525B"; }}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          {items.length > 0 && (
+            <div style={{
+              borderTop: "1px solid rgba(255,255,255,0.07)",
+              padding: "20px",
+              background: "#0A0A0C",
+              display: "flex", flexDirection: "column", gap: 12,
+            }}>
+              <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
+                <div>
+                  <p style={{ color: "#52525B", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 600, marginBottom: 4 }}>
+                    Subtotal
+                  </p>
+                  <p style={{
+                    fontSize: 22, fontWeight: 700,
+                    background: "linear-gradient(135deg, #C9A84C, #E4BA65)",
+                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                  }}>
+                    {formatPrice(total)}
+                  </p>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <p style={{ color: "#52525B", fontSize: 12, marginBottom: 4 }}>
+                    {itemCount} ticket{itemCount !== 1 ? "s" : ""}
+                  </p>
+                  <Badge variant="success" size="sm">Secure checkout</Badge>
+                </div>
+              </div>
+
+              <Dialog.Close asChild>
+                <Link href="/checkout" style={{
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  padding: "15px", borderRadius: 12, fontWeight: 700, fontSize: 15,
+                  background: "linear-gradient(135deg, #C9A84C, #E4BA65)", color: "#000",
+                  textDecoration: "none",
+                }}>
+                  Proceed to Checkout <ArrowRight size={16} />
+                </Link>
+              </Dialog.Close>
+
+              <Dialog.Close asChild>
+                <button style={{
+                  width: "100%", padding: "11px", borderRadius: 12, cursor: "pointer",
+                  border: "1px solid rgba(255,255,255,0.14)", background: "transparent",
+                  color: "#fff", fontSize: 13, fontWeight: 500,
+                }}>
+                  Continue Shopping
+                </button>
+              </Dialog.Close>
+            </div>
           )}
-        </AnimatePresence>
+
+        </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
