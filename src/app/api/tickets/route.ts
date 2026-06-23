@@ -21,16 +21,12 @@ export async function GET(request: NextRequest) {
     where.category = category as TicketCategory;
   }
 
-  try {
-    const tickets = await prisma.ticket.findMany({
-      where,
-      orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
-    });
-    return Response.json(tickets);
-  } catch (err) {
-    console.error("[/api/tickets]", err);
-    return Response.json({ error: String(err) }, { status: 500 });
-  }
+  const tickets = await prisma.ticket.findMany({
+    where,
+    orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+  });
+
+  return Response.json(tickets);
 }
 
 export async function POST(request: NextRequest) {
