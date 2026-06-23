@@ -3,8 +3,11 @@ import { prisma } from "@/backend/lib/prisma";
 import { auth } from "@/backend/lib/auth";
 import { TicketCategory } from "@prisma/client";
 import { slugify } from "@/backend/lib/utils";
+import { getIp, rateLimit, tooManyRequests } from "@/backend/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
+  const { allowed } = await rateLimit(`tickets:${getIp(request)}`, { windowSeconds: 60, maxRequests: 60 });
+  if (!allowed) return tooManyRequests();
   const searchParams = request.nextUrl.searchParams;
   const featured = searchParams.get("featured");
   const category = searchParams.get("category");

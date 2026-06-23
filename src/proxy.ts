@@ -1,6 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-export function proxy() {
+const BOT_UA = /curl|wget|python|java(?!script)|perl|ruby|php|go-http|axios|node-fetch|httpx|aiohttp|mechanize|scrapy|phantomjs|headlesschrome|selenium|webdriver|zgrab|masscan|nmap|libwww|lwp-|htmlunit/i;
+
+export function proxy(request: NextRequest) {
+  // Block known scraper / scripting user-agents on API routes
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    const ua = request.headers.get("user-agent") ?? "";
+    if (BOT_UA.test(ua)) {
+      return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  }
+
   const response = NextResponse.next();
 
   response.headers.set("X-Frame-Options", "DENY");

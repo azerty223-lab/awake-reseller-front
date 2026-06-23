@@ -1,6 +1,7 @@
 ﻿import { NextRequest } from "next/server";
 import { z } from "zod/v4";
 import { getEnabledWallets, buildQuote } from "@/backend/payments/static/service";
+import { getIp, rateLimit, tooManyRequests } from "@/backend/lib/rate-limit";
 
 const schema = z.object({
   currency: z.string(),
@@ -19,6 +20,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const { allowed } = await rateLimit(`static-quote:${getIp(req)}`, { windowSeconds: 60, maxRequests: 20 });
+  if (!allowed) return tooManyRequests();
   try {
     const body = await req.json() as unknown;
     const parsed = schema.safeParse(body);

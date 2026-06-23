@@ -1,6 +1,7 @@
 ﻿import { NextRequest } from "next/server";
 import { prisma } from "@/backend/lib/prisma";
 import { auth } from "@/backend/lib/auth";
+import { getIp, rateLimit, tooManyRequests } from "@/backend/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -8,6 +9,8 @@ export async function GET(request: NextRequest) {
 
   // Public: get order by stripe session id
   if (sessionId) {
+    const { allowed } = await rateLimit(`orders:${getIp(request)}`, { windowSeconds: 60, maxRequests: 10 });
+    if (!allowed) return tooManyRequests();
     const order = await prisma.order.findUnique({
       where: { stripeSessionId: sessionId },
       include: { orderItems: { include: { ticket: true } } },

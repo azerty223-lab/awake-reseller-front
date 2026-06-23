@@ -1,11 +1,14 @@
 ﻿import { NextRequest } from "next/server";
 import { PaymentService } from "@/backend/payments/service";
 import { InvoiceNotFoundError } from "@/backend/payments/errors";
+import { getIp, rateLimit, tooManyRequests } from "@/backend/lib/rate-limit";
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ invoiceId: string }> }
 ) {
+  const { allowed } = await rateLimit(`inv-status:${getIp(_req)}`, { windowSeconds: 60, maxRequests: 30 });
+  if (!allowed) return tooManyRequests();
   try {
     const { invoiceId } = await params;
 

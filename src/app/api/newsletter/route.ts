@@ -23,12 +23,10 @@ export async function POST(request: NextRequest) {
   });
 
   if (existing) {
-    return Response.json({ message: "Already subscribed" });
+    return Response.json({ success: true }, { status: 200 });
   }
 
-  const subscriber = await prisma.newsletterSubscriber.create({
-    data: { email },
-  });
+  await prisma.newsletterSubscriber.create({ data: { email } });
 
-  return Response.json({ success: true, id: subscriber.id }, { status: 201 });
+  return Response.json({ success: true }, { status: 201 });
 }
