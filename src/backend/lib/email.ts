@@ -1,20 +1,24 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-let _resend: Resend | null = null;
+const ADMIN = process.env.ADMIN_EMAIL ?? "awtickets@outlook.com";
 
-function getResend(): Resend {
-  if (!_resend) {
-    const key = process.env.RESEND_API_KEY;
-    if (!key) throw new Error("RESEND_API_KEY is not set");
-    _resend = new Resend(key);
-  }
-  return _resend;
+function getTransporter() {
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  if (!user || !pass) throw new Error("SMTP_USER and SMTP_PASS must be set");
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST ?? "smtp.gmail.com",
+    port: parseInt(process.env.SMTP_PORT ?? "587"),
+    secure: false,
+    auth: { user, pass },
+  });
 }
 
-// FROM must match a domain verified in your Resend dashboard.
-// On the free plan with no custom domain, use "onboarding@resend.dev".
-const FROM = process.env.EMAIL_FROM ?? "onboarding@resend.dev";
-const ADMIN = "awtickets@outlook.com";
+const FROM = () =>
+  `AW Tickets <${process.env.EMAIL_FROM ?? process.env.SMTP_USER ?? ADMIN}>`;
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 interface OrderConfirmationData {
   to: string;
@@ -23,13 +27,6 @@ interface OrderConfirmationData {
   items: { name: string; quantity: number; unitPrice: number }[];
   totalAmount: number;
   currency: string;
-}
-
-interface InquiryConfirmationData {
-  to: string;
-  name: string;
-  subject: string;
-  message: string;
 }
 
 export async function sendOrderConfirmation(data: OrderConfirmationData) {
@@ -92,15 +89,22 @@ export async function sendOrderConfirmation(data: OrderConfirmationData) {
   </div>
 </body></html>`;
 
-  const { error } = await getResend().emails.send({
-    from: FROM,
+  await getTransporter().sendMail({
+    from: FROM(),
     replyTo: ADMIN,
     to: data.to,
     subject: `Order Confirmation #${data.orderNumber} — Awakenings Festival 2026`,
     html,
   });
+}
 
-  if (error) throw new Error(error.message);
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface InquiryConfirmationData {
+  to: string;
+  name: string;
+  subject: string;
+  message: string;
 }
 
 export async function sendInquiryConfirmation(data: InquiryConfirmationData) {
@@ -110,7 +114,6 @@ export async function sendInquiryConfirmation(data: InquiryConfirmationData) {
   <div style="max-width:600px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:40px;">
       <h1 style="color:#c9a84c;font-size:28px;margin:0;letter-spacing:.1em;">AW TICKETS</h1>
-      <p style="color:#666;margin:8px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;">Awakenings Festival 2026</p>
     </div>
     <div style="background:#161616;border:1px solid #2a2a2a;border-radius:12px;padding:32px;">
       <h2 style="color:#fff;margin:0 0 8px;">We Got Your Message</h2>
@@ -124,25 +127,21 @@ export async function sendInquiryConfirmation(data: InquiryConfirmationData) {
         <p style="color:#999;margin:0;line-height:1.6;">${data.message}</p>
       </div>
     </div>
-    <div style="text-align:center;color:#444;font-size:12px;margin-top:40px;">
-      <p>Awakenings Festival 2026 — July 10–12 • Hilvarenbeek</p>
-      <p style="margin-top:8px;"><a href="mailto:${ADMIN}" style="color:#c9a84c;">${ADMIN}</a></p>
-    </div>
   </div>
 </body></html>`;
 
-  // Confirmation to the customer
-  await getResend().emails.send({
-    from: FROM,
+  const transporter = getTransporter();
+
+  await transporter.sendMail({
+    from: FROM(),
     replyTo: ADMIN,
     to: data.to,
     subject: `We received your inquiry — Awakenings Tickets`,
     html,
   });
 
-  // Notification to you with the full message
-  await getResend().emails.send({
-    from: FROM,
+  await transporter.sendMail({
+    from: FROM(),
     replyTo: data.to,
     to: ADMIN,
     subject: `New inquiry from ${data.name}: ${data.subject}`,
@@ -152,6 +151,8 @@ export async function sendInquiryConfirmation(data: InquiryConfirmationData) {
            <p style="white-space:pre-wrap;">${data.message}</p>`,
   });
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 interface TicketEmailData {
   to: string;
@@ -167,49 +168,42 @@ export async function sendTicketEmail(data: TicketEmailData) {
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:40px 16px;background:#f0f0f0;font-family:Arial,sans-serif;">
   <div style="max-width:520px;margin:0 auto;">
-
-    <!-- Header -->
     <div style="background:#0a0a0a;border-radius:16px 16px 0 0;padding:28px 32px;text-align:center;">
       <p style="color:#c9a84c;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin:0 0 6px;">Official Resale</p>
       <h1 style="color:#c9a84c;font-size:26px;margin:0;letter-spacing:.08em;font-weight:900;">AW TICKETS</h1>
     </div>
-
-    <!-- Body -->
     <div style="background:#fff;padding:32px;">
       <p style="color:#888;font-size:13px;margin:0 0 6px;">Your personal ticket for</p>
       <h2 style="color:#0a0a0a;font-size:20px;font-weight:800;margin:0 0 24px;line-height:1.3;">Awakenings Festival 2026</h2>
-
       <hr style="border:none;border-top:1px solid #eee;margin:0 0 24px;">
-
-      <!-- Date row -->
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
-        <div style="background:#0a0a0a;border-radius:10px;padding:8px 14px;text-align:center;min-width:44px;">
-          <div style="font-size:9px;color:#c9a84c;text-transform:uppercase;letter-spacing:.1em;">Jul</div>
-          <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.1;">10</div>
-        </div>
-        <div>
-          <div style="font-size:14px;font-weight:700;color:#0a0a0a;">July 10–12, 2026</div>
-          <div style="font-size:12px;color:#888;margin-top:2px;">12:00 → Jul 12 · 23:59</div>
-        </div>
-      </div>
-
-      <!-- Location row -->
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
-        <div style="width:44px;text-align:center;font-size:22px;">📍</div>
-        <div>
-          <div style="font-size:14px;font-weight:700;color:#c9a84c;">Hilvarenbeek</div>
-          <div style="font-size:12px;color:#888;margin-top:2px;">Hilvarenbeek Recreation Area, Netherlands</div>
-        </div>
-      </div>
-
-      <!-- Attendee card -->
+      <table cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+        <tr>
+          <td style="vertical-align:middle;padding-right:16px;">
+            <div style="background:#0a0a0a;border-radius:10px;padding:8px 14px;text-align:center;">
+              <div style="font-size:9px;color:#c9a84c;text-transform:uppercase;letter-spacing:.1em;">Jul</div>
+              <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.1;">10</div>
+            </div>
+          </td>
+          <td style="vertical-align:middle;">
+            <div style="font-size:14px;font-weight:700;color:#0a0a0a;">July 10–12, 2026</div>
+            <div style="font-size:12px;color:#888;margin-top:2px;">12:00 → Jul 12 · 23:59</div>
+          </td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+        <tr>
+          <td style="vertical-align:middle;padding-right:16px;width:44px;text-align:center;font-size:22px;">📍</td>
+          <td style="vertical-align:middle;">
+            <div style="font-size:14px;font-weight:700;color:#c9a84c;">Hilvarenbeek</div>
+            <div style="font-size:12px;color:#888;margin-top:2px;">Hilvarenbeek Recreation Area, Netherlands</div>
+          </td>
+        </tr>
+      </table>
       <div style="background:#f8f8f8;border-radius:10px;padding:14px 16px;margin-bottom:24px;">
         <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;">Attendee</div>
         <div style="font-size:15px;font-weight:700;color:#0a0a0a;">${data.customerName}</div>
         <div style="font-size:12px;color:#888;margin-top:3px;">${data.ticketTypes}</div>
       </div>
-
-      <!-- Buttons -->
       <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
         <tr>
           <td style="padding-right:6px;">
@@ -220,16 +214,12 @@ export async function sendTicketEmail(data: TicketEmailData) {
           </td>
         </tr>
       </table>
-
-      <!-- QR code -->
       <div style="border:1.5px solid #eee;border-radius:14px;padding:24px;text-align:center;">
         <img src="${data.qrDataUri}" width="190" height="190" alt="Entry QR Code" style="display:block;margin:0 auto 14px;">
         <div style="font-family:monospace;font-size:13px;color:#555;letter-spacing:.08em;">${data.orderNumber}</div>
         <p style="font-size:11px;color:#aaa;margin:10px 0 0;line-height:1.5;">This QR code is your entry pass.<br>Have it ready and accessible on your mobile device.</p>
       </div>
     </div>
-
-    <!-- Footer -->
     <div style="background:#0a0a0a;border-radius:0 0 16px 16px;padding:16px 32px;text-align:center;">
       <p style="color:#555;font-size:11px;margin:0;">Awakenings Festival 2026 · July 10–12 · Hilvarenbeek</p>
       <p style="margin:6px 0 0;"><a href="mailto:${ADMIN}" style="color:#c9a84c;font-size:11px;text-decoration:none;">${ADMIN}</a></p>
@@ -237,13 +227,11 @@ export async function sendTicketEmail(data: TicketEmailData) {
   </div>
 </body></html>`;
 
-  const { error } = await getResend().emails.send({
-    from: FROM,
+  await getTransporter().sendMail({
+    from: FROM(),
     replyTo: ADMIN,
     to: data.to,
     subject: `Ticket of "${data.customerName}" for Awakenings 2026`,
     html,
   });
-
-  if (error) throw new Error(error.message);
 }
