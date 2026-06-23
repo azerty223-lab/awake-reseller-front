@@ -23,7 +23,7 @@ export function FestivalInfo() {
       {/* Large atmospheric image — intentional placement */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://images.unsplash.com/photo-1429514513361-8a632ff5f4b8?q=80&w=1920&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=1920&auto=format&fit=crop"
           alt=""
           fill
           style={{ objectFit: "cover", objectPosition: "center 60%", opacity: 0.08 }}
