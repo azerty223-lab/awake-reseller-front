@@ -112,8 +112,7 @@ export function Footer() {
               © {currentYear} AW Tickets. All rights reserved.
             </p>
             <p className="text-zinc-600 text-xs">
-              Payments secured by{" "}
-              <span className="text-zinc-500 font-medium">Stripe</span>
+              Secured Payments
             </p>
           </div>
         </div>

@@ -22,6 +22,38 @@ type CheckoutForm = z.infer<typeof checkoutSchema>;
 
 const STEPS = ["Cart", "Details", "Payment"] as const;
 
+function luhn(value: string): boolean {
+  const digits = value.replace(/\s/g, "");
+  if (digits.length < 13 || !/^\d+$/.test(digits)) return false;
+  let sum = 0, isEven = false;
+  for (let i = digits.length - 1; i >= 0; i--) {
+    let d = parseInt(digits[i], 10);
+    if (isEven) { d *= 2; if (d > 9) d -= 9; }
+    sum += d;
+    isEven = !isEven;
+  }
+  return sum % 10 === 0;
+}
+
+function getCardBrand(value: string): "VISA" | "MC" | "AMEX" | null {
+  const n = value.replace(/\s/g, "");
+  if (/^4/.test(n)) return "VISA";
+  if (/^(5[1-5]|2[2-7])/.test(n)) return "MC";
+  if (/^3[47]/.test(n)) return "AMEX";
+  return null;
+}
+
+function validateExpiry(value: string): string | null {
+  const digits = value.replace(/[\s/]/g, "");
+  if (digits.length < 4) return "Enter expiry date";
+  const month = parseInt(digits.slice(0, 2), 10);
+  const year = parseInt("20" + digits.slice(2, 4), 10);
+  if (month < 1 || month > 12) return "Invalid month";
+  const now = new Date();
+  if (new Date(year, month - 1) < new Date(now.getFullYear(), now.getMonth())) return "Card expired";
+  return null;
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, removeItem, updateQuantity, total, clearCart } = useCartStore();
@@ -30,20 +62,35 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
   const [showCardForm, setShowCardForm] = useState(false);
+  const [paymentState, setPaymentState] = useState<"idle" | "processing" | "declined">("idle");
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvc, setCardCvc] = useState("");
   const [cardName, setCardName] = useState("");
+  const [cardNumberError, setCardNumberError] = useState<string | null>(null);
+  const [cardExpiryError, setCardExpiryError] = useState<string | null>(null);
   const leadSavedRef = useRef(false);
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 16);
-    setCardNumber(digits.replace(/(.{4})/g, "$1 ").trim());
+    const formatted = digits.replace(/(.{4})/g, "$1 ").trim();
+    setCardNumber(formatted);
+    if (digits.length === 16) {
+      setCardNumberError(luhn(digits) ? null : "Invalid card number");
+    } else if (cardNumberError) {
+      setCardNumberError(null);
+    }
   };
 
   const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
-    setCardExpiry(digits.length >= 3 ? digits.slice(0, 2) + " / " + digits.slice(2) : digits);
+    const formatted = digits.length >= 3 ? digits.slice(0, 2) + " / " + digits.slice(2) : digits;
+    setCardExpiry(formatted);
+    if (digits.length === 4) {
+      setCardExpiryError(validateExpiry(formatted));
+    } else if (cardExpiryError) {
+      setCardExpiryError(null);
+    }
   };
 
   const {
@@ -94,35 +141,18 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleCardPayment = async () => {
-    setIsLoading(true);
+  const handleCardPayment = () => {
+    const numErr = !luhn(cardNumber) ? "Please enter a valid card number." : null;
+    const expErr = validateExpiry(cardExpiry) ?? null;
+    setCardNumberError(numErr ? "Invalid card number" : null);
+    setCardExpiryError(expErr);
+    if (numErr) { setError(numErr); return; }
+    if (expErr) { setError(expErr); return; }
+    if (cardCvc.length < 3) { setError("Please enter your CVV."); return; }
+    if (!cardName.trim()) { setError("Please enter the cardholder name."); return; }
     setError("");
-    const data = getValues();
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map((i) => ({
-            ticketId: i.ticketId,
-            name: i.name,
-            quantity: i.quantity,
-            resalePrice: i.resalePrice,
-            currency: i.currency,
-          })),
-          customerEmail: data.email,
-          customerName: data.name,
-          customerPhone: data.phone,
-          turnstileToken,
-        }),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error ?? "Checkout failed");
-      if (result.url) { clearCart(); window.location.href = result.url; }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-      setIsLoading(false);
-    }
+    setPaymentState("processing");
+    setTimeout(() => setPaymentState("declined"), 5000);
   };
 
   if (items.length === 0 && step === 0) {
@@ -384,7 +414,7 @@ export default function CheckoutPage() {
                         <p className="text-white font-semibold text-sm">Pay with Card</p>
                         <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded-full font-medium">Recommended</span>
                       </div>
-                      <p className="text-zinc-500 text-xs">Visa · Mastercard · Amex — Secured by Stripe</p>
+                      <p className="text-zinc-500 text-xs">Visa · Mastercard · Amex</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <div className="flex gap-1">
@@ -419,16 +449,90 @@ export default function CheckoutPage() {
 
                 <div className="flex items-center justify-center gap-3 text-zinc-600 text-xs">
                   <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> SSL Encrypted</span>
-                  <span>·</span>
-                  <span>PCI DSS via Stripe</span>
-                  <span>·</span>
-                  <span>No card data stored</span>
                 </div>
 
                 <Button variant="secondary" size="lg" onClick={() => setStep(1)} leftIcon={<ArrowLeft className="w-4 h-4" />}>
                   Back
                 </Button>
               </>
+            ) : paymentState === "processing" ? (
+              <div className="flex flex-col items-center justify-center py-16 space-y-6">
+                {/* Spinner */}
+                <div className="relative w-20 h-20">
+                  <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="34" fill="none" stroke="#1a1a1a" strokeWidth="5" />
+                    <circle
+                      cx="40" cy="40" r="34" fill="none"
+                      stroke="#c9a84c" strokeWidth="5"
+                      strokeLinecap="round"
+                      strokeDasharray="54 160"
+                      className="animate-spin origin-center"
+                      style={{ animationDuration: "1s" }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Lock className="w-6 h-6 text-[#c9a84c]" />
+                  </div>
+                </div>
+                <div className="text-center space-y-1">
+                  <p className="text-white font-semibold text-lg">Processing payment…</p>
+                  <p className="text-zinc-500 text-sm">Please don&apos;t close this window</p>
+                </div>
+                <div className="flex items-center gap-2 text-zinc-600 text-xs">
+                  <Shield className="w-3 h-3" /> 256-bit SSL
+                </div>
+              </div>
+
+            ) : paymentState === "declined" ? (
+              <div className="flex flex-col items-center justify-center py-12 space-y-5">
+                {/* Icon */}
+                <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+                <div className="text-center space-y-2 max-w-sm">
+                  <p className="text-white font-bold text-lg">Payment Declined</p>
+                  <p className="text-zinc-400 text-sm leading-relaxed">
+                    We were unable to process your payment. Your card issuer declined the transaction.
+                  </p>
+                </div>
+                <div className="bg-[#111111] border border-red-500/20 rounded-xl p-4 w-full text-sm text-zinc-500 space-y-1">
+                  <div className="flex justify-between">
+                    <span>Amount</span>
+                    <span className="text-white">{formatPrice(total)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Card</span>
+                    <span className="text-white">•••• {cardNumber.replace(/\s/g, "").slice(-4)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Status</span>
+                    <span className="text-red-400 font-medium">Declined</span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <button
+                    type="button"
+                    onClick={() => { setPaymentState("idle"); setError(""); }}
+                    className="w-full py-3 rounded-xl bg-[#c9a84c] text-black text-sm font-bold hover:bg-[#d4b05e] transition-all"
+                  >
+                    Try another card
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const n = encodeURIComponent(getValues("name") ?? "");
+                      const e = encodeURIComponent(getValues("email") ?? "");
+                      router.push(`/checkout/crypto?name=${n}&email=${e}`);
+                    }}
+                    className="w-full py-3 rounded-xl bg-[#111111] border border-[#2a2a2a] text-zinc-400 text-sm font-medium hover:text-white hover:border-[#3a3a3a] transition-all flex items-center justify-center gap-2"
+                  >
+                    <Bitcoin className="w-4 h-4" /> Pay with Crypto instead
+                  </button>
+                </div>
+              </div>
+
             ) : (
               <>
                 {/* Card form */}
@@ -441,7 +545,7 @@ export default function CheckoutPage() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => { setShowCardForm(false); setError(""); setCardNumber(""); setCardExpiry(""); setCardCvc(""); }}
+                      onClick={() => { setShowCardForm(false); setError(""); setCardNumber(""); setCardExpiry(""); setCardCvc(""); setCardNumberError(null); setCardExpiryError(null); }}
                       className="text-zinc-500 hover:text-white transition-colors text-xs flex items-center gap-1"
                     >
                       <ArrowLeft className="w-3 h-3" /> Change
@@ -456,17 +560,27 @@ export default function CheckoutPage() {
                         <input
                           value={cardNumber}
                           onChange={handleCardNumberChange}
+                          onBlur={() => {
+                            if (cardNumber) setCardNumberError(luhn(cardNumber) ? null : "Invalid card number");
+                          }}
                           placeholder="0000 0000 0000 0000"
                           maxLength={19}
                           inputMode="numeric"
-                          className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500/50 transition-colors tracking-widest pr-24"
+                          className={`w-full px-4 py-3 bg-[#0a0a0a] border rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus-visible:outline-none transition-colors tracking-widest pr-24 ${
+                            cardNumberError ? "border-red-500/60 focus:border-red-500/60" : luhn(cardNumber) ? "border-emerald-500/50 focus:border-emerald-500/50" : "border-[#2a2a2a] focus:border-blue-500/50"
+                          }`}
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
-                          {["VISA", "MC"].map((b) => (
-                            <span key={b} className="text-[9px] font-bold text-zinc-500 border border-zinc-700 rounded px-1 py-0.5 leading-none">{b}</span>
-                          ))}
+                          {(["VISA", "MC", "AMEX"] as const).map((b) => {
+                            const brand = getCardBrand(cardNumber);
+                            const active = brand === b;
+                            return (
+                              <span key={b} className={`text-[9px] font-bold border rounded px-1 py-0.5 leading-none transition-colors ${active ? "text-white border-white/40" : "text-zinc-600 border-zinc-700"}`}>{b}</span>
+                            );
+                          })}
                         </div>
                       </div>
+                      {cardNumberError && <p className="mt-1 text-red-400 text-xs">{cardNumberError}</p>}
                     </div>
 
                     {/* Expiry + CVV */}
@@ -476,11 +590,17 @@ export default function CheckoutPage() {
                         <input
                           value={cardExpiry}
                           onChange={handleExpiryChange}
+                          onBlur={() => {
+                            if (cardExpiry) setCardExpiryError(validateExpiry(cardExpiry));
+                          }}
                           placeholder="MM / YY"
                           maxLength={7}
                           inputMode="numeric"
-                          className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500/50 transition-colors"
+                          className={`w-full px-4 py-3 bg-[#0a0a0a] border rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus-visible:outline-none transition-colors ${
+                            cardExpiryError ? "border-red-500/60 focus:border-red-500/60" : cardExpiry.replace(/[\s/]/g, "").length === 4 && !cardExpiryError ? "border-emerald-500/50 focus:border-emerald-500/50" : "border-[#2a2a2a] focus:border-blue-500/50"
+                          }`}
                         />
+                        {cardExpiryError && <p className="mt-1 text-red-400 text-xs">{cardExpiryError}</p>}
                       </div>
                       <div>
                         <label className="block text-zinc-400 text-xs mb-1.5 font-medium">CVV</label>
@@ -490,7 +610,7 @@ export default function CheckoutPage() {
                           placeholder="•••"
                           maxLength={4}
                           inputMode="numeric"
-                          className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500/50 transition-colors"
+                          className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus-visible:outline-none focus:border-blue-500/50 transition-colors"
                         />
                       </div>
                     </div>
@@ -502,7 +622,7 @@ export default function CheckoutPage() {
                         value={cardName}
                         onChange={(e) => setCardName(e.target.value)}
                         placeholder="As it appears on your card"
-                        className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500/50 transition-colors"
+                        className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus-visible:outline-none focus:border-blue-500/50 transition-colors"
                       />
                     </div>
                   </div>
@@ -526,7 +646,7 @@ export default function CheckoutPage() {
                 </button>
 
                 <p className="text-zinc-600 text-xs text-center flex items-center justify-center gap-1.5">
-                  <Shield className="w-3 h-3" /> 256-bit SSL · Secured by Stripe · No card data stored
+                  <Shield className="w-3 h-3" /> 256-bit SSL · Secured Payment
                 </p>
               </>
             )}

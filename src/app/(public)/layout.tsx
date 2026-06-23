@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Navbar } from "@/frontend/components/layout/Navbar";
 import { Footer } from "@/frontend/components/layout/Footer";
 import { CartDrawer } from "@/frontend/components/layout/CartDrawer";
+import { VisitorTracker } from "@/frontend/components/analytics/VisitorTracker";
 
 export default function PublicLayout({
   children,
@@ -18,6 +19,7 @@ export default function PublicLayout({
       <main className="flex-1 pt-16 sm:pt-20">{children}</main>
       <Footer />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <VisitorTracker />
     </div>
   );
 }
