@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus, HelpCircle } from "lucide-react";
+import { ChevronDown, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const faqs = [
   {
@@ -35,53 +36,48 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-20 bg-[#0a0a0a]">
+    <section id="faq" className="py-24 bg-[#080809]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-14">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <HelpCircle className="w-4 h-4 text-[#c9a84c]" />
-            <span className="text-[#c9a84c] text-xs uppercase tracking-widest font-semibold">
-              FAQ
-            </span>
-          </div>
-          <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-bold text-white mb-3">
+        {/* Header */}
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-zinc-500">
+            FAQs
+          </span>
+          <h2 className="mt-3 font-[var(--font-playfair)] text-4xl sm:text-5xl font-black text-white">
             Common Questions
           </h2>
-          <p className="text-zinc-500 text-sm">
-            Everything you need to know before purchasing
-          </p>
-        </div>
+        </motion.div>
 
-        <div className="space-y-2">
+        {/* FAQ Items */}
+        <motion.div
+          className="space-y-3"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+        >
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-[#111111] border border-[#2a2a2a] rounded-xl overflow-hidden hover:border-[#3a3a3a] transition-colors"
+              className="border border-white/[0.06] rounded-2xl overflow-hidden bg-white/[0.02] hover:border-white/[0.1] transition-colors"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between gap-4 p-5 text-left"
+                className="w-full flex justify-between items-center px-6 py-5"
               >
-                <span
-                  className={`font-medium text-sm transition-colors ${
-                    openIndex === index ? "text-[#c9a84c]" : "text-white"
-                  }`}
-                >
+                <span className="text-white font-medium text-left text-sm sm:text-base">
                   {faq.q}
                 </span>
-                <div
-                  className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-                    openIndex === index
-                      ? "bg-[#c9a84c]/20 text-[#c9a84c]"
-                      : "bg-[#1a1a1a] text-zinc-500"
-                  }`}
-                >
-                  {openIndex === index ? (
-                    <Minus className="w-3.5 h-3.5" />
-                  ) : (
-                    <Plus className="w-3.5 h-3.5" />
-                  )}
-                </div>
+                <ChevronDown
+                  className="text-[#C9A84C] w-5 h-5 flex-shrink-0 ml-4 transition-transform duration-300"
+                  style={{ transform: openIndex === index ? "rotate(180deg)" : "rotate(0deg)" }}
+                />
               </button>
 
               <AnimatePresence initial={false}>
@@ -91,18 +87,38 @@ export function FAQSection() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    transition={{ duration: 0.3 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-5 pb-5 border-t border-[#1a1a1a]">
-                      <p className="text-zinc-400 text-sm leading-relaxed pt-4">{faq.a}</p>
+                    <div className="px-6 pb-5">
+                      <p className="text-zinc-500 text-sm leading-relaxed">{faq.a}</p>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
           ))}
-        </div>
+        </motion.div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <p className="text-zinc-500 text-sm">
+            Still have questions?{" "}
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-1 text-[#C9A84C] hover:text-[#E4BA65] transition-colors font-medium"
+            >
+              Get in touch
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </p>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,9 +1,9 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { prisma } from "@/backend/lib/prisma";
 
 export const dynamic = "force-dynamic";
+import Image from "next/image";
 import { TicketGrid } from "@/frontend/components/tickets/TicketGrid";
-import { Ticket as TicketIcon, Calendar, MapPin } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Browse Tickets",
@@ -17,32 +17,32 @@ export default async function TicketsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
-      {/* Header */}
-      <div className="bg-[#080808] border-b border-[#1a1a1a] py-12 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 mb-3">
-            <TicketIcon className="w-4 h-4 text-[#c9a84c]" />
-            <span className="text-[#c9a84c] text-xs uppercase tracking-widest font-semibold">
-              Available Now
-            </span>
+    <div className="min-h-screen bg-[#050507]">
+      {/* Hero Banner */}
+      <div className="relative h-64 sm:h-80 overflow-hidden bg-[#050507]">
+        <Image
+          src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=1920&auto=format&fit=crop"
+          alt="Awakenings"
+          fill
+          style={{ objectFit: "cover" }}
+          className="opacity-20"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050507] to-transparent" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-[#C9A84C] font-semibold mb-3">
+            Available Now
           </div>
-          <h1 className="font-[var(--font-playfair)] text-4xl sm:text-5xl font-bold text-white mb-3">
+          <h1 className="font-[var(--font-playfair)] text-5xl sm:text-6xl font-black text-white mb-3">
             Ticket Marketplace
           </h1>
-          <p className="text-zinc-500 text-sm max-w-xl">
+          <p className="text-zinc-500 text-sm max-w-lg">
             Verified resale tickets for Awakenings Festival 2026 — July 10–12 at Hilvarenbeek.
-            All tickets include name transfer service.
           </p>
-          <div className="flex items-center gap-6 mt-5 text-zinc-500 text-xs">
-            <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-[#c9a84c]" />
-              July 10–12, 2026
-            </span>
-            <span className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-[#c9a84c]" />
-              Hilvarenbeek
-            </span>
+          <div className="flex items-center gap-4 mt-4 text-zinc-600 text-xs">
+            <span className="flex items-center gap-1.5">📅 July 10–12, 2026</span>
+            <span>·</span>
+            <span className="flex items-center gap-1.5">📍 Hilvarenbeek</span>
           </div>
         </div>
       </div>

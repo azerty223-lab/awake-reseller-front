@@ -1,139 +1,147 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { ArrowRight, MapPin, Calendar } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import { CountdownTimer } from "@/frontend/components/ui/CountdownTimer";
-import { getPossibleInstrumentationHookFilenames } from "next/dist/build/utils";
 
 const FESTIVAL_DATE = new Date("2026-07-10T15:00:00+02:00");
 
 export function HeroSection() {
+  const router = useRouter();
+
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0a0a0a]">
-      {/* Background gradient */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#0a0a0a] to-[#0a0a0a]" />
-        {/* Animated orbs */}
-        <div className="orb-1 absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-[#c9a84c]/5 blur-[100px]" />
-        <div className="orb-2 absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-[#c9a84c]/8 blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#c9a84c]/3 blur-[150px]" />
-        {/* Grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(201,168,76,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,0.5) 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
-          }}
+    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#050507]">
+      {/* Background image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1920&auto=format&fit=crop"
+          alt="Awakenings Festival"
+          fill
+          style={{ objectFit: "cover" }}
+          className="opacity-30 scale-105"
+          priority
         />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 max-w-5xl mx-auto">
-        {/* Label */}
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#050507] via-[#050507]/50 to-transparent" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#050507]/60 to-transparent" />
+      <div
+        className="absolute inset-0 z-10"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 40%, #050507 100%)",
+        }}
+      />
+
+      {/* Decorative orbs */}
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[#C9A84C]/10 rounded-full blur-3xl animate-pulse pointer-events-none z-10" />
+      <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-900/15 rounded-full blur-3xl pointer-events-none z-10" />
+
+      {/* Main content */}
+      <div className="relative z-20 flex flex-col items-center text-center px-4 sm:px-6 max-w-5xl mx-auto">
+
+        {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-[#c9a84c]/10 border border-[#c9a84c]/30"
+          transition={{ duration: 0.6, delay: 0 }}
         >
-          <span className="w-2 h-2 rounded-full bg-[#c9a84c] animate-pulse" />
-          <span className="text-[#c9a84c] text-xs font-semibold tracking-widest uppercase">
-             Ticket Resale — 2026
-          </span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.06] border border-white/[0.1] backdrop-blur-sm mb-8">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-pulse" />
+            <span className="text-[11px] uppercase tracking-[0.25em] text-zinc-300 font-medium">
+              Official Ticket Resale — 2026
+            </span>
+          </div>
         </motion.div>
 
-        {/* Main heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-[var(--font-playfair)] text-5xl sm:text-7xl lg:text-8xl font-bold leading-none tracking-tight mb-2"
-        >
-          <span className="gradient-text">AWAKENINGS</span>
-        </motion.h1>
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          className="font-[var(--font-playfair)] text-5xl sm:text-7xl lg:text-8xl font-bold leading-none tracking-tight mb-8 text-white"
-        >
-          FESTIVAL 2026
-        </motion.h1>
-
-        {/* Date & Location */}
+        {/* Main title */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 mb-12 text-zinc-400"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
         >
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-[#c9a84c]" />
-            <span className="text-sm font-medium tracking-wide">JULY 10–12, 2026</span>
-          </div>
-          <div className="hidden sm:block w-px h-4 bg-[#2a2a2a]" />
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[#c9a84c]" />
-            <span className="text-sm font-medium tracking-wide">HILVARENBEEK</span>
-          </div>
+          <h1 className="font-[var(--font-playfair)] font-black leading-none mb-6">
+            <span className="block text-7xl sm:text-8xl lg:text-[9rem] bg-gradient-to-r from-[#C9A84C] via-[#E4BA65] to-[#C9A84C] bg-clip-text text-transparent">
+              AWAKENINGS
+            </span>
+            <span className="block text-5xl sm:text-6xl lg:text-7xl text-white mt-2">
+              FESTIVAL 2026
+            </span>
+          </h1>
+        </motion.div>
+
+        {/* Date / Location row */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex items-center justify-center gap-4 mb-10 text-zinc-400 text-sm"
+        >
+          <span className="flex items-center gap-1.5">
+            <CalendarDays className="w-4 h-4" />
+            July 10–12, 2026
+          </span>
+          <span className="w-1 h-1 rounded-full bg-zinc-600" />
+          <span className="flex items-center gap-1.5">
+            <MapPin className="w-4 h-4" />
+            Hilvarenbeek, NL
+          </span>
         </motion.div>
 
         {/* Countdown */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mb-12"
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mb-2"
         >
-          <p className="text-zinc-600 text-xs uppercase tracking-widest mb-4 font-medium">
+          <p className="text-[9px] uppercase tracking-[0.2em] text-zinc-500 mb-4">
             Countdown to festival
           </p>
-          <CountdownTimer targetDate={FESTIVAL_DATE} />
+          <CountdownTimer
+            targetDate={FESTIVAL_DATE}
+            className="[&_.glass-dark]:bg-white/[0.06] [&_.glass-dark]:backdrop-blur-sm [&_.glass-dark]:border-white/[0.08] [&_.glass-dark]:rounded-2xl [&_.glass-dark]:min-w-[80px] [&_.glass-dark]:px-5 [&_.glass-dark]:py-4 [&_.glass-dark]:h-auto [&_.glass-dark]:w-auto [&_span.text-2xl]:text-4xl [&_span.text-2xl]:font-black [&_span.text-2xl]:font-[var(--font-playfair)] [&_span.text-3xl]:text-4xl [&_span.text-3xl]:font-black"
+          />
         </motion.div>
 
-        {/* CTA Buttons */}
+        {/* CTA buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="flex flex-col sm:flex-row items-center gap-4"
+          transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <Link
-            href="/tickets"
-            className="group flex items-center gap-3 px-8 py-4 rounded-xl bg-[#c9a84c] text-black font-semibold text-sm tracking-wide hover:bg-[#e8c05a] active:bg-[#b89438] transition-all shadow-lg shadow-[#c9a84c]/30 hover:shadow-[#c9a84c]/50"
-          >
-            Browse Tickets
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-          </Link>
-          <Link
-            href="/about"
-            className="flex items-center gap-3 px-8 py-4 rounded-xl border border-[#3a3a3a] text-zinc-300 font-medium text-sm tracking-wide hover:border-[#c9a84c]/50 hover:text-[#c9a84c] hover:bg-[#c9a84c]/5 transition-all"
-          >
-            Learn More
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 mt-10 justify-center">
+            <button
+              onClick={() => router.push("/tickets")}
+              className="px-8 py-4 rounded-2xl bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] text-black font-bold text-sm tracking-wide hover:shadow-[0_0_40px_rgba(201,168,76,0.4)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              Browse Tickets
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <button className="px-8 py-4 rounded-2xl border border-white/20 text-white font-medium text-sm hover:bg-white/[0.07] hover:border-white/40 transition-all duration-300 backdrop-blur-sm">
+              Learn More
+            </button>
+          </div>
         </motion.div>
-
-        {/* Trust note */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1 }}
-          className="mt-8 text-zinc-600 text-xs"
-        >
-          Verified seller · Secured Payment · Name transfer guaranteed
-        </motion.p>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Trust row — pinned to bottom */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="absolute bottom-8 left-0 right-0 flex justify-center z-20"
       >
-        <span className="text-zinc-600 text-[10px] uppercase tracking-widest">Scroll</span>
-        <div className="w-px h-8 bg-gradient-to-b from-[#c9a84c]/40 to-transparent" />
+        <div className="flex items-center gap-6 text-zinc-600 text-[11px]">
+          <span>&#10003; Verified seller</span>
+          <span className="w-1 h-1 rounded-full bg-zinc-700" />
+          <span>&#10003; Stripe secured</span>
+          <span className="w-1 h-1 rounded-full bg-zinc-700" />
+          <span>&#10003; Name transfer guaranteed</span>
+        </div>
       </motion.div>
     </section>
   );
