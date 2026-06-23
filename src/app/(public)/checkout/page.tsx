@@ -79,6 +79,37 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleCardPayment = async () => {
+    setIsLoading(true);
+    setError("");
+    const data = getValues();
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((i) => ({
+            ticketId: i.ticketId,
+            name: i.name,
+            quantity: i.quantity,
+            resalePrice: i.resalePrice,
+            currency: i.currency,
+          })),
+          customerEmail: data.email,
+          customerName: data.name,
+          customerPhone: data.phone,
+          turnstileToken,
+        }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error ?? "Checkout failed");
+      if (result.url) { clearCart(); window.location.href = result.url; }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+      setIsLoading(false);
+    }
+  };
+
   if (items.length === 0 && step === 0) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
@@ -316,36 +347,74 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Card payments unavailable notice */}
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <CreditCard className="w-4 h-4 text-amber-400" />
+            {/* Payment method selector */}
+            <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-[#2a2a2a]">
+                <p className="text-white font-semibold text-sm">Choose Payment Method</p>
               </div>
-              <div>
-                <p className="text-amber-400 font-semibold text-sm mb-1">Card payments temporarily unavailable</p>
-                <p className="text-zinc-500 text-xs leading-relaxed">
-                  We are currently unable to process card payments. Please use the crypto payment option below — it only takes a minute.
-                </p>
-              </div>
+
+              {/* Card payment */}
+              <button
+                type="button"
+                onClick={handleCardPayment}
+                disabled={isLoading}
+                className="w-full flex items-center gap-4 px-6 py-5 hover:bg-white/[0.03] transition-colors border-b border-[#1a1a1a] group disabled:opacity-50"
+              >
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                  <CreditCard className="w-5 h-5 text-blue-400" />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className="text-white font-semibold text-sm">Pay with Card</p>
+                    <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded-full font-medium">Recommended</span>
+                  </div>
+                  <p className="text-zinc-500 text-xs">Visa · Mastercard · Amex — Secured by Stripe</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex gap-1">
+                    {["VISA", "MC", "AMEX"].map((b) => (
+                      <span key={b} className="text-[9px] font-bold text-zinc-600 border border-zinc-700 rounded px-1 py-0.5 leading-none">{b}</span>
+                    ))}
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-white transition-colors" />
+                </div>
+              </button>
+
+              {/* Crypto payment */}
+              <button
+                type="button"
+                onClick={() => {
+                  const n = encodeURIComponent(getValues("name") ?? "");
+                  const e = encodeURIComponent(getValues("email") ?? "");
+                  router.push(`/checkout/crypto?name=${n}&email=${e}`);
+                }}
+                className="w-full flex items-center gap-4 px-6 py-5 hover:bg-white/[0.03] transition-colors group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#c9a84c]/10 border border-[#c9a84c]/20 flex items-center justify-center shrink-0">
+                  <Bitcoin className="w-5 h-5 text-[#c9a84c]" />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-white font-semibold text-sm mb-0.5">Pay with Crypto</p>
+                  <p className="text-zinc-500 text-xs">BTC · ETH · USDT · SOL — no extra fees</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-[#c9a84c] transition-colors" />
+              </button>
             </div>
 
-            {/* Crypto CTA — primary */}
-            <button
-              type="button"
-              onClick={() => {
-                const n = encodeURIComponent(getValues("name") ?? "");
-                const e = encodeURIComponent(getValues("email") ?? "");
-                router.push(`/checkout/crypto?name=${n}&email=${e}`);
-              }}
-              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-[#c9a84c] text-black text-sm font-bold hover:bg-[#d4b05e] transition-all shadow-lg shadow-[#c9a84c]/20"
-            >
-              <Bitcoin className="w-5 h-5" />
-              Pay {formatPrice(total)} with Crypto
-            </button>
+            {/* Trust row */}
+            <div className="flex items-center justify-center gap-3 text-zinc-600 text-xs">
+              <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> SSL Encrypted</span>
+              <span>·</span>
+              <span>PCI DSS via Stripe</span>
+              <span>·</span>
+              <span>No card data stored</span>
+            </div>
 
-            <p className="text-zinc-600 text-xs text-center">
-              BTC · ETH · USDT (ERC-20 / TRC-20) · SOL — no extra fees
-            </p>
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3">
+                <p className="text-red-400 text-sm">{error}</p>
+              </div>
+            )}
 
             <Button
               variant="secondary"
