@@ -17,7 +17,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Awakenings Tickets — Official Resale",
+    default: "Awakenings Tickets — Resale",
     template: "%s | Awakenings Tickets",
   },
   description:

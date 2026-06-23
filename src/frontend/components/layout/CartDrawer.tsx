@@ -14,16 +14,14 @@ interface CartDrawerProps {
 }
 
 const panelVariants = {
-  hidden: { x: "100%", opacity: 0 },
+  hidden: { x: "100%" },
   visible: {
     x: 0,
-    opacity: 1,
-    transition: { type: "spring" as const, stiffness: 320, damping: 36, mass: 0.8 },
+    transition: { duration: 0.32, ease: [0.32, 0.72, 0, 1] as const },
   },
   exit: {
     x: "100%",
-    opacity: 0,
-    transition: { duration: 0.25, ease: [0.32, 0, 0.67, 0] as const },
+    transition: { duration: 0.24, ease: [0.32, 0, 0.67, 0] as const },
   },
 };
 
@@ -48,10 +46,10 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
         <AnimatePresence>
           {open && (
             <>
-              {/* Overlay */}
+              {/* Overlay — no backdrop-blur, just opacity */}
               <Dialog.Overlay asChild forceMount>
                 <motion.div
-                  className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60]"
+                  className="fixed inset-0 bg-black/75 z-[60]"
                   variants={overlayVariants}
                   initial="hidden"
                   animate="visible"
@@ -59,10 +57,11 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                 />
               </Dialog.Overlay>
 
-              {/* Panel */}
+              {/* Panel — solid background, no backdrop-blur, will-change for GPU hint */}
               <Dialog.Content asChild forceMount>
                 <motion.div
-                  className="fixed right-0 top-0 h-full w-full max-w-sm bg-[#0A0A0C]/95 backdrop-blur-xl border-l border-white/[0.07] z-[70] flex flex-col shadow-[0_0_80px_rgba(0,0,0,0.9)] outline-none"
+                  className="fixed right-0 top-0 h-full w-full max-w-sm bg-[#0E0E11] border-l border-white/[0.07] z-[70] flex flex-col shadow-2xl outline-none"
+                  style={{ willChange: "transform" }}
                   variants={panelVariants}
                   initial="hidden"
                   animate="visible"
@@ -129,12 +128,11 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                           {items.map((item) => (
                             <motion.div
                               key={item.ticketId}
-                              layout
                               variants={itemVariants}
                               initial="hidden"
                               animate="visible"
                               exit="exit"
-                              className="group bg-white/[0.04] backdrop-blur-md border border-white/[0.07] rounded-2xl p-4 hover:bg-white/[0.07] hover:border-white/[0.12] transition-all duration-300"
+                              className="group bg-white/[0.05] border border-white/[0.07] rounded-2xl p-4 hover:bg-white/[0.08] hover:border-white/[0.12] transition-colors duration-200"
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1 min-w-0">
@@ -208,7 +206,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 16 }}
                         transition={{ duration: 0.22 }}
-                        className="border-t border-white/[0.07] px-5 py-5 space-y-4 bg-black/30 backdrop-blur-sm"
+                        className="border-t border-white/[0.07] px-5 py-5 space-y-4 bg-[#0A0A0C]"
                       >
                         {/* Subtotal row */}
                         <div className="flex items-end justify-between">
