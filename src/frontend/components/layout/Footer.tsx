@@ -3,7 +3,7 @@ import { Ticket, Globe, Share2, ExternalLink, MapPin, Calendar } from "lucide-re
 
 export function Footer() {
   return (
-    <footer className="bg-[#050507] mt-auto relative">
+    <footer className="bg-[#020203]/80 backdrop-blur-sm mt-auto relative">
       {/* Top decorative gradient line */}
       <div
         className="absolute top-0 left-0 right-0 h-px"

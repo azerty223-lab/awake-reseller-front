@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowRight, CalendarDays, MapPin } from "lucide-react";
@@ -10,12 +11,15 @@ const FESTIVAL_DATE = new Date("2026-07-10T15:00:00+02:00");
 
 export function HeroSection() {
   const router = useRouter();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#020203]">
+    <section ref={ref} className="relative min-h-screen overflow-hidden">
 
       {/* Background — image at real cinematic brightness */}
-      <div className="absolute inset-0 z-0">
+      <motion.div className="absolute inset-0 z-0" style={{ y: imageY }}>
         <Image
           src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1920&auto=format&fit=crop"
           alt="Awakenings Festival"
@@ -24,7 +28,7 @@ export function HeroSection() {
           className="scale-[1.03]"
           priority
         />
-      </div>
+      </motion.div>
 
       {/* Cinematic gradient — bottom ONLY, minimal top */}
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#020203] via-[#020203]/40 to-transparent" />

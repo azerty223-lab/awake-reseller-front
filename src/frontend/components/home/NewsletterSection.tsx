@@ -50,7 +50,7 @@ export function NewsletterSection() {
       </div>
 
       {/* Heavy gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#050507] via-[#050507]/90 to-[#050507]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#050507]/30 via-[#050507]/20 to-[#050507]/30" />
 
       {/* Content */}
       <div className="relative z-10 max-w-2xl mx-auto text-center px-4">

@@ -33,9 +33,11 @@ const features = [
 
 export function TrustSection() {
   return (
-    <section className="relative py-28 overflow-hidden" style={{ background: "#07070A" }}>
+    <section className="relative py-28 overflow-hidden bg-transparent">
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      {/* Local blue glow */}
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-900/8 blur-[140px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-16 items-start">

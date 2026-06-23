@@ -194,9 +194,11 @@ export function FeaturedTickets() {
   const [featured, ...rest] = tickets;
 
   return (
-    <section className="py-24 bg-[#050507] relative overflow-hidden">
+    <section className="py-24 bg-transparent relative overflow-hidden">
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#C9A84C]/15 to-transparent" />
+      {/* Local ambient glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#C9A84C]/5 blur-[100px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

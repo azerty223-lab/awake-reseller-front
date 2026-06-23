@@ -73,7 +73,9 @@ const itemVariants = {
 
 export function FestivalInfo() {
   return (
-    <section className="py-24 bg-[#080809] relative overflow-hidden">
+    <section className="py-24 bg-transparent relative overflow-hidden">
+      {/* Local orange/amber glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-orange-900/10 blur-[120px] pointer-events-none rounded-full" />
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -85,7 +87,7 @@ export function FestivalInfo() {
         />
       </div>
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#080809] via-transparent to-[#080809]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
