@@ -104,8 +104,8 @@ export function AnimatedBackground() {
           top: "8%",
           right: "6%",
           background: "rgba(88,28,135,1)",
-          filter: "blur(160px)",
-          opacity: 0.18,
+          filter: "blur(180px)",
+          opacity: 0.10,
         }}
       />
 
@@ -118,8 +118,8 @@ export function AnimatedBackground() {
           top: "38%",
           left: "3%",
           background: "rgba(180,83,9,1)",
-          filter: "blur(140px)",
-          opacity: 0.14,
+          filter: "blur(160px)",
+          opacity: 0.08,
         }}
       />
 
@@ -132,8 +132,8 @@ export function AnimatedBackground() {
           bottom: "8%",
           right: "15%",
           background: "rgba(29,78,216,1)",
-          filter: "blur(150px)",
-          opacity: 0.13,
+          filter: "blur(170px)",
+          opacity: 0.07,
         }}
       />
 
@@ -146,8 +146,8 @@ export function AnimatedBackground() {
           bottom: "28%",
           left: "18%",
           background: "rgba(162,28,175,1)",
-          filter: "blur(130px)",
-          opacity: 0.11,
+          filter: "blur(150px)",
+          opacity: 0.06,
         }}
       />
 
@@ -160,8 +160,8 @@ export function AnimatedBackground() {
           top: "20%",
           left: "42%",
           background: "rgba(180,120,9,1)",
-          filter: "blur(120px)",
-          opacity: 0.09,
+          filter: "blur(140px)",
+          opacity: 0.05,
           animationDelay: "-12s",
         }}
       />
