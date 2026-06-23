@@ -3,8 +3,7 @@
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { TicketCard } from "./TicketCard";
-import type { Ticket } from "@prisma/client";
-import { TicketCategory } from "@prisma/client";
+import { TicketCategory, type Ticket } from "@/frontend/types/tickets";
 import { motion, AnimatePresence } from "framer-motion";
 
 const CATEGORIES = [

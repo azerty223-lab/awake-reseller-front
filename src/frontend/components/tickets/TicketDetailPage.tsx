@@ -7,8 +7,7 @@ import { Badge } from "@/frontend/components/ui/Badge";
 import { Button } from "@/frontend/components/ui/Button";
 import { useCartStore } from "@/frontend/store/cart";
 import { formatPrice } from "@/backend/lib/utils";
-import type { Ticket } from "@prisma/client";
-import { DeliveryMethod, TicketCategory } from "@prisma/client";
+import { DeliveryMethod, TicketCategory, type Ticket } from "@/frontend/types/tickets";
 import { motion } from "framer-motion";
 
 function getCategoryBadgeVariant(category: TicketCategory): "gold" | "info" | "success" | "purple" | "rose" | "default" {
