@@ -9,7 +9,7 @@ import { Badge } from "@/frontend/components/ui/Badge";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
-import { ShoppingCart, User, CreditCard, ArrowRight, ArrowLeft, Trash2, Shield, Bitcoin } from "lucide-react";
+import { ShoppingCart, User, CreditCard, ArrowRight, ArrowLeft, Trash2, Shield, Bitcoin, Lock } from "lucide-react";
 import { Turnstile } from "@/frontend/components/ui/Turnstile";
 
 const checkoutSchema = z.object({
@@ -29,7 +29,22 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [showCardForm, setShowCardForm] = useState(false);
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
+  const [cardName, setCardName] = useState("");
   const leadSavedRef = useRef(false);
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 16);
+    setCardNumber(digits.replace(/(.{4})/g, "$1 ").trim());
+  };
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+    setCardExpiry(digits.length >= 3 ? digits.slice(0, 2) + " / " + digits.slice(2) : digits);
+  };
 
   const {
     register,
@@ -347,83 +362,174 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Payment method selector */}
-            <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-[#2a2a2a]">
-                <p className="text-white font-semibold text-sm">Choose Payment Method</p>
-              </div>
-
-              {/* Card payment */}
-              <button
-                type="button"
-                onClick={handleCardPayment}
-                disabled={isLoading}
-                className="w-full flex items-center gap-4 px-6 py-5 hover:bg-white/[0.03] transition-colors border-b border-[#1a1a1a] group disabled:opacity-50"
-              >
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                  <CreditCard className="w-5 h-5 text-blue-400" />
-                </div>
-                <div className="flex-1 text-left">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-white font-semibold text-sm">Pay with Card</p>
-                    <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded-full font-medium">Recommended</span>
+            {!showCardForm ? (
+              <>
+                {/* Payment method selector */}
+                <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl overflow-hidden">
+                  <div className="px-6 py-4 border-b border-[#2a2a2a]">
+                    <p className="text-white font-semibold text-sm">Choose Payment Method</p>
                   </div>
-                  <p className="text-zinc-500 text-xs">Visa · Mastercard · Amex — Secured by Stripe</p>
+
+                  {/* Card payment */}
+                  <button
+                    type="button"
+                    onClick={() => { setCardName(getValues("name") ?? ""); setShowCardForm(true); setError(""); }}
+                    className="w-full flex items-center gap-4 px-6 py-5 hover:bg-white/[0.03] transition-colors border-b border-[#1a1a1a] group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                      <CreditCard className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="text-white font-semibold text-sm">Pay with Card</p>
+                        <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded-full font-medium">Recommended</span>
+                      </div>
+                      <p className="text-zinc-500 text-xs">Visa · Mastercard · Amex — Secured by Stripe</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex gap-1">
+                        {["VISA", "MC", "AMEX"].map((b) => (
+                          <span key={b} className="text-[9px] font-bold text-zinc-600 border border-zinc-700 rounded px-1 py-0.5 leading-none">{b}</span>
+                        ))}
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-white transition-colors" />
+                    </div>
+                  </button>
+
+                  {/* Crypto payment */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const n = encodeURIComponent(getValues("name") ?? "");
+                      const e = encodeURIComponent(getValues("email") ?? "");
+                      router.push(`/checkout/crypto?name=${n}&email=${e}`);
+                    }}
+                    className="w-full flex items-center gap-4 px-6 py-5 hover:bg-white/[0.03] transition-colors group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-[#c9a84c]/10 border border-[#c9a84c]/20 flex items-center justify-center shrink-0">
+                      <Bitcoin className="w-5 h-5 text-[#c9a84c]" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p className="text-white font-semibold text-sm mb-0.5">Pay with Crypto</p>
+                      <p className="text-zinc-500 text-xs">BTC · ETH · USDT · SOL — no extra fees</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-[#c9a84c] transition-colors" />
+                  </button>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <div className="flex gap-1">
-                    {["VISA", "MC", "AMEX"].map((b) => (
-                      <span key={b} className="text-[9px] font-bold text-zinc-600 border border-zinc-700 rounded px-1 py-0.5 leading-none">{b}</span>
-                    ))}
+
+                <div className="flex items-center justify-center gap-3 text-zinc-600 text-xs">
+                  <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> SSL Encrypted</span>
+                  <span>·</span>
+                  <span>PCI DSS via Stripe</span>
+                  <span>·</span>
+                  <span>No card data stored</span>
+                </div>
+
+                <Button variant="secondary" size="lg" onClick={() => setStep(1)} leftIcon={<ArrowLeft className="w-4 h-4" />}>
+                  Back
+                </Button>
+              </>
+            ) : (
+              <>
+                {/* Card form */}
+                <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl overflow-hidden">
+                  {/* Header */}
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-blue-400" />
+                      <span className="text-white font-semibold text-sm">Card Details</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { setShowCardForm(false); setError(""); setCardNumber(""); setCardExpiry(""); setCardCvc(""); }}
+                      className="text-zinc-500 hover:text-white transition-colors text-xs flex items-center gap-1"
+                    >
+                      <ArrowLeft className="w-3 h-3" /> Change
+                    </button>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-white transition-colors" />
-                </div>
-              </button>
 
-              {/* Crypto payment */}
-              <button
-                type="button"
-                onClick={() => {
-                  const n = encodeURIComponent(getValues("name") ?? "");
-                  const e = encodeURIComponent(getValues("email") ?? "");
-                  router.push(`/checkout/crypto?name=${n}&email=${e}`);
-                }}
-                className="w-full flex items-center gap-4 px-6 py-5 hover:bg-white/[0.03] transition-colors group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#c9a84c]/10 border border-[#c9a84c]/20 flex items-center justify-center shrink-0">
-                  <Bitcoin className="w-5 h-5 text-[#c9a84c]" />
-                </div>
-                <div className="flex-1 text-left">
-                  <p className="text-white font-semibold text-sm mb-0.5">Pay with Crypto</p>
-                  <p className="text-zinc-500 text-xs">BTC · ETH · USDT · SOL — no extra fees</p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-[#c9a84c] transition-colors" />
-              </button>
-            </div>
+                  <div className="p-6 space-y-4">
+                    {/* Card number */}
+                    <div>
+                      <label className="block text-zinc-400 text-xs mb-1.5 font-medium">Card Number</label>
+                      <div className="relative">
+                        <input
+                          value={cardNumber}
+                          onChange={handleCardNumberChange}
+                          placeholder="0000 0000 0000 0000"
+                          maxLength={19}
+                          inputMode="numeric"
+                          className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500/50 transition-colors tracking-widest pr-24"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
+                          {["VISA", "MC"].map((b) => (
+                            <span key={b} className="text-[9px] font-bold text-zinc-500 border border-zinc-700 rounded px-1 py-0.5 leading-none">{b}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
 
-            {/* Trust row */}
-            <div className="flex items-center justify-center gap-3 text-zinc-600 text-xs">
-              <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> SSL Encrypted</span>
-              <span>·</span>
-              <span>PCI DSS via Stripe</span>
-              <span>·</span>
-              <span>No card data stored</span>
-            </div>
+                    {/* Expiry + CVV */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-zinc-400 text-xs mb-1.5 font-medium">Expiry Date</label>
+                        <input
+                          value={cardExpiry}
+                          onChange={handleExpiryChange}
+                          placeholder="MM / YY"
+                          maxLength={7}
+                          inputMode="numeric"
+                          className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500/50 transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-zinc-400 text-xs mb-1.5 font-medium">CVV</label>
+                        <input
+                          value={cardCvc}
+                          onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                          placeholder="•••"
+                          maxLength={4}
+                          inputMode="numeric"
+                          className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500/50 transition-colors"
+                        />
+                      </div>
+                    </div>
 
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3">
-                <p className="text-red-400 text-sm">{error}</p>
-              </div>
+                    {/* Cardholder name */}
+                    <div>
+                      <label className="block text-zinc-400 text-xs mb-1.5 font-medium">Cardholder Name</label>
+                      <input
+                        value={cardName}
+                        onChange={(e) => setCardName(e.target.value)}
+                        placeholder="As it appears on your card"
+                        className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500/50 transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {error && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3">
+                    <p className="text-red-400 text-sm">{error}</p>
+                  </div>
+                )}
+
+                {/* Pay button */}
+                <button
+                  type="button"
+                  onClick={handleCardPayment}
+                  disabled={isLoading}
+                  className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-[#c9a84c] text-black text-sm font-bold hover:bg-[#d4b05e] transition-all shadow-lg shadow-[#c9a84c]/20 disabled:opacity-50"
+                >
+                  <Lock className="w-4 h-4" />
+                  {isLoading ? "Processing…" : `Pay ${formatPrice(total)} securely`}
+                </button>
+
+                <p className="text-zinc-600 text-xs text-center flex items-center justify-center gap-1.5">
+                  <Shield className="w-3 h-3" /> 256-bit SSL · Secured by Stripe · No card data stored
+                </p>
+              </>
             )}
-
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => setStep(1)}
-              leftIcon={<ArrowLeft className="w-4 h-4" />}
-            >
-              Back
-            </Button>
           </div>
         )}
       </div>
