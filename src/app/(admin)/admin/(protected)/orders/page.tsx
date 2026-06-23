@@ -103,10 +103,19 @@ export default function AdminOrdersPage() {
 
   const sendTicket = async (id: string) => {
     setUpdating(id);
-    const res = await fetch(`/api/orders/${id}/send-ticket`, { method: "POST" });
-    const data = await res.json() as { error?: string };
-    if (!res.ok) alert(data.error ?? "Failed to send ticket");
-    else alert("Ticket sent successfully — order marked as Delivered.");
+    try {
+      const res = await fetch(`/api/orders/${id}/send-ticket`, { method: "POST" });
+      const data = await res.json() as { success?: boolean; delivered?: boolean; emailError?: string; ticketUrl?: string };
+      if (res.status === 207) {
+        alert(`Order marked as Delivered, but email failed:\n${data.emailError}\n\nTicket URL: ${data.ticketUrl}`);
+      } else if (!res.ok) {
+        alert((data as { error?: string }).error ?? "Failed to send ticket");
+      } else {
+        alert("Ticket sent successfully — order marked as Delivered.");
+      }
+    } catch {
+      alert("Request failed. Check your connection.");
+    }
     setUpdating(null);
     fetchOrders();
   };

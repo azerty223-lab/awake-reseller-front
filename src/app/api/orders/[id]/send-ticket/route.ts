@@ -39,19 +39,36 @@ export async function POST(
     .map((oi) => `${oi.ticket.name}${oi.quantity > 1 ? ` ×${oi.quantity}` : ""}`)
     .join(", ");
 
-  await sendTicketEmail({
-    to: order.guestEmail,
-    customerName: order.guestName ?? "Attendee",
-    orderNumber: order.orderNumber,
-    ticketTypes,
-    ticketUrl,
-    qrDataUri,
-  });
+  let emailError: string | null = null;
 
+  try {
+    await sendTicketEmail({
+      to: order.guestEmail,
+      customerName: order.guestName ?? "Attendee",
+      orderNumber: order.orderNumber,
+      ticketTypes,
+      ticketUrl,
+      qrDataUri,
+    });
+  } catch (err) {
+    console.error("[send-ticket] Email failed:", err);
+    emailError = err instanceof Error ? err.message : "Email sending failed";
+  }
+
+  // Always mark as delivered even if email failed
   await prisma.order.update({
     where: { id },
     data: { status: "DELIVERED", deliveredAt: new Date() },
   });
 
-  return Response.json({ success: true });
+  if (emailError) {
+    return Response.json({
+      success: false,
+      delivered: true,
+      emailError,
+      ticketUrl,
+    }, { status: 207 });
+  }
+
+  return Response.json({ success: true, ticketUrl });
 }
