@@ -229,8 +229,11 @@ async function main() {
   console.log(`Seeded ${tickets.length} tickets successfully.`);
 
   // Seed admin user
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@awakenings-tickets.com";
-  const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminEmail || !adminPassword) {
+    throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD must be set in environment variables");
+  }
   const hashedPassword = await hash(adminPassword, 12);
 
   await prisma.user.upsert({
@@ -244,66 +247,7 @@ async function main() {
     },
   });
 
-  console.log(`Admin user seeded: ${adminEmail} (password: ${adminPassword})`);
-
-  // Seed a test order with a crypto invoice for development testing
-  const firstTicket = await prisma.ticket.findFirst({ where: { isVisible: true } });
-  if (firstTicket) {
-    // Find or create the admin user (already created above)
-    const adminUser = await prisma.user.findUnique({ where: { email: adminEmail } });
-
-    // Create a test order
-    const testOrder = await prisma.order.upsert({
-      where: { orderNumber: "CRYPTO-TEST-001" },
-      update: {},
-      create: {
-        orderNumber: "CRYPTO-TEST-001",
-        userId: adminUser?.id,
-        guestEmail: "test@awakenings-tickets.com",
-        guestName: "Crypto Test User",
-        status: "PENDING",
-        totalAmount: firstTicket.resalePrice,
-        currency: "EUR",
-        orderItems: {
-          create: [
-            {
-              ticketId: firstTicket.id,
-              quantity: 1,
-              unitPrice: firstTicket.resalePrice,
-            },
-          ],
-        },
-      },
-    });
-
-    // Upsert a crypto invoice for this test order
-    const now = new Date();
-    await prisma.cryptoInvoice.upsert({
-      where: { orderId: testOrder.id },
-      update: {},
-      create: {
-        orderId: testOrder.id,
-        provider: "MOCK" as CryptoProviderName,
-        providerInvoiceId: `mock_seed_${testOrder.id}`,
-        providerHostedUrl: null,
-        status: "WAITING_PAYMENT",
-        fiatAmount: firstTicket.resalePrice,
-        fiatCurrency: "EUR",
-        cryptoCurrency: "USDC" as CryptoCurrency,
-        cryptoNetwork: "ETHEREUM" as CryptoNetwork,
-        cryptoAmount: (firstTicket.resalePrice / 1.08).toFixed(8), // approx USDC at 1.08 EUR/USDC
-        exchangeRateSnapshot: "1.08",
-        exchangeRateSource: "seed-fallback",
-        paymentAddress: "0x1234567890abcdef1234567890abcdef12345678",
-        paymentUri: `ethereum:0x1234567890abcdef1234567890abcdef12345678?value=0&token=USDC&amount=${(firstTicket.resalePrice / 1.08).toFixed(8)}`,
-        requiredConfirmations: 12,
-        expiresAt: new Date(now.getTime() + 60 * 60 * 1000), // 1 hour from now
-        priceLockExpiresAt: new Date(now.getTime() + 15 * 60 * 1000), // 15 min from now
-      },
-    });
-
-    console.log(`Test crypto invoice seeded for order: ${testOrder.orderNumber}`);
-  }
+  console.log(`Admin user seeded: ${adminEmail}`);
 }
 
 main()
