@@ -8,13 +8,6 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
-// ── YouTube API types ─────────────────────────────────────────────────────────
-interface _YTPlayer {
-  getCurrentTime(): number;
-  seekTo(seconds: number, allowSeekAhead: boolean): void;
-  destroy(): void;
-}
-
 // ── Countdown ─────────────────────────────────────────────────────────────────
 const FESTIVAL_DATE = new Date("2026-07-10T15:00:00+02:00");
 
@@ -70,83 +63,16 @@ const CONTENT_PANELS: ContentPanel[] = [
 // Total panel count (hero + content panels) — used for GSAP sizing
 const TOTAL_PANELS = 1 + CONTENT_PANELS.length;
 
-const YT_VIDEO_ID = "m1SvbXLYEEc"; // Charlotte de Witte @ Awakenings 2025
-
 // ── Component ─────────────────────────────────────────────────────────────────
 export function CinematicHero() {
   const router = useRouter();
 
-  // Horizontal scroll refs
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef     = useRef<HTMLDivElement>(null);
 
-  // YouTube
-  const ytDivRef    = useRef<HTMLDivElement>(null);
-  const ytPlayerRef = useRef<_YTPlayer | null>(null);
-  const pollRef     = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [ytReady, setYtReady] = useState(false);
-
-  // Active panel for dot indicator
   const [activePanel, setActivePanel] = useState(0);
 
   const { d, h, m, s } = useCountdown(FESTIVAL_DATE);
-
-  // ── YouTube: loop 20–32s ──────────────────────────────────────────────────
-  useEffect(() => {
-    const div = ytDivRef.current;
-    if (!div) return;
-
-    function createPlayer() {
-      if (!window.YT?.Player || !ytDivRef.current) return;
-
-      ytPlayerRef.current = new window.YT.Player(ytDivRef.current, {
-        videoId: YT_VIDEO_ID,
-        width: "100%",
-        height: "100%",
-        playerVars: {
-          autoplay: 1, mute: 1, controls: 0, disablekb: 1,
-          rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3,
-          start: 20,
-        },
-        events: {
-          onStateChange: (e) => {
-            if (e.data === 1) {
-              setYtReady(true);
-              pollRef.current = setInterval(() => {
-                try {
-                  if ((ytPlayerRef.current?.getCurrentTime() ?? 0) >= 32)
-                    ytPlayerRef.current?.seekTo(20, true);
-                } catch { /* destroyed */ }
-              }, 200);
-            }
-          },
-        },
-      }) as unknown as _YTPlayer;
-    }
-
-    const win = window as typeof window & {
-      YT?: { Player: new (el: HTMLElement, opts: object) => _YTPlayer };
-      onYouTubeIframeAPIReady?: () => void;
-    };
-
-    if (win.YT?.Player) {
-      createPlayer();
-    } else {
-      if (!document.getElementById("yt-api-script")) {
-        const s = document.createElement("script");
-        s.id = "yt-api-script";
-        s.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(s);
-      }
-      const prev = win.onYouTubeIframeAPIReady;
-      win.onYouTubeIframeAPIReady = () => { prev?.(); createPlayer(); };
-    }
-
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
-      ytPlayerRef.current?.destroy();
-    };
-  }, []);
 
   // ── GSAP horizontal scroll ─────────────────────────────────────────────────
   useEffect(() => {
@@ -225,10 +151,10 @@ export function CinematicHero() {
         style={{ width: `${TOTAL_PANELS * 100}vw` }}
       >
 
-        {/* ══ Panel 1 — YouTube video hero ══════════════════════════════ */}
+        {/* ══ Panel 1 — Local video hero ════════════════════════════════ */}
         <div className="relative w-screen h-screen shrink-0 overflow-hidden">
 
-          {/* YouTube player div — replaced by iframe by YT API */}
+          {/* Background video — cover-sized, muted autoplay loop */}
           <div
             data-parallax
             className="absolute pointer-events-none"
@@ -239,17 +165,15 @@ export function CinematicHero() {
               transform: "translateX(-50%)",
             }}
           >
-            <div
-              ref={ytDivRef}
-              style={{ width: "100%", height: "100%" }}
+            <video
+              src="/videos/hero-bg.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
-
-          {/* Video fade-in once playing */}
-          <div
-            className="absolute inset-0 bg-black transition-opacity duration-[2000ms]"
-            style={{ opacity: ytReady ? 0 : 1, pointerEvents: "none" }}
-          />
 
           {/* Overlay */}
           <div
