@@ -291,7 +291,7 @@ export function CinematicHero() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="pointer-events-none select-none mt-8"
             >
-              <div className="flex items-center gap-4 px-8 py-4 rounded-full border border-white/[0.15] bg-black/60 backdrop-blur-md">
+              <div className="flex items-center gap-4 px-8 py-[19px] rounded-full border border-white/[0.15] bg-black/60 backdrop-blur-md">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] shrink-0" />
                 <span className="text-white/80 text-[12px] uppercase tracking-[0.28em] font-semibold whitespace-nowrap">
                   Awakenings Festival · July 10–12, 2026
