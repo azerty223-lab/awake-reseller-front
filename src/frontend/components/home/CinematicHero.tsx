@@ -50,16 +50,9 @@ interface ContentPanel {
 // Panels 2+ use this typed array.
 const CONTENT_PANELS: ContentPanel[] = [
   {
-    id: "atmosphere",
-    bg: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=90&w=1920&auto=format&fit=crop",
-    eyebrow: "Awakenings Festival 2026",
-    lines: ["Three Days.", "One Sound."],
-    sub: "July 10–12 · Hilvarenbeek · 7+ Stages · 100+ Artists",
-  },
-  {
+    // Slide 2: festival crowd background + "Get Your Pass" content (slide 3 text)
     id: "tickets",
-    // Vitalii Onyshchuk — concert crowd, hands raised, blue/purple stage lights (Unsplash free)
-    bg: "https://images.unsplash.com/photo-b7gi_rqKxcQ?q=90&w=1920&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=90&w=1920&auto=format&fit=crop",
     eyebrow: "Verified Resale",
     lines: ["Get Your", "Pass."],
     sub: "Every ticket authenticated · Name transfer included · Stripe secured",
