@@ -99,10 +99,11 @@ export function CinematicHero() {
           pin:               true,
           scrub:             0.4,
           snap: {
-            snapTo:   1 / (numPanels - 1),
-            duration: { min: 0.08, max: 0.22 },
-            delay:    0,
-            ease:     "power3.out",
+            snapTo:      1 / (numPanels - 1),
+            directional: true,   // any scroll forward = next panel, backward = prev
+            duration:    { min: 0.1, max: 0.3 },
+            delay:       0,
+            ease:        "power3.out",
           },
           end: () => `+=${track.scrollWidth - window.innerWidth}`,
           invalidateOnRefresh: true,
