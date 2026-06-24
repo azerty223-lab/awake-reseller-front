@@ -58,7 +58,8 @@ const CONTENT_PANELS: ContentPanel[] = [
   },
   {
     id: "tickets",
-    bg: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=90&w=1920&auto=format&fit=crop",
+    // Vitalii Onyshchuk — concert crowd, hands raised, blue/purple stage lights (Unsplash free)
+    bg: "https://images.unsplash.com/photo-b7gi_rqKxcQ?q=90&w=1920&auto=format&fit=crop",
     eyebrow: "Verified Resale",
     lines: ["Get Your", "Pass."],
     sub: "Every ticket authenticated · Name transfer included · Stripe secured",
