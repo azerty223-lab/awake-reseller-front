@@ -280,20 +280,12 @@ export function CinematicHero() {
                 initial={{ opacity: 0, y: 32 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="font-[var(--font-playfair)] font-black text-white leading-[0.9] mb-8"
-                style={{ fontSize: "clamp(4.5rem, 13vw, 11rem)", letterSpacing: "-0.03em" }}
+                className="font-[var(--font-inter)] font-black text-white uppercase leading-tight mb-8"
+                style={{ fontSize: "clamp(2.5rem, 4.5vw, 4.5rem)", letterSpacing: "0.04em" }}
               >
-                Awakenings
-                <br />
-                <span style={{
-                  display: "block",
-                  marginLeft: "clamp(2rem, 12vw, 10rem)",
-                  background: "linear-gradient(to right, #C9A84C 0%, #E4BA65 40%, #C9A84C 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}>
-                  Festival
+                <span className="block">Awakenings</span>
+                <span style={{ display: "block", marginLeft: "clamp(2rem, 12vw, 10rem)" }}>
+                  Festival 2026
                 </span>
               </motion.h1>
 
