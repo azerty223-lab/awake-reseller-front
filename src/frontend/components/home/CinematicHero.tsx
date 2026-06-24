@@ -273,18 +273,7 @@ export function CinematicHero() {
             data-content
             className="relative z-20 h-full flex flex-col items-center justify-center text-center px-6 sm:px-12 lg:px-20 max-w-[1400px] mx-auto w-full gap-6"
           >
-            {/* Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="font-[var(--font-inter)] font-black text-white uppercase leading-tight"
-              style={{ fontSize: "clamp(1.75rem, 3vw, 3rem)", letterSpacing: "0.04em" }}
-            >
-              Awakenings<br />Festival 2026
-            </motion.h1>
-
-            {/* Dark pill — replaces plain text, covers YouTube button */}
+            {/* Dark pill — covers YouTube button */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
