@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
@@ -31,7 +30,6 @@ export function HeroSection() {
   const router = useRouter();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const { d, h, m, s } = useCountdown(FESTIVAL_DATE);
@@ -42,32 +40,37 @@ export function HeroSection() {
       {/* Full-bleed festival photography
           photo-1522601157550: Kaskade at Ultra Music Festival — low-angle crowd
           silhouettes, pyrotechnic fire, deep blue-purple + warm orange-amber haze */}
-      <motion.div className="absolute inset-0 z-0" style={{ y: imageY }}>
-        <Image
-          src="https://images.unsplash.com/photo-1522601157550-4282ae97472d?q=90&w=1920&auto=format&fit=crop"
-          alt="Awakenings Festival"
-          fill
-          priority
+      {/* YouTube video background — official Awakenings channel
+          Charlotte de Witte @ Awakenings Festival 2025 (video: m1SvbXLYEEc)
+          Cover sizing: max(177.78vh, 100%) × max(100vh, 56.25vw) maintains 16:9 */}
+      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+        <iframe
+          src="https://www.youtube.com/embed/m1SvbXLYEEc?autoplay=1&mute=1&controls=0&loop=1&playlist=m1SvbXLYEEc&playsinline=1&modestbranding=1&rel=0"
+          title="Awakenings Festival background"
+          allow="autoplay; encrypted-media; picture-in-picture"
           style={{
-            objectFit: "cover",
-            objectPosition: "center 38%",
-            opacity: 0.62,
-            // Preserve the warm amber-orange fire tones — they map to #C9A84C brand gold.
-            // Slight brightness reduction deepens the crowd silhouettes.
-            filter: "brightness(0.80) saturate(0.92)",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "max(177.78vh, 100%)",
+            height: "max(100vh, 56.25vw)",
+            transform: "translate(-50%, -50%)",
+            pointerEvents: "none",
+            border: "none",
           }}
-          className="scale-[1.04]"
         />
-      </motion.div>
+      </div>
 
-      {/* Heavy bottom fade — keeps headline zone dark and text legible */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#020203] via-[#020203]/45 to-transparent" />
-
-      {/* Left panel — readable text without killing the right-side drama */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#020203]/75 via-[#020203]/20 to-transparent" />
-
-      {/* Very faint warm amber cast — bridges fire tones to brand gold */}
-      <div className="absolute inset-0 z-10 bg-[#C9A84C]/[0.03] pointer-events-none" />
+      {/* Cinematic overlay — bottom darkening for text + warm amber glow at top */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{
+          background: [
+            "linear-gradient(to bottom, rgba(0,0,0,0.45), rgba(0,0,0,0.90))",
+            "radial-gradient(circle at 50% 20%, rgba(210,170,55,0.18), transparent 45%)",
+          ].join(", "),
+        }}
+      />
 
       {/* Content */}
       <motion.div
@@ -83,7 +86,7 @@ export function HeroSection() {
             transition={{ duration: 1, delay: 0.2 }}
             className="text-[10px] uppercase tracking-[0.3em] text-white/35 mb-10 font-medium"
           >
-            Official Ticket Resale — awakenings.com
+            Ticket Resale — awakenings.com
           </motion.p>
 
           {/* Primary headline — designed, not generated */}
