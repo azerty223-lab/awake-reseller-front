@@ -257,99 +257,108 @@ export function CinematicHero() {
             }}
           />
 
-          {/* Content */}
+          {/* Content — centered so the headline covers the YouTube play button */}
           <div
             data-content
-            className="relative z-20 h-full flex flex-col justify-end px-6 sm:px-12 lg:px-20 pb-20 sm:pb-28 max-w-[1400px] mx-auto w-full"
+            className="relative z-20 h-full flex flex-col px-6 sm:px-12 lg:px-20 max-w-[1400px] mx-auto w-full"
           >
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="text-[10px] uppercase tracking-[0.3em] text-white/35 mb-10 font-medium"
-            >
-              Ticket Resale — awakenings.com
-            </motion.p>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="font-[var(--font-playfair)] font-black text-white leading-[0.9] mb-10"
-              style={{ fontSize: "clamp(4.5rem, 13vw, 11rem)", letterSpacing: "-0.03em" }}
-            >
-              Awakenings
-              <br />
-              <span style={{
-                background: "linear-gradient(to right, #C9A84C 0%, #E4BA65 40%, #C9A84C 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>
-                Festival
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.55 }}
-              className="text-sm text-zinc-400 tracking-[0.12em] uppercase mb-12 font-light"
-            >
-              July 10–12, 2026&nbsp;&nbsp;·&nbsp;&nbsp;Hilvarenbeek, Netherlands
-            </motion.p>
-
-            {/* Countdown */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              className="flex items-baseline gap-8 mb-14"
-            >
-              {[
-                { val: d, label: "days" },
-                { val: h, label: "hrs" },
-                { val: m, label: "min" },
-                { val: s, label: "sec" },
-              ].map(({ val, label }, i) => (
-                <div key={label} className="flex items-baseline gap-1.5">
-                  <span
-                    className="font-[var(--font-playfair)] font-black text-white tabular-nums"
-                    style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", letterSpacing: "-0.02em" }}
-                  >
-                    {String(val).padStart(2, "0")}
-                  </span>
-                  <span className="text-zinc-600 text-[10px] uppercase tracking-[0.15em] font-medium">
-                    {label}
-                  </span>
-                  {i < 3 && (
-                    <span className="text-zinc-700 ml-3 font-light text-2xl leading-none select-none">·</span>
-                  )}
-                </div>
-              ))}
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.85 }}
-            >
-              <button
-                onClick={() => router.push("/tickets")}
-                className="group inline-flex items-center gap-3 text-sm font-semibold text-black tracking-wide rounded-full px-8 py-4 transition-all duration-500"
-                style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E4BA65 100%)" }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                    "0 0 60px rgba(201,168,76,0.4), 0 8px 32px rgba(0,0,0,0.4)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = "none";
-                }}
+            {/* Top spacer + provenance */}
+            <div className="flex-1 flex items-start pt-10 sm:pt-14">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.2 }}
+                className="text-[10px] uppercase tracking-[0.3em] text-white/35 font-medium"
               >
-                Browse Tickets
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
-              </button>
-            </motion.div>
+                Ticket Resale — awakenings.com
+              </motion.p>
+            </div>
+
+            {/* Centre block — headline + meta + countdown */}
+            <div className="flex flex-col items-start">
+              <motion.h1
+                initial={{ opacity: 0, y: 32 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="font-[var(--font-playfair)] font-black text-white leading-[0.9] mb-8"
+                style={{ fontSize: "clamp(4.5rem, 13vw, 11rem)", letterSpacing: "-0.03em" }}
+              >
+                Awakenings
+                <br />
+                <span style={{
+                  background: "linear-gradient(to right, #C9A84C 0%, #E4BA65 40%, #C9A84C 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}>
+                  Festival
+                </span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.55 }}
+                className="text-sm text-zinc-400 tracking-[0.12em] uppercase mb-10 font-light"
+              >
+                July 10–12, 2026&nbsp;&nbsp;·&nbsp;&nbsp;Hilvarenbeek, Netherlands
+              </motion.p>
+
+              {/* Countdown */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                className="flex items-baseline gap-8 mb-12"
+              >
+                {[
+                  { val: d, label: "days" },
+                  { val: h, label: "hrs" },
+                  { val: m, label: "min" },
+                  { val: s, label: "sec" },
+                ].map(({ val, label }, i) => (
+                  <div key={label} className="flex items-baseline gap-1.5">
+                    <span
+                      className="font-[var(--font-playfair)] font-black text-white tabular-nums"
+                      style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", letterSpacing: "-0.02em" }}
+                    >
+                      {String(val).padStart(2, "0")}
+                    </span>
+                    <span className="text-zinc-600 text-[10px] uppercase tracking-[0.15em] font-medium">
+                      {label}
+                    </span>
+                    {i < 3 && (
+                      <span className="text-zinc-700 ml-3 font-light text-2xl leading-none select-none">·</span>
+                    )}
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Bottom — CTA pinned to bottom */}
+            <div className="flex-1 flex items-end pb-16 sm:pb-20">
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.85 }}
+              >
+                <button
+                  onClick={() => router.push("/tickets")}
+                  className="group inline-flex items-center gap-3 text-sm font-semibold text-black tracking-wide rounded-full px-8 py-4 transition-all duration-500"
+                  style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E4BA65 100%)" }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                      "0 0 60px rgba(201,168,76,0.4), 0 8px 32px rgba(0,0,0,0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = "none";
+                  }}
+                >
+                  Browse Tickets
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
+                </button>
+              </motion.div>
+            </div>
           </div>
         </div>
 
