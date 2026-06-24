@@ -11,6 +11,7 @@ import {
   CreditCard, Shield, Bitcoin, Lock, Check, ArrowLeft,
 } from "lucide-react";
 import { Turnstile } from "@/frontend/components/ui/Turnstile";
+import { StaticCryptoCheckout } from "@/frontend/components/crypto/StaticCryptoCheckout";
 
 // ── Schema ─────────────────────────────────────────────────────────────────
 
@@ -194,6 +195,9 @@ export default function CheckoutPage() {
   const [turnstileToken, setTurnstileToken] = useState("");
   const [paymentMethod,  setPaymentMethod]  = useState<"card" | "crypto">("card");
   const [paymentState,   setPaymentState]   = useState<"idle" | "processing" | "success">("idle");
+  // Crypto inline state — populated when user confirms contact info with Crypto selected
+  const [showCrypto,   setShowCrypto]   = useState(false);
+  const [cryptoCustomer, setCryptoCustomer] = useState({ name: "", email: "" });
 
   // Card fields
   const [cardNumber,      setCardNumber]      = useState("");
@@ -228,11 +232,10 @@ export default function CheckoutPage() {
 
   // Single submit handler — routes by payment method
   const onSubmit = async (data: FormValues) => {
-    // Crypto: validate contact, then redirect
+    // Crypto: validate contact, then show QR + currency selector inline
     if (paymentMethod === "crypto") {
-      router.push(
-        `/checkout/crypto?name=${encodeURIComponent(data.name)}&email=${encodeURIComponent(data.email)}`
-      );
+      setCryptoCustomer({ name: data.name, email: data.email });
+      setShowCrypto(true);
       return;
     }
 
@@ -557,74 +560,105 @@ export default function CheckoutPage() {
               )}
 
               {/* ── Crypto info ─────────────────────────────────── */}
-              {paymentMethod === "crypto" && (
+              {paymentMethod === "crypto" && !showCrypto && (
                 <div className="rounded-lg border border-white/[0.09] bg-white/[0.02] px-4 py-4">
                   <p className="text-sm font-medium text-zinc-200 mb-1.5">
                     Pay with cryptocurrency
                   </p>
                   <p className="text-xs text-zinc-500 leading-relaxed">
                     Accepts BTC, ETH, USDT, SOL and more. No additional fees.
-                    After confirming your details below, you will be redirected to complete payment.
+                    Confirm your contact details above then click Continue to see the wallet address and QR code.
                   </p>
                 </div>
               )}
             </section>
 
-            {/* Turnstile verification */}
+            {/* ── Inline crypto payment ───────────────────────────
+                Appears after contact info is confirmed with Crypto
+                selected. Shows currency grid, QR code, address copy,
+                and the red Important warning — all from the existing
+                StaticCryptoCheckout component, unchanged. */}
+            {showCrypto && (
+              <div className="space-y-4">
+                <div className="h-px bg-white/[0.07]" />
+
+                {/* Confirmed contact recap */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider mb-0.5">Paying as</p>
+                    <p className="text-sm text-zinc-200">{cryptoCustomer.name} · {cryptoCustomer.email}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { setShowCrypto(false); setCryptoCustomer({ name: "", email: "" }); }}
+                    className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1"
+                  >
+                    <ArrowLeft className="w-3 h-3" />
+                    Change
+                  </button>
+                </div>
+
+                {/* Full crypto UI: currency selector → QR → address → red warning */}
+                <StaticCryptoCheckout
+                  fiatAmount={total}
+                  cartItems={items}
+                  customerName={cryptoCustomer.name}
+                  customerEmail={cryptoCustomer.email}
+                />
+              </div>
+            )}
+
+            {/* Turnstile verification — only needed for card */}
+            {!showCrypto && paymentMethod === "card" && (
             <Turnstile
               onToken={setTurnstileToken}
               onExpire={() => setTurnstileToken("")}
             />
+            )}
 
-            {/* Error state */}
-            {error && (
+            {/* Error state — only relevant for card payment */}
+            {!showCrypto && error && (
               <div className="rounded-lg border border-red-500/25 bg-red-500/[0.06] px-4 py-3.5">
                 <p className="text-sm text-red-400">{error}</p>
               </div>
             )}
 
-            {/* ── Primary CTA ─────────────────────────────────────
-                One button. No back button. No competing actions.
-                The amount is part of the label — user knows exactly
-                what they're committing to before they press. */}
-            <button
-              type="submit"
-              disabled={isLoading || (paymentMethod === "card" && !turnstileToken)}
-              className={[
-                "w-full h-14 flex items-center justify-center gap-2.5 rounded-xl",
-                "text-base font-bold text-black transition-all duration-150",
-                "bg-[#C9A84C] hover:bg-[#D4B855]",
-                "shadow-[0_2px_16px_rgba(201,168,76,0.2)]",
-                "disabled:opacity-50 disabled:cursor-not-allowed",
-                "active:scale-[0.99]",
-              ].join(" ")}
-            >
-              {isLoading ? (
-                <>
-                  {/* Spinner */}
-                  <svg
-                    className="w-4 h-4 animate-spin text-black/50"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Processing…
-                </>
-              ) : (
-                <>
-                  <Lock className="w-4 h-4" />
-                  {ctaLabel}
-                </>
-              )}
-            </button>
+            {/* ── Primary CTA — hidden once crypto QR is showing ──── */}
+            {!showCrypto && (
+              <button
+                type="submit"
+                disabled={isLoading || (paymentMethod === "card" && !turnstileToken)}
+                className={[
+                  "w-full h-14 flex items-center justify-center gap-2.5 rounded-xl",
+                  "text-base font-bold text-black transition-all duration-150",
+                  "bg-[#C9A84C] hover:bg-[#D4B855]",
+                  "shadow-[0_2px_16px_rgba(201,168,76,0.2)]",
+                  "disabled:opacity-50 disabled:cursor-not-allowed",
+                  "active:scale-[0.99]",
+                ].join(" ")}
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin text-black/50" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Processing…
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-4 h-4" />
+                    {ctaLabel}
+                  </>
+                )}
+              </button>
+            )}
 
-            {/* Sub-CTA reassurance — not a second CTA, just a confidence signal */}
-            <p className="text-center text-[11px] text-zinc-600 flex items-center justify-center gap-1.5">
+            {/* Sub-CTA reassurance */}
+            {!showCrypto && <p className="text-center text-[11px] text-zinc-600 flex items-center justify-center gap-1.5">
               <Shield className="w-3 h-3 shrink-0" />
               Secured by Stripe · 256-bit SSL · PCI DSS Level 1
-            </p>
+            </p>}
 
           </div>
 
