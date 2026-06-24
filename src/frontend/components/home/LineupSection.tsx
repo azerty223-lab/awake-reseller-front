@@ -7,7 +7,7 @@ import { useReducedMotion, motion, AnimatePresence } from "framer-motion";
 
 interface Slot { time: string; artist: string; }
 interface Area { id: string; label: string; note?: string; slots: Slot[]; }
-type DayKey = "Friday" | "Saturday";
+type DayKey = "Friday" | "Saturday" | "Sunday";
 
 // ── Lineup data ──────────────────────────────────────────────────────────────
 
@@ -178,14 +178,100 @@ const LINEUP: Record<DayKey, Area[]> = {
       ],
     },
   ],
+
+  Sunday: [
+    {
+      id: "V", label: "Area V",
+      slots: [
+        { time: "13:00 – 15:00", artist: "Julya Karma" },
+        { time: "15:00 – 16:30", artist: "Innellea" },
+        { time: "16:30 – 18:00", artist: "Boris Brejcha" },
+        { time: "18:00 – 19:30", artist: "Adriatique" },
+        { time: "19:30 – 21:00", artist: "Richie Hawtin" },
+        { time: "21:00 – 23:00", artist: "Charlotte de Witte" },
+      ],
+    },
+    {
+      id: "A", label: "Area A",
+      slots: [
+        { time: "13:00 – 14:30", artist: "Lisa Korver" },
+        { time: "14:30 – 16:00", artist: "Lucky Done Gone" },
+        { time: "16:00 – 18:00", artist: "LAMMER" },
+        { time: "18:00 – 19:30", artist: "Bad Boombox" },
+        { time: "19:30 – 21:15", artist: "ØTTA" },
+        { time: "21:15 – 23:00", artist: "MCR-T & Partiboi69" },
+      ],
+    },
+    {
+      id: "B", label: "Area B",
+      slots: [
+        { time: "13:00 – 15:00", artist: "Easttown" },
+        { time: "15:00 – 16:30", artist: "Joëlla Jackson" },
+        { time: "16:30 – 18:00", artist: "Toman" },
+        { time: "18:00 – 19:30", artist: "Mau P" },
+        { time: "19:30 – 21:00", artist: "Franky Rizardo" },
+        { time: "21:00 – 23:00", artist: "Marco Carola" },
+      ],
+    },
+    {
+      id: "C", label: "Area C",
+      slots: [
+        { time: "13:00 – 14:30", artist: "Kaufmann" },
+        { time: "14:30 – 16:00", artist: "Mha Iri" },
+        { time: "16:00 – 17:45", artist: "Chris Avantgarde" },
+        { time: "17:45 – 19:15", artist: "Bart Skils" },
+        { time: "19:15 – 21:00", artist: "Pan-Pot" },
+        { time: "21:00 – 23:00", artist: "Eli Brown & HI-LO" },
+      ],
+    },
+    {
+      id: "X", label: "Area X",
+      slots: [
+        { time: "13:00 – 14:45", artist: "Julia Maria" },
+        { time: "14:45 – 16:30", artist: "Ignez" },
+        { time: "16:30 – 18:00", artist: "Nina Kraviz" },
+        { time: "18:00 – 19:30", artist: "Freddy K" },
+        { time: "19:30 – 21:00", artist: "Ben Klock" },
+        { time: "21:00 – 23:00", artist: "Chlär & Yanamaste" },
+      ],
+    },
+    {
+      id: "Y", label: "Area Y",
+      slots: [
+        { time: "13:00 – 14:30", artist: "Samoh (live)" },
+        { time: "14:30 – 16:00", artist: "Nikolina" },
+        { time: "16:00 – 17:30", artist: "BIIA" },
+        { time: "17:30 – 19:00", artist: "Novah" },
+        { time: "19:00 – 21:00", artist: "999999999" },
+        { time: "21:00 – 23:00", artist: "Cynthia Spiering & Reinier Zonneveld" },
+      ],
+    },
+    {
+      id: "H", label: "Area H",
+      slots: [
+        { time: "15:00 – 16:30", artist: "Valody" },
+        { time: "16:30 – 18:00", artist: "Rosati" },
+        { time: "18:00 – 20:00", artist: "SHDW" },
+        { time: "20:00 – 22:00", artist: "Stranger & Talismann" },
+      ],
+    },
+    {
+      id: "N", label: "Area N", note: "Camping After",
+      slots: [
+        { time: "23:00 – 01:00", artist: "Ares Carter" },
+        { time: "01:00 – 03:00", artist: "Joyhauser" },
+      ],
+    },
+  ],
 };
 
-const DAYS: DayKey[] = ["Friday", "Saturday"];
+const DAYS: DayKey[] = ["Friday", "Saturday", "Sunday"];
 
 // Static metadata per day (date + headline hours for main stages)
 const DAY_META: Record<DayKey, { date: string; timeRange: string }> = {
   Friday:   { date: "Friday · July 10, 2026",   timeRange: "15:00 – 01:00" },
   Saturday: { date: "Saturday · July 11, 2026", timeRange: "13:00 – 01:00" },
+  Sunday:   { date: "Sunday · July 12, 2026",   timeRange: "13:00 – 23:00" },
 };
 
 // ── YouTube background types ──────────────────────────────────────────────────
@@ -716,7 +802,7 @@ export function LineupSection() {
             <p className="text-[10px] uppercase tracking-[0.25em] text-zinc-600 text-center mb-6 font-medium">
               Select a day
             </p>
-            <div className="flex gap-3 sm:gap-4" role="group" aria-label="Day selection">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4" role="group" aria-label="Day selection">
               {DAYS.map(day => (
                 <DayCard
                   key={day}
