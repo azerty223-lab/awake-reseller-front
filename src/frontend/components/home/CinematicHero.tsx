@@ -7,7 +7,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-
+// ── YouTube IFrame API types ──────────────────────────────────────────────────
+interface _YTPlayer {
+  getCurrentTime(): number;
+  seekTo(seconds: number, allowSeekAhead: boolean): void;
+  destroy(): void;
+}
 
 // ── Countdown ─────────────────────────────────────────────────────────────────
 const FESTIVAL_DATE = new Date("2026-07-10T15:00:00+02:00");
@@ -65,8 +70,9 @@ const CONTENT_PANELS: ContentPanel[] = [
 const TOTAL_PANELS = 1 + CONTENT_PANELS.length;
 
 // Charlotte de Witte @ Awakenings Festival 2025 (official Awakenings channel)
-// Direct iframe embed — no API required, guaranteed autoplay with start=22
-const YT_EMBED = "https://www.youtube.com/embed/m1SvbXLYEEc?autoplay=1&mute=1&loop=1&playlist=m1SvbXLYEEc&controls=0&disablekb=1&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&start=22";
+const YT_ID    = "m1SvbXLYEEc";
+const YT_START = 22;  // 0:22
+const YT_END   = 32;  // 0:32  — polling seeks back to YT_START when reached
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function CinematicHero() {
@@ -74,9 +80,68 @@ export function CinematicHero() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef     = useRef<HTMLDivElement>(null);
+
+  // YouTube IFrame API refs — no state dependency, no black mask
+  const ytDivRef    = useRef<HTMLDivElement>(null);
+  const ytPlayerRef = useRef<_YTPlayer | null>(null);
+  const pollRef     = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const [activePanel, setActivePanel] = useState(0);
 
   const { d, h, m, s } = useCountdown(FESTIVAL_DATE);
+
+  // ── YouTube: precise 0:22 → 0:32 loop via IFrame API polling ────────────────
+  // No black mask — the gradient overlay covers YouTube UI during load.
+  useEffect(() => {
+    function createPlayer() {
+      if (!window.YT?.Player || !ytDivRef.current) return;
+
+      ytPlayerRef.current = new window.YT.Player(ytDivRef.current, {
+        videoId: YT_ID,
+        width:   "100%",
+        height:  "100%",
+        playerVars: {
+          autoplay: 1, mute: 1, controls: 0, disablekb: 1,
+          rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3,
+          start: YT_START,
+        },
+        events: {
+          onReady: () => {
+            // Start polling immediately once the player is ready
+            pollRef.current = setInterval(() => {
+              try {
+                if ((ytPlayerRef.current?.getCurrentTime() ?? 0) >= YT_END)
+                  ytPlayerRef.current?.seekTo(YT_START, true);
+              } catch { /* player destroyed during cleanup */ }
+            }, 150);
+          },
+        },
+      }) as unknown as _YTPlayer;
+    }
+
+    const win = window as typeof window & {
+      YT?: { Player: new (el: HTMLElement, opts: object) => _YTPlayer };
+      onYouTubeIframeAPIReady?: () => void;
+    };
+
+    if (win.YT?.Player) {
+      createPlayer();
+    } else {
+      if (!document.getElementById("yt-api-script")) {
+        const s = document.createElement("script");
+        s.id = "yt-api-script";
+        s.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(s);
+      }
+      const prev = win.onYouTubeIframeAPIReady;
+      win.onYouTubeIframeAPIReady = () => { prev?.(); createPlayer(); };
+    }
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+      ytPlayerRef.current?.destroy();
+    };
+  }, []);
 
   // ── GSAP horizontal scroll ─────────────────────────────────────────────────
   useEffect(() => {
@@ -156,14 +221,12 @@ export function CinematicHero() {
         style={{ width: `${TOTAL_PANELS * 100}vw` }}
       >
 
-        {/* ══ Panel 1 — YouTube video hero (m1SvbXLYEEc, 0:20→0:31) ══ */}
+        {/* ══ Panel 1 — YouTube video hero (m1SvbXLYEEc, 0:22→0:32) ══ */}
         <div className="relative w-screen h-screen shrink-0 overflow-hidden">
 
-          {/* YouTube iframe — z-index 0, no GSAP transform (avoids stacking context) */}
-          <iframe
-            src={YT_EMBED}
-            allow="autoplay; encrypted-media; picture-in-picture"
-            title="Awakenings Festival background"
+          {/* YouTube IFrame API — cover-sized wrapper, player replaces inner div */}
+          <div
+            aria-hidden="true"
             style={{
               position: "absolute",
               top: "50%",
@@ -172,11 +235,11 @@ export function CinematicHero() {
               height: "max(100vh, 56.25vw)",
               transform: "translate(-50%, -50%)",
               pointerEvents: "none",
-              border: "none",
               zIndex: 0,
             }}
-            aria-hidden="true"
-          />
+          >
+            <div ref={ytDivRef} style={{ width: "100%", height: "100%" }} />
+          </div>
 
           {/* Overlay — z-index 10 keeps it above the iframe at all times */}
           <div
