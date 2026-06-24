@@ -21,7 +21,7 @@ const facts = [
 
 export function FestivalInfo() {
   return (
-    <section className="relative py-32 sm:py-44 overflow-hidden">
+    <section className="relative py-4 overflow-hidden">
 
       {/* Large atmospheric image — intentional placement */}
       <div className="absolute inset-0 z-0">

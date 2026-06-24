@@ -156,7 +156,7 @@ export function FeaturedTickets() {
   }, []);
 
   return (
-    <section className="relative py-32 sm:py-40 overflow-hidden">
+    <section className="relative py-4 overflow-hidden">
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
         {/* Section header */}

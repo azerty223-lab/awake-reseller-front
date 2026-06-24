@@ -26,7 +26,7 @@ export function NewsletterSection() {
   };
 
   return (
-    <section className="relative py-32 sm:py-40 overflow-hidden">
+    <section className="relative py-4 overflow-hidden">
       {/* Restrained horizontal rule top */}
       <div className="absolute top-0 left-6 right-6 sm:left-12 lg:left-20 sm:right-12 lg:right-20 h-px bg-white/[0.06]" />
 

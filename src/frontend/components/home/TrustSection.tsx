@@ -34,7 +34,7 @@ const features = [
 
 export function TrustSection() {
   return (
-    <section className="relative py-28 overflow-hidden bg-transparent">
+    <section className="relative py-4 overflow-hidden bg-transparent">
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
       {/* Local blue glow */}

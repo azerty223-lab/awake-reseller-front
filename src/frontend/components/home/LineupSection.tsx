@@ -787,7 +787,7 @@ export function LineupSection() {
       </div>
 
       {/* ── Schedule ─────────────────────────────────────────────── */}
-      <div className="pt-16 pb-28 px-4 sm:px-6 lg:px-8">
+      <div className="pt-4 pb-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
 
           {/* ── Day selector ────────────────────────────────────────

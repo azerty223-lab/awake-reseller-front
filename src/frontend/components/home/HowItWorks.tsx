@@ -27,7 +27,7 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="relative py-32 sm:py-40 overflow-hidden">
+    <section className="relative py-4 overflow-hidden">
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 

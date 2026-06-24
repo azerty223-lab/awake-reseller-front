@@ -36,7 +36,7 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-24 bg-transparent">
+    <section id="faq" className="py-4 bg-transparent">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <motion.div

@@ -1,5 +1,4 @@
 ﻿import { CinematicHero }  from "@/frontend/components/home/CinematicHero";
-import { StatsBar }        from "@/frontend/components/home/StatsBar";
 import { FeaturedTickets } from "@/frontend/components/home/FeaturedTickets";
 import { HowItWorks }      from "@/frontend/components/home/HowItWorks";
 import { FestivalInfo }    from "@/frontend/components/home/FestivalInfo";
@@ -12,7 +11,6 @@ export default function HomePage() {
   return (
     <>
       <CinematicHero />
-      <StatsBar />
       <FeaturedTickets />
       <HowItWorks />
       <FestivalInfo />
