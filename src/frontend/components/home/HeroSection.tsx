@@ -42,20 +42,29 @@ export function HeroSection() {
       {/* Full-bleed festival photography */}
       <motion.div className="absolute inset-0 z-0" style={{ y: imageY }}>
         <Image
-          src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1920&auto=format&fit=crop"
+          src="/festival-hero.png"
           alt="Awakenings Festival"
           fill
           priority
-          style={{ objectFit: "cover", objectPosition: "center 30%", opacity: 0.52 }}
+          style={{
+            objectFit: "cover",
+            objectPosition: "center 40%",
+            opacity: 0.55,
+            // Subtle grade: pull vivid pinks/cyans toward cinematic dark-gold palette
+            filter: "saturate(0.82) brightness(0.88)",
+          }}
           className="scale-[1.04]"
         />
       </motion.div>
 
-      {/* Single gradient — bottom fade only */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#020203] via-[#020203]/25 to-transparent" />
+      {/* Bottom fade — ensures headline legibility */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#020203] via-[#020203]/30 to-transparent" />
 
-      {/* Narrow side darkening — keeps text readable without killing the image */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#020203]/60 via-transparent to-transparent" />
+      {/* Left darkening — keeps left-aligned text readable */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#020203]/70 via-[#020203]/20 to-transparent" />
+
+      {/* Subtle warm amber tint — ties the image to the brand's gold accent */}
+      <div className="absolute inset-0 z-10 bg-[#C9A84C]/[0.04] pointer-events-none" />
 
       {/* Content */}
       <motion.div
