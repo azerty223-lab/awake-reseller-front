@@ -1,4 +1,4 @@
-﻿import { HeroSection }     from "@/frontend/components/home/HeroSection";
+﻿import { CinematicHero }  from "@/frontend/components/home/CinematicHero";
 import { StatsBar }        from "@/frontend/components/home/StatsBar";
 import { FeaturedTickets } from "@/frontend/components/home/FeaturedTickets";
 import { HowItWorks }      from "@/frontend/components/home/HowItWorks";
@@ -11,7 +11,7 @@ import { FAQSection }      from "@/frontend/components/home/FAQSection";
 export default function HomePage() {
   return (
     <>
-      <HeroSection />
+      <CinematicHero />
       <StatsBar />
       <FeaturedTickets />
       <HowItWorks />
