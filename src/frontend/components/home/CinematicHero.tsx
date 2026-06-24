@@ -234,7 +234,10 @@ export function CinematicHero() {
               left: "50%",
               width: "max(177.78vh, 100%)",
               height: "max(100vh, 56.25vw)",
-              transform: "translate(-50%, -50%)",
+              // scale(1.05) adds ~2.5% overhang on every edge.
+              // The panel's overflow:hidden clips that fringe,
+              // hiding YouTube's corner logo and any edge UI.
+              transform: "translate(-50%, -50%) scale(1.05)",
               pointerEvents: "none",
               zIndex: 0,
             }}
