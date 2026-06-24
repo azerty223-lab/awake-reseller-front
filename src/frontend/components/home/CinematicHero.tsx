@@ -281,7 +281,6 @@ export function CinematicHero() {
           <div
             data-content
             className="relative z-20 h-full flex flex-col items-center justify-center text-center px-6 sm:px-12 lg:px-20 max-w-[1400px] mx-auto w-full gap-6"
-            style={{ paddingTop: "40px" }}
           >
             {/* Dark pill — covers YouTube button */}
             <motion.div
