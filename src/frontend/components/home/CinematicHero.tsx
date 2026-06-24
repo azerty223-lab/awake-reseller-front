@@ -167,12 +167,12 @@ export function CinematicHero() {
         scrollTrigger: {
           trigger:           container,
           pin:               true,
-          scrub:             1,
+          scrub:             0.4,
           snap: {
             snapTo:   1 / (numPanels - 1),
-            duration: { min: 0.2, max: 0.55 },
-            delay:    0.05,
-            ease:     "power2.inOut",
+            duration: { min: 0.08, max: 0.22 },
+            delay:    0,
+            ease:     "power3.out",
           },
           end: () => `+=${track.scrollWidth - window.innerWidth}`,
           invalidateOnRefresh: true,
@@ -200,7 +200,7 @@ export function CinematicHero() {
             trigger:             container,
             start:               "top top",
             end:     () => `+=${track.scrollWidth - window.innerWidth}`,
-            scrub:               1,
+            scrub:               0.4,
             invalidateOnRefresh: true,
           },
         });
