@@ -95,11 +95,11 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5 text-zinc-400 text-sm">
                 <Calendar className="w-4 h-4 text-[#C9A84C] mt-0.5 shrink-0" />
-                <span>28 June – 5 July 2026</span>
+                <span>July 10–12, 2026</span>
               </li>
               <li className="flex items-start gap-2.5 text-zinc-400 text-sm">
                 <MapPin className="w-4 h-4 text-[#C9A84C] mt-0.5 shrink-0" />
-                <span>Spaarnwoude, Amsterdam, NL</span>
+                <span>Hilvarenbeek, Netherlands</span>
               </li>
             </ul>
 
@@ -141,7 +141,7 @@ export function Footer() {
             &copy; 2026 AW Tickets. All rights reserved.
           </p>
           <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[#C9A84C]/60">
-            Official Resale Partner
+           AW Ticket Resale
           </p>
         </div>
       </div>
