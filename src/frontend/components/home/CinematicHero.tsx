@@ -288,7 +288,7 @@ export function CinematicHero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="pointer-events-none select-none mt-8 w-full max-w-xl"
+              className="pointer-events-none select-none mt-8 w-full max-w-2xl"
             >
               <div className="flex flex-col items-center gap-5 px-8 py-6 rounded-2xl border border-white/[0.15] bg-black/60 backdrop-blur-md">
                 {/* Label row */}
