@@ -289,7 +289,7 @@ export function CinematicHero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="pointer-events-none select-none"
+              className="pointer-events-none select-none mt-8"
             >
               <div className="flex items-center gap-4 px-8 py-4 rounded-full border border-white/[0.15] bg-black/60 backdrop-blur-md">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] shrink-0" />
