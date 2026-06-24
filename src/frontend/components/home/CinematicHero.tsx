@@ -245,15 +245,23 @@ export function CinematicHero() {
             <div ref={ytDivRef} style={{ width: "100%", height: "100%" }} />
           </div>
 
-          {/* Overlay — z-index 10 keeps it above the iframe at all times.
-              Centre radial: opaque black ellipse at 50% 48% blacks out
-              the exact spot YouTube renders its play/pause button. */}
+          {/* Mouse-event interceptor — transparent, sits between iframe (z-0)
+              and overlay (z-10). Absorbs all hover/click events so they
+              never reach the YouTube iframe → YouTube's hover UI (play/pause
+              button) is never triggered. Content at z-20 still works normally
+              because its z-index is higher than this layer. */}
+          <div
+            className="absolute inset-0"
+            style={{ zIndex: 5 }}
+            aria-hidden="true"
+          />
+
+          {/* Visual overlay — z-index 10, pointer-events:none (visual only) */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               zIndex: 10,
               background: [
-                "radial-gradient(ellipse 30% 22% at 50% 48%, rgba(0,0,0,0.95) 0%, transparent 100%)",
                 "linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.88))",
                 "radial-gradient(circle at 50% 20%, rgba(210,170,55,0.18), transparent 45%)",
               ].join(", "),
