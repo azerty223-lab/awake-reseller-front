@@ -156,8 +156,9 @@ export function CinematicHero() {
     if (!container || !track) return;
 
     const numPanels = TOTAL_PANELS;
-    let current = 0;
-    let busy    = false;
+    let current   = 0;
+    let busy      = false;
+    let cooldown: ReturnType<typeof setTimeout> | null = null;
 
     // Pin the container in the viewport for the duration of all panels
     const pin = ScrollTrigger.create({
@@ -180,7 +181,11 @@ export function CinematicHero() {
         x:        -next * window.innerWidth,
         duration: 0.55,
         ease:     "power3.inOut",
-        onComplete: () => { busy = false; },
+        onComplete: () => {
+          // Extra cooldown after animation — prevents touchpad from
+          // firing a second panel change mid-swipe gesture
+          cooldown = setTimeout(() => { busy = false; }, 750);
+        },
       });
     };
 
@@ -214,6 +219,7 @@ export function CinematicHero() {
     window.addEventListener("touchend",   onTouchEnd,   { passive: false });
 
     return () => {
+      if (cooldown) clearTimeout(cooldown);
       pin.kill();
       window.removeEventListener("wheel",      onWheel);
       window.removeEventListener("touchstart", onTouchStart);
