@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, ShoppingCart, Check } from "lucide-react";
+import { ShoppingCart, Check, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Ticket as PrismaTicket } from "@prisma/client";
 import { useCartStore } from "@/frontend/store/cart";
@@ -19,14 +19,13 @@ const CATEGORY_LABEL: Record<string, string> = {
   ACCOMMODATION:   "Stay",
 };
 
-// Column width constants — shared between header and rows for precise alignment
+// Shared between header and rows — prevents structural misalignment when button states change width
 const COL = {
   index:    "w-10 shrink-0",
   category: "hidden sm:block shrink-0 w-[88px]",
   stock:    "hidden md:flex shrink-0 items-center gap-1.5 w-[96px]",
   price:    "shrink-0 w-[88px] text-right",
-  action:   "shrink-0 w-[72px]",
-  arrow:    "shrink-0 w-4",
+  action:   "shrink-0 w-[72px] flex justify-end",
 } as const;
 
 function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
@@ -34,10 +33,10 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
   const items   = useCartStore((s) => s.items);
   const [added, setAdded] = useState(false);
 
-  const available  = ticket.quantity - ticket.sold;
-  const isAvail    = available > 0 && ticket.isVisible;
-  const isLow      = isAvail && available <= 3;
-  const inCart     = !!items.find((i) => i.ticketId === ticket.id);
+  const available = ticket.quantity - ticket.sold;
+  const isAvail   = available > 0 && ticket.isVisible;
+  const isLow     = isAvail && available <= 3;
+  const inCart    = !!items.find((i) => i.ticketId === ticket.id);
 
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -59,33 +58,28 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
+      transition={{ duration: 0.38, delay: index * 0.05, ease: "easeOut" }}
     >
       <Link
         href={`/tickets/${ticket.slug}`}
-        className="group flex items-center gap-4 py-4 border-b border-white/[0.06] hover:bg-white/[0.02] transition-colors duration-150"
+        // hover:bg-white/[0.04] — 4% is minimum perceptible surface shift on #050507 at standard calibration
+        className="group flex items-center gap-4 py-4 border-b border-white/[0.06] hover:bg-white/[0.04] transition-colors duration-150"
       >
-        {/* Index */}
-        <span
-          className={`${COL.index} font-[var(--font-playfair)] font-black text-zinc-800 group-hover:text-zinc-600 transition-colors duration-200 tabular-nums select-none`}
-          style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.2rem)", letterSpacing: "-0.01em" }}
-        >
+        {/* Index — fixed text-sm: two clamp curves on adjacent columns create misalignment at all but one viewport width */}
+        <span className={`${COL.index} text-sm font-bold text-zinc-700 group-hover:text-zinc-500 transition-colors duration-150 tabular-nums select-none`}>
           {String(index + 1).padStart(2, "0")}
         </span>
 
-        {/* Name + day — flex-1 */}
+        {/* Name + day */}
         <div className="flex-1 min-w-0">
-          <p
-            className="text-zinc-200 font-medium truncate group-hover:text-white transition-colors duration-150"
-            style={{ fontSize: "clamp(0.875rem, 1.4vw, 1rem)" }}
-          >
+          <p className="text-[0.9375rem] font-medium text-zinc-200 truncate group-hover:text-white transition-colors duration-150">
             {ticket.name}
           </p>
           {ticket.dayLabel && (
-            <p className="text-zinc-600 text-xs mt-0.5 truncate">{ticket.dayLabel}</p>
+            <p className="text-xs text-zinc-600 mt-0.5 truncate">{ticket.dayLabel}</p>
           )}
         </div>
 
@@ -98,50 +92,49 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
         <div className={COL.stock}>
           {isAvail ? (
             <>
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isLow ? "bg-amber-400/75" : "bg-emerald-500/55"}`} />
-              <span className={`text-[11px] ${isLow ? "text-amber-400/65 font-medium" : "text-zinc-600"}`}>
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isLow ? "bg-amber-400" : "bg-emerald-500/60"}`} />
+              <span className={`text-[11px] ${isLow ? "text-amber-400/90 font-semibold" : "text-zinc-600"}`}>
                 {available === 1 ? "Last one" : `${available} left`}
               </span>
             </>
           ) : (
-            <>
-              <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-zinc-800" />
-              <span className="text-[11px] text-zinc-700">Sold out</span>
-            </>
+            <span className="text-[11px] text-zinc-700">Sold out</span>
           )}
         </div>
 
         {/* Price */}
         <div className={COL.price}>
-          <span
-            className="font-semibold text-white tabular-nums"
-            style={{ fontSize: "clamp(0.875rem, 1.5vw, 1.0625rem)", letterSpacing: "-0.015em" }}
-          >
+          <span className="text-[0.9375rem] font-semibold text-white tabular-nums" style={{ letterSpacing: "-0.015em" }}>
             {formatPrice(ticket.resalePrice, ticket.currency)}
           </span>
         </div>
 
-        {/* Add button — fixed width matches header spacer */}
-        <div className={`${COL.action} flex justify-end`}>
+        {/* Add button
+            opacity-40 (not 25): disabled ≠ invisible — 25% removes the element from
+            the user's awareness entirely, preventing them from understanding the state */}
+        <div className={COL.action}>
           <button
             onClick={handleAdd}
             disabled={!isAvail}
             className={[
               "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold",
-              "transition-colors duration-150 disabled:opacity-25 disabled:cursor-not-allowed select-none",
+              "transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed select-none",
               added || inCart
-                ? "bg-white/[0.05] text-zinc-500 ring-1 ring-white/[0.07]"
+                ? "bg-white/[0.05] text-zinc-500"
                 : "bg-[#C9A84C] text-[#0C0900] hover:bg-[#D4B855] active:scale-[0.97]",
             ].join(" ")}
           >
-            {added   ? <><Check className="w-3 h-3" />Done</> :
-             inCart  ? <><ShoppingCart className="w-3 h-3" />In cart</> :
-                        <><ShoppingCart className="w-3 h-3" />Add</>}
+            {added
+              ? <><Check className="w-3 h-3" />Done</>
+              : inCart
+                ? <><ShoppingCart className="w-3 h-3" />In cart</>
+                : <><ShoppingCart className="w-3 h-3" />Add</>
+            }
           </button>
         </div>
-
-        {/* Arrow */}
-        <ArrowRight className={`${COL.arrow} text-zinc-700 group-hover:text-zinc-400 group-hover:translate-x-0.5 transition-all duration-200`} />
+        {/* No ArrowRight: the row is a link — cursor + hover bg communicate affordance.
+            An end arrow creates false visual weight at the rightmost position,
+            drawing the eye away from price (the last meaningful datum). */}
       </Link>
     </motion.div>
   );
@@ -167,10 +160,10 @@ export function FeaturedTickets() {
 
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.48 }}
           className="flex items-end justify-between mb-12"
         >
           <div>
@@ -193,15 +186,14 @@ export function FeaturedTickets() {
           </Link>
         </motion.div>
 
-        {/* Column headers — widths mirror COL constants */}
+        {/* Column headers — widths must precisely mirror COL constants */}
         <div className="flex items-center gap-4 pb-2.5 border-b border-white/[0.06]">
           <span className={COL.index} />
           <span className="flex-1 text-[11px] uppercase tracking-[0.12em] text-zinc-600">Ticket</span>
           <span className={`${COL.category} text-[11px] uppercase tracking-[0.12em] text-zinc-600`}>Type</span>
-          <span className={`w-[96px] hidden md:block text-[11px] uppercase tracking-[0.12em] text-zinc-600`}>Stock</span>
+          <span className="w-[96px] hidden md:block text-[11px] uppercase tracking-[0.12em] text-zinc-600">Stock</span>
           <span className={`${COL.price} text-[11px] uppercase tracking-[0.12em] text-zinc-600`}>Price</span>
           <span className={COL.action} />
-          <span className={COL.arrow} />
         </div>
 
         {/* Rows */}
@@ -224,9 +216,7 @@ export function FeaturedTickets() {
           <p className="text-zinc-700 py-12 text-sm">No featured tickets right now.</p>
         ) : (
           <div>
-            {tickets.map((t, i) => (
-              <TicketRow key={t.id} ticket={t} index={i} />
-            ))}
+            {tickets.map((t, i) => <TicketRow key={t.id} ticket={t} index={i} />)}
           </div>
         )}
 
@@ -236,7 +226,7 @@ export function FeaturedTickets() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.2 }}
+            transition={{ duration: 0.38, delay: 0.18 }}
             className="flex pt-6 sm:hidden"
           >
             <Link

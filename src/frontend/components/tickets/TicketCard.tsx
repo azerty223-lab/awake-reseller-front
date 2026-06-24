@@ -12,16 +12,16 @@ import {
 } from "@/frontend/types/tickets";
 import { useState } from "react";
 
-// Muted, sophisticated badge palette — no oversaturation
+// Pure bg+text badges — no ring complexity that contributes nothing at dark-mode opacity levels
 const CATEGORY_STYLES: Partial<Record<TicketCategory, { label: string; cls: string }>> = {
-  [TicketCategory.WEEKEND]:         { label: "Weekend",      cls: "bg-violet-500/[0.1]  text-violet-300/75  ring-1 ring-violet-500/[0.14]" },
-  [TicketCategory.SATURDAY]:        { label: "Saturday",     cls: "bg-blue-500/[0.1]    text-blue-300/75    ring-1 ring-blue-500/[0.14]" },
-  [TicketCategory.SUNDAY]:          { label: "Sunday",       cls: "bg-sky-500/[0.1]     text-sky-300/75     ring-1 ring-sky-500/[0.14]" },
-  [TicketCategory.CAMPING]:         { label: "Camping",      cls: "bg-emerald-500/[0.1] text-emerald-300/75 ring-1 ring-emerald-500/[0.14]" },
-  [TicketCategory.COMFORT_CAMPING]: { label: "Comfort Camp", cls: "bg-emerald-500/[0.1] text-emerald-300/75 ring-1 ring-emerald-500/[0.14]" },
-  [TicketCategory.CAR_CAMPING]:     { label: "Car Camp",     cls: "bg-emerald-500/[0.1] text-emerald-300/75 ring-1 ring-emerald-500/[0.14]" },
-  [TicketCategory.PREMIUM]:         { label: "Premium",      cls: "bg-[#C9A84C]/[0.1]   text-[#D4AF5A]      ring-1 ring-[#C9A84C]/[0.18]" },
-  [TicketCategory.ACCOMMODATION]:   { label: "Stay",         cls: "bg-rose-500/[0.1]    text-rose-300/75    ring-1 ring-rose-500/[0.14]" },
+  [TicketCategory.WEEKEND]:         { label: "Weekend",      cls: "bg-violet-500/[0.12]  text-violet-300/80" },
+  [TicketCategory.SATURDAY]:        { label: "Saturday",     cls: "bg-blue-500/[0.12]    text-blue-300/80" },
+  [TicketCategory.SUNDAY]:          { label: "Sunday",       cls: "bg-sky-500/[0.12]     text-sky-300/80" },
+  [TicketCategory.CAMPING]:         { label: "Camping",      cls: "bg-emerald-500/[0.12] text-emerald-300/80" },
+  [TicketCategory.COMFORT_CAMPING]: { label: "Comfort Camp", cls: "bg-emerald-500/[0.12] text-emerald-300/80" },
+  [TicketCategory.CAR_CAMPING]:     { label: "Car Camp",     cls: "bg-emerald-500/[0.12] text-emerald-300/80" },
+  [TicketCategory.PREMIUM]:         { label: "Premium",      cls: "bg-[#C9A84C]/[0.12]   text-[#D4B050]" },
+  [TicketCategory.ACCOMMODATION]:   { label: "Stay",         cls: "bg-rose-500/[0.12]    text-rose-300/80" },
 };
 
 function getDeliveryInfo(method: DeliveryMethod) {
@@ -45,6 +45,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
   const inCart    = !!items.find((i) => i.ticketId === ticket.id);
   const available = ticket.quantity - ticket.sold;
   const isAvail   = available > 0 && ticket.isVisible;
+  // Low-stock threshold: urgency messaging must be proportional to scarcity
   const isLow     = isAvail && available <= 3;
 
   const handleAdd = (e: React.MouseEvent) => {
@@ -67,115 +68,104 @@ export function TicketCard({ ticket }: TicketCardProps) {
 
   const cat   = CATEGORY_STYLES[ticket.category] ?? {
     label: String(ticket.category).replace(/_/g, " "),
-    cls: "bg-zinc-700/20 text-zinc-400 ring-1 ring-zinc-700/25",
+    cls: "bg-zinc-700/20 text-zinc-400",
   };
   const deliv   = getDeliveryInfo(ticket.deliveryMethod);
-  const DelIcon = deliv.Icon;
 
   return (
     <div
       className={[
-        // Base surface — fractional elevation above page background
-        "group relative flex flex-col bg-[#0F1013] border rounded-xl",
-        // Only transition border — no shadow transforms, no translate
-        "transition-colors duration-200",
+        "group relative flex flex-col bg-[#0F1013] border rounded-xl transition-colors duration-200",
         ticket.isFeatured
-          ? "border-[#C9A84C]/[0.16] hover:border-[#C9A84C]/[0.38]"
-          : "border-white/[0.07] hover:border-white/[0.14]",
-        // Sold-out: dim in place, no overlay divs
+          ? "border-[#C9A84C]/[0.18] hover:border-[#C9A84C]/[0.40]"
+          : "border-white/[0.09] hover:border-white/[0.16]",
         !isAvail ? "opacity-50" : "",
       ].join(" ")}
     >
-      {/* Featured: single pixel top rule, no glows */}
+      {/* Featured: 1px top accent — signals elevation without decoration */}
       {ticket.isFeatured && (
-        <div className="absolute top-0 inset-x-0 h-px rounded-t-xl bg-gradient-to-r from-transparent via-[#C9A84C]/40 to-transparent pointer-events-none" />
+        <div className="absolute top-0 inset-x-0 h-px rounded-t-xl bg-gradient-to-r from-transparent via-[#C9A84C]/45 to-transparent pointer-events-none" />
       )}
 
-      {/* ── Card body ─────────────────────────────── */}
-      <div className="flex flex-col flex-1 p-4 gap-0">
+      {/* ── Body ─────────────────────────────────── */}
+      <div className="flex flex-col flex-1 p-4">
 
-        {/* Meta row — badge left, delivery right */}
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium leading-tight ${cat.cls}`}>
+        {/* Badge row — category only, left-aligned */}
+        <div className="mb-3">
+          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${cat.cls}`}>
             {cat.label}
           </span>
-          <div className="flex items-center gap-1 text-[11px] text-zinc-700 select-none">
-            <DelIcon className="w-3 h-3 shrink-0" />
-            <span>{deliv.label}</span>
-          </div>
         </div>
 
-        {/* Ticket name — primary identifier */}
-        <h3
-          className="text-[0.9375rem] font-medium text-zinc-100 leading-snug mb-1"
-          style={{ letterSpacing: "-0.006em" }}
-        >
-          {ticket.name}
-        </h3>
-        {ticket.dayLabel && (
-          <p className="text-xs text-zinc-600 mb-0">{ticket.dayLabel}</p>
-        )}
-
-        {/* Spacer — pushes price to bottom of content area */}
-        <div className="flex-1 min-h-[16px]" />
+        {/* Name block — min-height anchors price Y-position across grid */}
+        <div className="min-h-[52px] mb-4">
+          <h3
+            className="text-[0.9375rem] font-medium text-zinc-100 leading-snug"
+            style={{ letterSpacing: "-0.006em" }}
+          >
+            {ticket.name}
+          </h3>
+          {ticket.dayLabel && (
+            <p className="text-xs text-zinc-600 mt-1">{ticket.dayLabel}</p>
+          )}
+        </div>
 
         {/* Price block */}
-        <div className="mt-4">
-          <div className="flex items-baseline justify-between gap-2 mb-2">
-            <span
-              className="text-[1.1875rem] font-semibold text-white tabular-nums leading-none"
-              style={{ letterSpacing: "-0.02em" }}
-            >
-              {formatPrice(ticket.resalePrice, ticket.currency)}
-            </span>
-            <span className="text-[11px] text-zinc-700 line-through tabular-nums leading-none">
-              {formatPrice(ticket.originalPrice, ticket.currency)}
-            </span>
-          </div>
+        <div className="flex items-baseline justify-between gap-2 mb-2">
+          <span
+            className="text-[1.1875rem] font-semibold text-white tabular-nums leading-none"
+            style={{ letterSpacing: "-0.022em" }}
+          >
+            {formatPrice(ticket.resalePrice, ticket.currency)}
+          </span>
+          <span className="text-[11px] text-zinc-700 line-through tabular-nums leading-none">
+            {formatPrice(ticket.originalPrice, ticket.currency)}
+          </span>
+        </div>
 
-          {/* Availability status */}
-          <div className="flex items-center justify-between h-4">
-            <div className="flex items-center gap-1.5">
-              {isAvail ? (
-                <>
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isLow ? "bg-amber-400/75" : "bg-emerald-500/55"}`} />
-                  <span className={`text-[11px] ${isLow ? "text-amber-400/65 font-medium" : "text-zinc-600"}`}>
-                    {available === 1 ? "Last one" : `${available} left`}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-zinc-800" />
-                  <span className="text-[11px] text-zinc-700">Sold out</span>
-                </>
-              )}
-            </div>
-            {ticket.personalizationStatus === PersonalizationStatus.COMPLETED && isAvail && (
-              <span className="flex items-center gap-1 text-[10px] text-emerald-500/55 select-none">
-                <Check className="w-2.5 h-2.5" />
-                Ready
-              </span>
+        {/* Availability + delivery — grouped: both answer "how/when do I get this" */}
+        <div className="flex items-center justify-between h-4">
+          <div className="flex items-center gap-1.5 min-w-0">
+            {isAvail ? (
+              <>
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isLow ? "bg-amber-400" : "bg-emerald-500/60"}`} />
+                {/* Low-stock urgency: semibold at 90% amber — must register, not whisper */}
+                <span className={`text-[11px] ${isLow ? "text-amber-400/90 font-semibold" : "text-zinc-600"}`}>
+                  {available === 1 ? "Last one" : `${available} left`}
+                </span>
+                <span className="text-zinc-800 text-[11px] select-none mx-0.5">·</span>
+                <span className="text-[11px] text-zinc-700 truncate">{deliv.label}</span>
+              </>
+            ) : (
+              <span className="text-[11px] text-zinc-700">Sold out</span>
             )}
           </div>
+          {ticket.personalizationStatus === PersonalizationStatus.COMPLETED && isAvail && (
+            <span className="flex items-center gap-1 text-[10px] text-emerald-500/60 shrink-0 select-none ml-2">
+              <Check className="w-2.5 h-2.5" />
+              Ready
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Separator */}
-      <div className="mx-4 h-px bg-white/[0.05]" />
+      {/* Separator — full-width, consistent with footer px-4 */}
+      <div className="h-px bg-white/[0.06]" />
 
       {/* ── Action footer ─────────────────────────── */}
-      <div className="flex items-center gap-2 p-3">
+      <div className="flex items-center gap-2 px-4 py-3">
+        {/* CTA: h-9 (36px) signals primary commercial action, not utility chip */}
         <button
           onClick={handleAdd}
           disabled={!isAvail}
           className={[
-            "flex-1 h-8 inline-flex items-center justify-center gap-1.5 rounded-lg",
+            "flex-1 h-9 inline-flex items-center justify-center gap-1.5 rounded-lg",
             "text-[11px] font-semibold transition-colors duration-150 select-none",
             added || inCart
-              ? "bg-white/[0.05] text-zinc-500 ring-1 ring-white/[0.07]"
+              ? "bg-white/[0.06] text-zinc-500"
               : isAvail
                 ? "bg-[#C9A84C] text-[#0C0900] hover:bg-[#D4B855] active:scale-[0.97]"
-                : "bg-transparent text-zinc-700 ring-1 ring-white/[0.06] cursor-not-allowed",
+                : "text-zinc-700 cursor-not-allowed",
           ].join(" ")}
         >
           {added
@@ -186,12 +176,11 @@ export function TicketCard({ ticket }: TicketCardProps) {
           }
         </button>
 
+        {/* View link: no border, w-7 h-7 — visually subordinate to CTA */}
         <Link
           href={`/tickets/${ticket.slug}`}
-          className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-zinc-700 hover:text-zinc-300 hover:bg-white/[0.05] transition-colors duration-150 shrink-0"
-          aria-label="View details"
-          // Keep navigable even when card is sold-out-dimmed
-          style={!isAvail ? { pointerEvents: "auto", opacity: 1 } : undefined}
+          className="w-7 h-7 inline-flex items-center justify-center rounded-lg text-zinc-700 hover:text-zinc-300 hover:bg-white/[0.05] transition-colors duration-150 shrink-0"
+          aria-label="View ticket details"
         >
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
