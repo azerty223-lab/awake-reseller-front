@@ -286,6 +286,8 @@ export function CinematicHero() {
                 Awakenings
                 <br />
                 <span style={{
+                  display: "block",
+                  marginLeft: "clamp(2rem, 12vw, 10rem)",
                   background: "linear-gradient(to right, #C9A84C 0%, #E4BA65 40%, #C9A84C 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
