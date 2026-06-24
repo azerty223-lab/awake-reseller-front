@@ -98,14 +98,14 @@ export function TrustSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="group flex gap-8 items-start px-6 py-7 rounded-2xl
+                className="group flex gap-4 sm:gap-8 items-start px-4 sm:px-6 py-5 sm:py-7 rounded-2xl w-full
                            hover:bg-white/[0.03] transition-all duration-300 border border-transparent
                            hover:border-white/[0.06]"
               >
                 {/* Number */}
-                <div className="shrink-0 w-14">
+                <div className="shrink-0 w-10 sm:w-14">
                   <span
-                    className="font-[var(--font-playfair)] text-4xl font-black leading-none"
+                    className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-black leading-none"
                     style={{
                       background: "linear-gradient(180deg, rgba(201,168,76,0.6) 0%, rgba(201,168,76,0.1) 100%)",
                       WebkitBackgroundClip: "text",
@@ -118,20 +118,20 @@ export function TrustSection() {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-white font-bold text-lg group-hover:text-white transition-colors">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <h3 className="text-white font-bold text-base sm:text-lg group-hover:text-white transition-colors">
                       {f.title}
                     </h3>
-                    <span className="text-[10px] uppercase tracking-[0.12em] text-[#C9A84C] bg-[#C9A84C]/8 border border-[#C9A84C]/15 px-2 py-0.5 rounded-full font-semibold">
+                    <span className="text-[10px] uppercase tracking-[0.12em] text-[#C9A84C] bg-[#C9A84C]/8 border border-[#C9A84C]/15 px-2 py-0.5 rounded-full font-semibold whitespace-nowrap">
                       {f.detail}
                     </span>
                   </div>
-                  <p className="text-zinc-500 text-sm leading-relaxed">{f.body}</p>
+                  <p className="text-zinc-500 text-sm leading-relaxed line-clamp-2">{f.body}</p>
                 </div>
 
                 {/* Hover arrow */}
-                <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1">
+                <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1 hidden sm:block">
                   <ArrowRight className="w-4 h-4 text-zinc-600" />
                 </div>
               </motion.div>

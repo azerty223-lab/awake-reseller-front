@@ -246,7 +246,7 @@ export function CinematicHero() {
               // scale(1.05) adds ~2.5% overhang on every edge.
               // The panel's overflow:hidden clips that fringe,
               // hiding YouTube's corner logo and any edge UI.
-              transform: "translate(-50%, -50%) scale(1.05)",
+              transform: "translate(-50%, calc(-50% - 20px)) scale(1.05)",
               pointerEvents: "none",
               zIndex: 0,
             }}
@@ -301,25 +301,25 @@ export function CinematicHero() {
                 </div>
 
                 {/* Countdown inside the container */}
-                <div className="flex items-baseline justify-center gap-6 sm:gap-10">
+                <div className="flex items-baseline justify-center gap-3 sm:gap-8">
                   {[
                     { val: d, label: "days" },
                     { val: h, label: "hrs" },
                     { val: m, label: "min" },
                     { val: s, label: "sec" },
                   ].map(({ val, label }, i) => (
-                    <div key={label} className="flex items-baseline gap-1.5">
+                    <div key={label} className="flex items-baseline gap-1">
                       <span
                         className="font-[var(--font-playfair)] font-black text-white tabular-nums"
-                        style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", letterSpacing: "-0.02em" }}
+                        style={{ fontSize: "clamp(1.5rem, 5vw, 3.5rem)", letterSpacing: "-0.02em" }}
                       >
                         {String(val).padStart(2, "0")}
                       </span>
-                      <span className="text-zinc-400 text-[10px] uppercase tracking-[0.15em] font-medium">
+                      <span className="text-zinc-400 text-[9px] uppercase tracking-[0.1em] font-medium">
                         {label}
                       </span>
                       {i < 3 && (
-                        <span className="text-zinc-600 ml-4 font-light text-xl leading-none select-none">·</span>
+                        <span className="hidden sm:inline text-zinc-600 ml-2 font-light text-xl leading-none select-none">·</span>
                       )}
                     </div>
                   ))}
