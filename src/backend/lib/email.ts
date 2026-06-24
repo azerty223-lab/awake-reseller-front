@@ -169,7 +169,7 @@ export async function sendTicketEmail(data: TicketEmailData) {
 <body style="margin:0;padding:40px 16px;background:#f0f0f0;font-family:Arial,sans-serif;">
   <div style="max-width:520px;margin:0 auto;">
     <div style="background:#0a0a0a;border-radius:16px 16px 0 0;padding:28px 32px;text-align:center;">
-      <p style="color:#c9a84c;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin:0 0 6px;">Official Resale</p>
+      <p style="color:#c9a84c;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin:0 0 6px;">Ticket Resale</p>
       <h1 style="color:#c9a84c;font-size:26px;margin:0;letter-spacing:.08em;font-weight:900;">AW TICKETS</h1>
     </div>
     <div style="background:#fff;padding:32px;">

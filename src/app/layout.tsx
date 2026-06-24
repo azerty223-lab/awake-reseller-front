@@ -2,6 +2,7 @@
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/frontend/components/ui/Toaster";
+import { LenisProvider } from "@/frontend/providers/LenisProvider";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -52,7 +53,9 @@ export default function RootLayout({
       style={{ colorScheme: "dark" }}
     >
       <body className="min-h-full bg-[#0a0a0a] text-white antialiased font-[var(--font-inter)]">
-        {children}
+        <LenisProvider>
+          {children}
+        </LenisProvider>
         <Toaster />
       </body>
     </html>

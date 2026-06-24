@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { LineReveal } from "@/frontend/components/ui/LineReveal";
 
 const artists = [
   "Adam Beyer", "Charlotte de Witte", "Amelie Lens", "Richie Hawtin",
@@ -52,16 +53,17 @@ export function FestivalInfo() {
               className="font-[var(--font-playfair)] font-black text-white leading-[0.95] mb-8"
               style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "-0.02em" }}
             >
-              Europe's premier
-              <br />
-              <span style={{
-                background: "linear-gradient(135deg, #C9A84C 0%, #E4BA65 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>
-                techno festival
-              </span>
+              <LineReveal>Europe's premier</LineReveal>
+              <LineReveal delay={0.09}>
+                <span style={{
+                  background: "linear-gradient(135deg, #C9A84C 0%, #E4BA65 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}>
+                  techno festival
+                </span>
+              </LineReveal>
             </h2>
             <p className="text-zinc-400 text-base leading-[1.8] mb-10">
               Since its founding, Awakenings has become the benchmark for electronic

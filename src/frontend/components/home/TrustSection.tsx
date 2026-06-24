@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { LineReveal } from "@/frontend/components/ui/LineReveal";
 
 const features = [
   {
@@ -60,17 +61,19 @@ export function TrustSection() {
             </div>
 
             <h2 className="font-[var(--font-playfair)] text-4xl sm:text-5xl font-black text-white leading-tight mb-6">
-              Buy with<br />
-              <span
-                style={{
-                  background: "linear-gradient(135deg, #C9A84C 0%, #E4BA65 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Confidence
-              </span>
+              <LineReveal>Buy with</LineReveal>
+              <LineReveal delay={0.09}>
+                <span
+                  style={{
+                    background: "linear-gradient(135deg, #C9A84C 0%, #E4BA65 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  Confidence
+                </span>
+              </LineReveal>
             </h2>
 
             <p className="text-zinc-500 text-sm leading-relaxed mb-8">

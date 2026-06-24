@@ -80,8 +80,7 @@ export default function AboutPage() {
               <h3 className="text-white font-semibold text-base mb-3">Independent &amp; Transparent</h3>
               <p className="text-zinc-500 text-sm leading-relaxed">
                 AW Tickets is operated by a private individual — not affiliated with Stichting
-                Awakenings, ID&amp;T Group, or any official festival organizer. No hidden fees,
-                no surprises.
+                Awakenings, ID&amp;T Group, or any official festival organizer.
               </p>
             </div>
 

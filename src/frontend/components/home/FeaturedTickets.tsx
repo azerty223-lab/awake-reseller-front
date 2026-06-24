@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart, Check, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { EchoHeading } from "@/frontend/components/ui/EchoHeading";
 import type { Ticket as PrismaTicket } from "@prisma/client";
 import { useCartStore } from "@/frontend/store/cart";
 import { formatPrice } from "@/backend/lib/utils";
@@ -170,12 +171,13 @@ export function FeaturedTickets() {
             <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-600 mb-3 font-medium">
               Available now
             </p>
-            <h2
+            <EchoHeading
+              as="h2"
               className="font-[var(--font-playfair)] font-black text-white leading-tight"
               style={{ fontSize: "clamp(1.875rem, 4.5vw, 3rem)", letterSpacing: "-0.02em" }}
             >
               Top Picks
-            </h2>
+            </EchoHeading>
           </div>
           <Link
             href="/tickets"

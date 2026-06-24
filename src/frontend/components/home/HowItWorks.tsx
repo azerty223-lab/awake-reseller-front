@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Search, Lock, MailCheck } from "lucide-react";
+import { LineReveal } from "@/frontend/components/ui/LineReveal";
 
 const STEPS = [
   {
@@ -47,7 +48,7 @@ export function HowItWorks() {
             className="font-[var(--font-playfair)] font-black text-white leading-tight"
             style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)", letterSpacing: "-0.02em" }}
           >
-            Your ticket, three steps
+            <LineReveal>Your ticket, three steps</LineReveal>
           </h2>
         </motion.div>
 
