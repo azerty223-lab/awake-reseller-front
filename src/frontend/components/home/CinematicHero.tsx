@@ -277,8 +277,8 @@ export function CinematicHero() {
                 play/pause button. Styled as a branded event-detail pill so
                 it looks intentional, not like a hack. */}
             <div
-              className="absolute left-1/2 -translate-x-1/2 pointer-events-none select-none z-30"
-              style={{ top: "50%", transform: "translate(-50%, -50%)" }}
+              className="absolute pointer-events-none select-none z-30"
+              style={{ top: "50%", left: "57%", transform: "translate(-50%, -50%)" }}
             >
               <div className="flex items-center gap-3 px-5 py-2 rounded-full border border-white/[0.12] bg-black/40 backdrop-blur-sm">
                 <span className="w-1 h-1 rounded-full bg-[#C9A84C]" />
