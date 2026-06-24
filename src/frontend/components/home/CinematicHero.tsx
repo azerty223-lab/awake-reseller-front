@@ -144,7 +144,10 @@ export function CinematicHero() {
     };
   }, []);
 
-  // ── GSAP horizontal scroll ─────────────────────────────────────────────────
+  // ── Panel navigation — wheel-event driven, one tick = one panel ──────────────
+  // Replaces scrub+snap approach which stopped halfway with Lenis smoothing.
+  // The container is pinned via ScrollTrigger; wheel events advance the index
+  // and gsap.to() animates the track. A "busy" lock prevents double-firing.
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
@@ -152,63 +155,70 @@ export function CinematicHero() {
     const track     = trackRef.current;
     if (!container || !track) return;
 
-    const panels    = Array.from(track.children) as HTMLElement[];
-    const numPanels = panels.length;
+    const numPanels = TOTAL_PANELS;
+    let current = 0;
+    let busy    = false;
 
-    const ctx = gsap.context(() => {
-      // ── 1. Translate the entire track leftward as the user scrolls ──────
+    // Pin the container in the viewport for the duration of all panels
+    const pin = ScrollTrigger.create({
+      trigger: container,
+      pin:     true,
+      start:   "top top",
+      end:     `+=${(numPanels - 1) * window.innerHeight}`,
+      invalidateOnRefresh: true,
+    });
+
+    const goTo = (index: number) => {
+      if (busy) return;
+      const next = Math.max(0, Math.min(numPanels - 1, index));
+      if (next === current) return;
+      busy    = true;
+      current = next;
+      setActivePanel(next);
+
       gsap.to(track, {
-        x: () => -(track.scrollWidth - window.innerWidth),
-        ease: "none",
-        scrollTrigger: {
-          trigger:           container,
-          pin:               true,
-          scrub:             0.4,
-          snap: {
-            snapTo:      1 / (numPanels - 1),
-            directional: true,   // any scroll forward = next panel, backward = prev
-            duration:    { min: 0.1, max: 0.3 },
-            delay:       0,
-            ease:        "power3.out",
-          },
-          end: () => `+=${track.scrollWidth - window.innerWidth}`,
-          invalidateOnRefresh: true,
-
-          // Track active panel for dot indicator
-          onUpdate: (self) => {
-            const idx = Math.round(self.progress * (numPanels - 1));
-            setActivePanel(idx);
-          },
-        },
+        x:        -next * window.innerWidth,
+        duration: 0.55,
+        ease:     "power3.inOut",
+        onComplete: () => { busy = false; },
       });
+    };
 
-      // ── 2. Background parallax — images move at 80% of panel speed ──────
-      // Backgrounds are in .data-parallax divs.
-      // They're carried by the track (100%), but we add back +20% rightward
-      // offset so their net movement is 80% — creating depth illusion.
-      const bgs = Array.from(
-        track.querySelectorAll<HTMLElement>("[data-parallax]")
-      );
-      if (bgs.length) {
-        gsap.to(bgs, {
-          x: () => (track.scrollWidth - window.innerWidth) * 0.22,
-          ease: "none",
-          scrollTrigger: {
-            trigger:             container,
-            start:               "top top",
-            end:     () => `+=${track.scrollWidth - window.innerWidth}`,
-            scrub:               0.4,
-            invalidateOnRefresh: true,
-          },
-        });
-      }
+    const onWheel = (e: WheelEvent) => {
+      const rect = container.getBoundingClientRect();
+      // Only intercept when pinned (container flush with top of viewport)
+      if (rect.top < -2 || rect.top > 2) return;
+      // At last panel scrolling down → release; at first scrolling up → release
+      if (e.deltaY > 0 && current >= numPanels - 1) return;
+      if (e.deltaY < 0 && current <= 0) return;
+      e.preventDefault();
+      goTo(current + (e.deltaY > 0 ? 1 : -1));
+    };
 
-      // Text content is animated via Framer Motion on panels 2-3 (see JSX).
-      // Per-panel GSAP text triggers are skipped here to avoid
-      // containerAnimation typing complexity.
-    }, container);
+    // Touch support
+    let touchStartY = 0;
+    const onTouchStart = (e: TouchEvent) => { touchStartY = e.touches[0].clientY; };
+    const onTouchEnd   = (e: TouchEvent) => {
+      const delta = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) < 30) return;
+      const rect = container.getBoundingClientRect();
+      if (rect.top < -2 || rect.top > 2) return;
+      if (delta > 0 && current >= numPanels - 1) return;
+      if (delta < 0 && current <= 0) return;
+      e.preventDefault();
+      goTo(current + (delta > 0 ? 1 : -1));
+    };
 
-    return () => ctx.revert();
+    window.addEventListener("wheel",      onWheel,      { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true  });
+    window.addEventListener("touchend",   onTouchEnd,   { passive: false });
+
+    return () => {
+      pin.kill();
+      window.removeEventListener("wheel",      onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend",   onTouchEnd);
+    };
   }, []);
 
   return (
