@@ -245,12 +245,15 @@ export function CinematicHero() {
             <div ref={ytDivRef} style={{ width: "100%", height: "100%" }} />
           </div>
 
-          {/* Overlay — z-index 10 keeps it above the iframe at all times */}
+          {/* Overlay — z-index 10 keeps it above the iframe at all times.
+              Centre radial: opaque black ellipse at 50% 48% blacks out
+              the exact spot YouTube renders its play/pause button. */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               zIndex: 10,
               background: [
+                "radial-gradient(ellipse 30% 22% at 50% 48%, rgba(0,0,0,0.95) 0%, transparent 100%)",
                 "linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.88))",
                 "radial-gradient(circle at 50% 20%, rgba(210,170,55,0.18), transparent 45%)",
               ].join(", "),
