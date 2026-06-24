@@ -7,13 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-// ── YouTube IFrame API types ──────────────────────────────────────────────────
-interface _YTPlayer {
-  getCurrentTime(): number;
-  seekTo(seconds: number, allowSeekAhead: boolean): void;
-  destroy(): void;
-}
-
 // ── Countdown ─────────────────────────────────────────────────────────────────
 const FESTIVAL_DATE = new Date("2026-07-10T15:00:00+02:00");
 
@@ -63,10 +56,9 @@ const CONTENT_PANELS: ContentPanel[] = [
 // Total panel count (hero + content panels) — used for GSAP sizing
 const TOTAL_PANELS = 1 + CONTENT_PANELS.length;
 
-// Charlotte de Witte @ Awakenings Festival 2025 (official Awakenings channel)
-const YT_ID    = "m1SvbXLYEEc";
-const YT_START = 22;  // 0:22
-const YT_END   = 32;  // 0:32  — polling seeks back to YT_START when reached
+// Pexels free festival crowd video — royalty-free, no player UI, loops cleanly
+// "People at a Concert" by Kelly Lacy (pexels.com/video/3042698)
+const BG_VIDEO = "https://videos.pexels.com/video-files/3042698/3042698-hd_1920_1080_25fps.mp4";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function CinematicHero() {
@@ -75,67 +67,10 @@ export function CinematicHero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef     = useRef<HTMLDivElement>(null);
 
-  // YouTube IFrame API refs — no state dependency, no black mask
-  const ytDivRef    = useRef<HTMLDivElement>(null);
-  const ytPlayerRef = useRef<_YTPlayer | null>(null);
-  const pollRef     = useRef<ReturnType<typeof setInterval> | null>(null);
-
   const [activePanel, setActivePanel] = useState(0);
 
   const { d, h, m, s } = useCountdown(FESTIVAL_DATE);
 
-  // ── YouTube: precise 0:22 → 0:32 loop via IFrame API polling ────────────────
-  // No black mask — the gradient overlay covers YouTube UI during load.
-  useEffect(() => {
-    function createPlayer() {
-      if (!window.YT?.Player || !ytDivRef.current) return;
-
-      ytPlayerRef.current = new window.YT.Player(ytDivRef.current, {
-        videoId: YT_ID,
-        width:   "100%",
-        height:  "100%",
-        playerVars: {
-          autoplay: 1, mute: 1, controls: 0, disablekb: 1,
-          rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3,
-          start: YT_START,
-        },
-        events: {
-          onReady: () => {
-            // Start polling immediately once the player is ready
-            pollRef.current = setInterval(() => {
-              try {
-                if ((ytPlayerRef.current?.getCurrentTime() ?? 0) >= YT_END)
-                  ytPlayerRef.current?.seekTo(YT_START, true);
-              } catch { /* player destroyed during cleanup */ }
-            }, 150);
-          },
-        },
-      }) as unknown as _YTPlayer;
-    }
-
-    const win = window as typeof window & {
-      YT?: { Player: new (el: HTMLElement, opts: object) => _YTPlayer };
-      onYouTubeIframeAPIReady?: () => void;
-    };
-
-    if (win.YT?.Player) {
-      createPlayer();
-    } else {
-      if (!document.getElementById("yt-api-script")) {
-        const s = document.createElement("script");
-        s.id = "yt-api-script";
-        s.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(s);
-      }
-      const prev = win.onYouTubeIframeAPIReady;
-      win.onYouTubeIframeAPIReady = () => { prev?.(); createPlayer(); };
-    }
-
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
-      ytPlayerRef.current?.destroy();
-    };
-  }, []);
 
   // ── Panel navigation — wheel-event driven, one tick = one panel ──────────────
   // Replaces scrub+snap approach which stopped halfway with Lenis smoothing.
@@ -231,39 +166,29 @@ export function CinematicHero() {
         style={{ width: `${TOTAL_PANELS * 100}vw` }}
       >
 
-        {/* ══ Panel 1 — YouTube video hero (m1SvbXLYEEc, 0:22→0:32) ══ */}
+        {/* ══ Panel 1 — native video hero (Pexels, royalty-free) ══════ */}
         <div className="relative w-screen h-screen shrink-0 overflow-hidden">
 
-          {/* YouTube IFrame API — cover-sized wrapper, player replaces inner div */}
-          <div
+          {/* Native <video> — no iframe, no player UI, no YouTube dependency */}
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
             aria-hidden="true"
             style={{
               position: "absolute",
-              top: "50%",
-              left: "50%",
-              width: "max(177.78vh, 100%)",
-              height: "max(100vh, 56.25vw)",
-              // scale(1.05) adds ~2.5% overhang on every edge.
-              // The panel's overflow:hidden clips that fringe,
-              // hiding YouTube's corner logo and any edge UI.
-              transform: "translate(-50%, calc(-50% - 20px)) scale(1.05)",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center 30%",
               pointerEvents: "none",
               zIndex: 0,
             }}
           >
-            <div ref={ytDivRef} style={{ width: "100%", height: "100%" }} />
-          </div>
-
-          {/* Mouse-event interceptor — transparent, sits between iframe (z-0)
-              and overlay (z-10). Absorbs all hover/click events so they
-              never reach the YouTube iframe → YouTube's hover UI (play/pause
-              button) is never triggered. Content at z-20 still works normally
-              because its z-index is higher than this layer. */}
-          <div
-            className="absolute inset-0"
-            style={{ zIndex: 5 }}
-            aria-hidden="true"
-          />
+            <source src={BG_VIDEO} type="video/mp4" />
+          </video>
 
           {/* Visual overlay — z-index 10, pointer-events:none (visual only) */}
           <div
