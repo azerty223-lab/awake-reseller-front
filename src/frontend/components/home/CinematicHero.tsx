@@ -27,25 +27,39 @@ function useCountdown(target: Date) {
   return t;
 }
 
+// ── Shared entrance animation factory ─────────────────────────────────────────
+// Each layer enters with a staggered delay for a composed, cinematic reveal.
+const enter = (delay: number) => ({
+  initial:    { opacity: 0, y: 16 } as const,
+  animate:    { opacity: 1, y: 0  } as const,
+  transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] as const },
+});
+
+// ── Design tokens (kept co-located for easy tuning) ───────────────────────────
+const GOLD         = "#C9A84C";
+const GOLD_LIGHT   = "#E8CC78";
+const GOLD_GRAD    = `linear-gradient(90deg, ${GOLD} 0%, ${GOLD_LIGHT} 50%, ${GOLD} 100%)`;
+const INTER        = "var(--font-inter, Inter, system-ui, sans-serif)";
+const PLAYFAIR     = "var(--font-playfair)";
+
 // ── Component ─────────────────────────────────────────────────────────────────
 export function CinematicHero() {
-  const router = useRouter();
+  const router   = useRouter();
   const { d, h, m, s } = useCountdown(FESTIVAL_DATE);
 
   return (
     /*
      * -mt-16 sm:-mt-20 negates <main>'s pt-16 sm:pt-20 so the hero is
-     * truly full-bleed. The transparent navbar sits on top naturally.
+     * truly full-bleed behind the transparent navbar.
      */
-    <section className="relative overflow-hidden -mt-16 sm:-mt-20" style={{ height: "100vh" }}>
+    <section
+      className="relative overflow-hidden -mt-16 sm:-mt-20"
+      style={{ height: "100vh" }}
+    >
 
-      {/* Background video */}
+      {/* ── Background video ────────────────────────────────────────────── */}
       <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        aria-hidden="true"
+        autoPlay muted loop playsInline aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover"
         style={{ objectPosition: "center 30%", zIndex: 0 }}
       >
@@ -53,8 +67,10 @@ export function CinematicHero() {
       </video>
 
       {/*
-       * Overlay — heavy at the bottom where text lives, light at the top
-       * so the crowd energy stays visible through the video.
+       * ── Cinematic overlay ────────────────────────────────────────────────
+       * Transparent at the top so the crowd energy stays visible.
+       * Graduates to near-opaque at the bottom where text lives.
+       * The gold radial adds a subtle brand warmth from above.
        */}
       <div
         aria-hidden="true"
@@ -62,56 +78,89 @@ export function CinematicHero() {
         style={{
           zIndex: 1,
           background: [
-            "linear-gradient(to top, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.42) 52%, rgba(0,0,0,0.15) 100%)",
-            "radial-gradient(ellipse 70% 45% at 50% 0%, rgba(201,168,76,0.12), transparent 70%)",
+            "linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.40) 54%, rgba(0,0,0,0.10) 100%)",
+            `radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.09), transparent 65%)`,
           ].join(", "),
         }}
       />
 
-      {/* Content — bottom-anchored, left-aligned editorial layout */}
+      {/* ── Content — bottom-anchored, left-aligned editorial layout ────── */}
       <div
         className="absolute inset-0 flex flex-col justify-end"
         style={{ zIndex: 2 }}
       >
-        <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 lg:px-20 pb-14 sm:pb-20 lg:pb-24">
+        <div
+          className="w-full max-w-[1380px] mx-auto px-6 sm:px-12 lg:px-20"
+          style={{ paddingBottom: "clamp(3rem, 7vw, 6rem)" }}
+        >
 
-          {/* Eyebrow */}
+          {/* ── Eyebrow ───────────────────────────────────────────────────
+           * Ultra-small, ultra-tracked caps. The gold rule acts as a
+           * visual anchor — restraint here amplifies the headline below.
+           */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-3 mb-5"
+            {...enter(0.15)}
+            style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.75rem, 3.5vw, 2.75rem)" }}
           >
-            <div className="shrink-0 h-px w-6 bg-[#C9A84C]" />
+            <span style={{ display: "block", width: "18px", height: "1px", background: GOLD, flexShrink: 0 }} />
             <span
-              className="text-[11px] font-semibold uppercase"
-              style={{ letterSpacing: "0.28em", color: "rgba(255,255,255,0.62)" }}
+              style={{
+                fontFamily:    INTER,
+                fontSize:      "9px",
+                fontWeight:    500,
+                textTransform: "uppercase",
+                letterSpacing: "0.4em",
+                color:         "rgba(255,255,255,0.45)",
+              }}
             >
               Official Verified Resale
             </span>
           </motion.div>
 
-          {/* Main headline */}
+          {/* ── Primary headline ──────────────────────────────────────────
+           *
+           * TWO-TIER SCALE — the luxury signal:
+           *
+           * "Awakenings"   → massive, dominant, full-weight serif
+           *                  (brand mark, owns the space)
+           *
+           * "Festival 2026" → intentionally much smaller, lighter weight,
+           *                   gold-tinted, wide tracking
+           *                   (descriptor, refines without competing)
+           *
+           * The dramatic scale jump is the editorial hierarchy —
+           * the same pattern as "BALENCIAGA / Paris" or "DIOR / Haute Couture".
+           * Both lines share the h1 for correct DOM/SEO semantics.
+           */}
           <motion.h1
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              fontFamily:    "var(--font-playfair)",
-              fontWeight:    900,
-              fontSize:      "clamp(3rem, 9.5vw, 8.5rem)",
-              lineHeight:    0.9,
-              letterSpacing: "-0.03em",
-              color:         "#fff",
-              textShadow:    "0 4px 48px rgba(0,0,0,0.55)",
-              marginBottom:  "clamp(1rem, 2.5vw, 1.75rem)",
-            }}
+            {...enter(0.3)}
+            style={{ margin: 0, padding: 0 }}
           >
-            Awakenings
-            <br />
             <span
+              className="block"
               style={{
-                background:           "linear-gradient(90deg, #C9A84C 0%, #F0D080 45%, #C9A84C 100%)",
+                fontFamily:    PLAYFAIR,
+                fontWeight:    900,
+                fontSize:      "clamp(4.25rem, 12vw, 10rem)",
+                lineHeight:    0.87,
+                letterSpacing: "-0.035em",
+                color:         "#fff",
+                textShadow:    "0 8px 80px rgba(0,0,0,0.40)",
+              }}
+            >
+              Awakenings
+            </span>
+
+            <span
+              className="block"
+              style={{
+                fontFamily:    PLAYFAIR,
+                fontWeight:    400,
+                fontSize:      "clamp(1.05rem, 2.3vw, 1.9rem)",
+                lineHeight:    1,
+                letterSpacing: "0.12em",
+                marginTop:     "clamp(0.55rem, 1.1vw, 0.95rem)",
+                background:    GOLD_GRAD,
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor:  "transparent",
                 backgroundClip:       "text",
@@ -121,116 +170,183 @@ export function CinematicHero() {
             </span>
           </motion.h1>
 
-          {/* Location line */}
+          {/* ── Location metadata ─────────────────────────────────────────
+           * Treated as a luxury address line — very small, very tracked,
+           * muted. Information without decoration.
+           */}
           <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            {...enter(0.45)}
             style={{
-              fontSize:      "clamp(0.8rem, 1.4vw, 1rem)",
-              letterSpacing: "0.06em",
-              color:         "rgba(255,255,255,0.52)",
-              textShadow:    "0 2px 12px rgba(0,0,0,0.5)",
-              marginBottom:  "clamp(1.75rem, 4vw, 2.75rem)",
+              fontFamily:    INTER,
+              fontWeight:    400,
+              fontSize:      "clamp(0.65rem, 1vw, 0.78rem)",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color:         "rgba(255,255,255,0.35)",
+              marginTop:     "clamp(1.75rem, 3.5vw, 2.5rem)",
+              marginBottom:  0,
             }}
           >
-            July 10–12&nbsp;&nbsp;·&nbsp;&nbsp;Amsterdam&nbsp;&nbsp;·&nbsp;&nbsp;Gashouder
-            &amp; Hembrugterrein
+            July 10–12&ensp;·&ensp;Amsterdam&ensp;·&ensp;Gashouder &amp; Hembrugterrein
           </motion.p>
 
-          {/* Countdown + CTA */}
+          {/* ── Gold rule — separates metadata from the action row ──────── */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-7 sm:gap-0"
+            {...enter(0.52)}
+            style={{
+              width:      "28px",
+              height:     "1px",
+              background: `rgba(201,168,76,0.40)`,
+              margin:     "clamp(1.25rem, 2.8vw, 2rem) 0",
+            }}
+          />
+
+          {/* ── Action row: countdown + CTA ───────────────────────────────
+           * Countdown uses a "label above / number below" pattern —
+           * reads like a luxury timepiece rather than a generic web widget.
+           * Labels are gold (brand accent), numbers are white serif.
+           */}
+          <motion.div
+            {...enter(0.62)}
+            style={{
+              display:    "flex",
+              flexDirection: "row",
+              alignItems: "flex-end",
+              flexWrap:   "wrap",
+              gap:        "clamp(1.5rem, 4vw, 0px)",
+            }}
           >
             {/* Countdown units */}
-            <div className="flex items-end gap-5 sm:gap-7 sm:pr-10">
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                gap: "clamp(1.25rem, 3vw, 2.25rem)",
+                paddingRight: "clamp(1.5rem, 3.5vw, 2.5rem)",
+              }}
+            >
               {[
-                { val: d, label: "days" },
-                { val: h, label: "hrs"  },
-                { val: m, label: "min"  },
-                { val: s, label: "sec"  },
+                { val: d, label: "Days" },
+                { val: h, label: "Hrs"  },
+                { val: m, label: "Min"  },
+                { val: s, label: "Sec"  },
               ].map(({ val, label }) => (
-                <div key={label} className="flex flex-col items-center">
+                <div
+                  key={label}
+                  style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "6px" }}
+                >
+                  {/* Label above — gold, micro */}
                   <span
                     style={{
-                      fontFamily:         "var(--font-playfair)",
+                      fontFamily:    INTER,
+                      fontSize:      "8px",
+                      fontWeight:    500,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.24em",
+                      color:         GOLD,
+                    }}
+                  >
+                    {label}
+                  </span>
+                  {/* Number — dominant serif */}
+                  <span
+                    style={{
+                      fontFamily:         PLAYFAIR,
                       fontWeight:         900,
-                      fontSize:           "clamp(2rem, 5vw, 3.25rem)",
+                      fontSize:           "clamp(1.75rem, 3.8vw, 2.75rem)",
                       lineHeight:         1,
                       letterSpacing:      "-0.025em",
                       color:              "#fff",
-                      textShadow:         "0 2px 20px rgba(0,0,0,0.4)",
                       fontVariantNumeric: "tabular-nums",
                     }}
                   >
                     {String(val).padStart(2, "0")}
                   </span>
-                  <span
-                    style={{
-                      fontSize:      "10px",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.18em",
-                      color:         "rgba(255,255,255,0.36)",
-                      marginTop:     "6px",
-                    }}
-                  >
-                    {label}
-                  </span>
                 </div>
               ))}
             </div>
 
-            {/* Vertical rule */}
+            {/* Vertical separator — only on wider viewports */}
             <div
-              className="hidden sm:block shrink-0 w-px bg-white/[0.14] sm:mx-10"
-              style={{ height: "2.75rem" }}
+              className="hidden sm:block shrink-0"
+              style={{
+                width:      "1px",
+                height:     "40px",
+                background: "rgba(255,255,255,0.10)",
+                marginRight: "clamp(1.5rem, 3.5vw, 2.5rem)",
+              }}
             />
 
-            {/* CTA */}
+            {/*
+             * ── CTA button ─────────────────────────────────────────────────
+             * Sharp 2px radius (vs pill) signals luxury/fashion.
+             * Medium-weight, tracked uppercase, small text — refined, precise.
+             * The gold fill is the single moment of brand warmth in the layout.
+             */}
             <button
               onClick={() => router.push("/tickets")}
-              className="group inline-flex items-center gap-3 text-sm font-semibold text-black tracking-wide rounded-full w-fit transition-all duration-300"
-              style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E4BA65 100%)", padding: "14px 28px" }}
+              className="group flex items-center gap-2.5"
+              style={{
+                background:   `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_LIGHT} 100%)`,
+                padding:      "12px 24px",
+                borderRadius: "2px",
+                border:       "none",
+                cursor:       "pointer",
+                transition:   "transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease",
+              }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget as HTMLButtonElement;
-                el.style.boxShadow = "0 0 50px rgba(201,168,76,0.5), 0 8px 28px rgba(0,0,0,0.4)";
-                el.style.transform = "translateY(-1px)";
+                el.style.transform  = "translateY(-2px)";
+                el.style.boxShadow  = "0 0 40px rgba(201,168,76,0.40), 0 6px 20px rgba(0,0,0,0.30)";
               }}
               onMouseLeave={(e) => {
                 const el = e.currentTarget as HTMLButtonElement;
-                el.style.boxShadow = "none";
-                el.style.transform = "none";
+                el.style.transform  = "none";
+                el.style.boxShadow  = "none";
               }}
             >
-              Browse Tickets
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
+              <span
+                style={{
+                  fontFamily:    INTER,
+                  fontWeight:    500,
+                  fontSize:      "10px",
+                  letterSpacing: "0.20em",
+                  textTransform: "uppercase",
+                  color:         "#000",
+                }}
+              >
+                Browse Tickets
+              </span>
+              <ArrowRight
+                className="group-hover:translate-x-px transition-transform duration-300"
+                style={{ width: "12px", height: "12px", color: "#000" }}
+              />
             </button>
-          </motion.div>
 
+          </motion.div>
         </div>
       </div>
 
-      {/* Scroll cue — bottom right */}
+      {/* ── Scroll cue — minimal, bottom-right ──────────────────────────── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.9, delay: 1.4 }}
-        className="absolute bottom-8 right-8 sm:right-12 lg:right-20 z-10 flex items-center gap-3 pointer-events-none select-none"
+        transition={{ duration: 1, delay: 1.7 }}
+        className="absolute bottom-8 right-8 sm:right-12 lg:right-20 z-10 pointer-events-none select-none"
+        style={{ display: "flex", alignItems: "center", gap: "12px" }}
       >
         <span
           style={{
-            fontSize:      "10px",
+            fontFamily:    INTER,
+            fontSize:      "8px",
             textTransform: "uppercase",
-            letterSpacing: "0.26em",
-            color:         "rgba(255,255,255,0.28)",
+            letterSpacing: "0.38em",
+            color:         "rgba(255,255,255,0.20)",
           }}
         >
-          Scroll to explore
+          Scroll
         </span>
-        <div className="w-8 h-px bg-white/[0.18]" />
+        <div style={{ width: "28px", height: "1px", background: "rgba(255,255,255,0.12)" }} />
       </motion.div>
 
     </section>
