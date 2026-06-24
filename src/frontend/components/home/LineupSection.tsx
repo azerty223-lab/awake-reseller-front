@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useReducedMotion, motion, AnimatePresence } from "framer-motion";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -86,7 +86,6 @@ const LINEUP: Record<DayKey, Area[]> = {
       ],
     },
   ],
-
   Saturday: [
     {
       id: "V", label: "Area V",
@@ -183,25 +182,114 @@ const LINEUP: Record<DayKey, Area[]> = {
 
 const DAYS: DayKey[] = ["Friday", "Saturday"];
 
-// ── Stage canvas animation ────────────────────────────────────────────────────
-// Canvas renders beam cones fanning from a stage point.
-// Automatically paused when prefers-reduced-motion is set.
+// Static metadata per day (date + headline hours for main stages)
+const DAY_META: Record<DayKey, { date: string; timeRange: string }> = {
+  Friday:   { date: "Friday · July 10, 2026",   timeRange: "15:00 – 01:00" },
+  Saturday: { date: "Saturday · July 11, 2026", timeRange: "13:00 – 01:00" },
+};
 
-interface Beam {
-  angle: number;   // base angle in degrees (0 = straight up)
-  speed: number;   // sway cycles per second
-  amp: number;     // sway amplitude in degrees
-  phase: number;   // phase offset
-  r: number; g: number; b: number;  // beam colour
+// ── YouTube background types ──────────────────────────────────────────────────
+// Minimal declarations — avoids a full @types/youtube dependency.
+
+interface YTPlayer { destroy(): void; }
+interface YTPlayerOptions {
+  videoId: string;
+  width?: string | number;
+  height?: string | number;
+  playerVars?: Record<string, number | string>;
+  events?: {
+    onStateChange?: (event: { data: number }) => void;
+    onReady?: (event: { target: YTPlayer }) => void;
+    onError?: () => void;
+  };
+}
+declare global {
+  interface Window {
+    YT?: { Player: new (el: HTMLElement | string, opts: YTPlayerOptions) => YTPlayer };
+    onYouTubeIframeAPIReady?: () => void;
+  }
 }
 
-const BEAMS: Beam[] = [
-  { angle: -46, speed: 0.14, amp:  8, phase: 0.0, r: 201, g: 168, b:  76 },
-  { angle: -27, speed: 0.21, amp: 13, phase: 1.3, r: 228, g: 186, b: 101 },
-  { angle:  -9, speed: 0.28, amp:  7, phase: 2.6, r: 190, g: 210, b: 255 },
-  { angle:   9, speed: 0.26, amp:  7, phase: 3.9, r: 190, g: 210, b: 255 },
-  { angle:  27, speed: 0.21, amp: 13, phase: 5.2, r: 228, g: 186, b: 101 },
-  { angle:  46, speed: 0.14, amp:  8, phase: 6.5, r: 201, g: 168, b:  76 },
+// ── YouTube IFrame API hook ───────────────────────────────────────────────────
+// Official video: 999999999 @ Awakenings Festival 2025 (Awakenings YouTube channel)
+// Fallback: canvas animation below
+
+const YT_VIDEO_ID = "4ayP8pfGMoc"; // 999999999 | Awakenings Festival 2025
+
+function useYouTubeBackground(
+  divRef: React.RefObject<HTMLDivElement | null>,
+  enabled: boolean,
+  onPlayingRef: React.RefObject<() => void>,
+) {
+  useEffect(() => {
+    if (!enabled) return;
+
+    let player: YTPlayer | null = null;
+
+    function createPlayer() {
+      const div = divRef.current;
+      if (!window.YT || !div) return;
+
+      player = new window.YT.Player(div, {
+        videoId: YT_VIDEO_ID,
+        width: "100%",
+        height: "100%",
+        playerVars: {
+          autoplay: 1, mute: 1, loop: 1,
+          playlist: YT_VIDEO_ID,
+          controls: 0, disablekb: 1,
+          rel: 0, playsinline: 1,
+          modestbranding: 1, iv_load_policy: 3,
+          start: 45,
+        },
+        events: {
+          onStateChange: (e) => {
+            if (e.data === 1) onPlayingRef.current?.(); // YT.PlayerState.PLAYING
+          },
+          onError: () => { /* canvas fallback handles this naturally */ },
+        },
+      });
+    }
+
+    if (window.YT) {
+      createPlayer();
+    } else {
+      if (!document.getElementById("yt-api-script")) {
+        const s = document.createElement("script");
+        s.id = "yt-api-script";
+        s.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(s);
+      }
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        prev?.();
+        createPlayer();
+      };
+    }
+
+    return () => {
+      player?.destroy();
+    };
+  }, [enabled]); // divRef and onPlayingRef are stable refs
+}
+
+// ── Canvas stage animation ────────────────────────────────────────────────────
+// Enhanced beam setup: wider spread, blue accent beams, richer haze
+
+interface Beam {
+  angle: number; speed: number; amp: number; phase: number;
+  r: number; g: number; b: number;
+}
+
+const CANVAS_BEAMS: Beam[] = [
+  { angle: -52, speed: 0.12, amp:  9, phase: 0.0, r: 201, g: 168, b:  76 },
+  { angle: -34, speed: 0.19, amp: 14, phase: 1.1, r: 228, g: 186, b: 101 },
+  { angle: -16, speed: 0.27, amp:  8, phase: 2.3, r: 200, g: 215, b: 255 },
+  { angle:  -4, speed: 0.35, amp:  5, phase: 3.4, r: 255, g: 245, b: 220 },
+  { angle:   4, speed: 0.33, amp:  5, phase: 4.5, r: 255, g: 245, b: 220 },
+  { angle:  16, speed: 0.27, amp:  8, phase: 5.6, r: 200, g: 215, b: 255 },
+  { angle:  34, speed: 0.19, amp: 14, phase: 6.7, r: 228, g: 186, b: 101 },
+  { angle:  52, speed: 0.12, amp:  9, phase: 7.8, r: 201, g: 168, b:  76 },
 ];
 
 function useStageCanvas(
@@ -229,53 +317,49 @@ function useStageCanvas(
     function frame(ts: number) {
       if (t0 === null) t0 = ts;
       const t = (ts - t0) / 1000;
-
       const W = canvas!.offsetWidth;
       const H = canvas!.offsetHeight;
       if (W === 0 || H === 0) { rafId = requestAnimationFrame(frame); return; }
 
-      // ── Background ──────────────────────────────────────────────────
-      ctx!.fillStyle = "#050507";
+      ctx!.fillStyle = "#030305";
       ctx!.fillRect(0, 0, W, H);
 
-      const sx = W * 0.5;   // stage x
-      const sy = H * 0.73;  // stage y (low in frame)
+      const sx = W * 0.5;
+      const sy = H * 0.72;
 
-      // ── Stage glow ──────────────────────────────────────────────────
-      const glow = ctx!.createRadialGradient(sx, sy, 0, sx, sy, W * 0.40);
-      glow.addColorStop(0,   "rgba(201,168,76,0.11)");
-      glow.addColorStop(0.5, "rgba(201,168,76,0.04)");
+      // Stage glow — warm amber halo
+      const glow = ctx!.createRadialGradient(sx, sy, 0, sx, sy, W * 0.45);
+      glow.addColorStop(0,   "rgba(201,168,76,0.14)");
+      glow.addColorStop(0.4, "rgba(201,168,76,0.05)");
       glow.addColorStop(1,   "rgba(0,0,0,0)");
       ctx!.fillStyle = glow;
       ctx!.fillRect(0, 0, W, H);
 
-      // ── Light beams ─────────────────────────────────────────────────
-      BEAMS.forEach(bm => {
+      // Wide ambient fill — slight purple depth
+      const amb = ctx!.createRadialGradient(sx, H * 0.3, 0, sx, H * 0.3, W * 0.6);
+      amb.addColorStop(0,   "rgba(60,40,100,0.08)");
+      amb.addColorStop(1,   "rgba(0,0,0,0)");
+      ctx!.fillStyle = amb;
+      ctx!.fillRect(0, 0, W, H);
+
+      // Light beams
+      CANVAS_BEAMS.forEach(bm => {
         const deg = bm.angle + Math.sin(t * bm.speed * Math.PI * 2 + bm.phase) * bm.amp;
         const rad = (deg * Math.PI) / 180;
-
-        const len = H * 0.88;
-        // Direction: upward == negative-y
+        const len = H * 0.90;
         const dx =  Math.sin(rad);
         const dy = -Math.cos(rad);
-
         const tipX = sx + dx * len;
         const tipY = sy + dy * len;
-
-        // Perpendicular to beam direction
-        const px = -dy;
-        const py =  dx;
-
-        const bW = 5;            // half-width at base
-        const tW = len * 0.115;  // half-width at tip (cone spread)
-
-        // Opacity pulses independently of sway
-        const op = 0.32 + 0.22 * Math.sin(t * bm.speed * Math.PI * 2 * 1.6 + bm.phase * 1.1);
+        const px = -dy, py = dx;
+        const bW = 4;
+        const tW = len * 0.10;
+        const op = 0.28 + 0.20 * Math.sin(t * bm.speed * Math.PI * 2 * 1.7 + bm.phase * 1.2);
 
         const grad = ctx!.createLinearGradient(sx, sy, tipX, tipY);
-        grad.addColorStop(0,   `rgba(${bm.r},${bm.g},${bm.b},${op})`);
-        grad.addColorStop(0.55,`rgba(${bm.r},${bm.g},${bm.b},${op * 0.45})`);
-        grad.addColorStop(1,   `rgba(${bm.r},${bm.g},${bm.b},0)`);
+        grad.addColorStop(0,    `rgba(${bm.r},${bm.g},${bm.b},${op})`);
+        grad.addColorStop(0.50, `rgba(${bm.r},${bm.g},${bm.b},${op * 0.4})`);
+        grad.addColorStop(1,    `rgba(${bm.r},${bm.g},${bm.b},0)`);
 
         ctx!.beginPath();
         ctx!.moveTo(sx + px * bW, sy + py * bW);
@@ -287,150 +371,319 @@ function useStageCanvas(
         ctx!.fill();
       });
 
-      // ── Haze band ────────────────────────────────────────────────────
-      const hAlpha = 0.055 + 0.025 * Math.sin(t * 0.38);
-      const haze = ctx!.createLinearGradient(0, sy - H * 0.18, 0, sy + H * 0.05);
-      haze.addColorStop(0,   `rgba(201,168,76,0)`);
+      // Haze band at stage horizon
+      const hAlpha = 0.06 + 0.03 * Math.sin(t * 0.37);
+      const haze = ctx!.createLinearGradient(0, sy - H * 0.20, 0, sy + H * 0.06);
+      haze.addColorStop(0,   "rgba(201,168,76,0)");
       haze.addColorStop(0.5, `rgba(201,168,76,${hAlpha})`);
-      haze.addColorStop(1,   `rgba(5,5,7,0)`);
+      haze.addColorStop(1,   "rgba(3,3,5,0)");
       ctx!.fillStyle = haze;
-      ctx!.fillRect(0, sy - H * 0.18, W, H * 0.23);
+      ctx!.fillRect(0, sy - H * 0.20, W, H * 0.26);
 
-      // ── Crowd floor fade ─────────────────────────────────────────────
-      const floor = ctx!.createLinearGradient(0, sy - 10, 0, H);
-      floor.addColorStop(0,   "rgba(5,5,7,0)");
-      floor.addColorStop(0.25,"rgba(5,5,7,0.65)");
-      floor.addColorStop(1,   "rgba(5,5,7,1)");
+      // Floor fade
+      const floor = ctx!.createLinearGradient(0, sy - 15, 0, H);
+      floor.addColorStop(0,    "rgba(3,3,5,0)");
+      floor.addColorStop(0.20, "rgba(3,3,5,0.6)");
+      floor.addColorStop(1,    "rgba(3,3,5,1)");
       ctx!.fillStyle = floor;
-      ctx!.fillRect(0, sy - 10, W, H - sy + 10);
+      ctx!.fillRect(0, sy - 15, W, H - sy + 15);
 
       rafId = requestAnimationFrame(frame);
     }
 
     rafId = requestAnimationFrame(frame);
-
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
     };
-  }, [enabled]);  // canvasRef is a stable object, omitted intentionally
+  }, [enabled]);
 }
 
-// ── Area card (desktop grid) ─────────────────────────────────────────────────
+// ── Day selector card ─────────────────────────────────────────────────────────
 
-function AreaCard({ area }: { area: Area }) {
-  const last = area.slots.length - 1;
+function DayCard({
+  day, isActive, onClick,
+}: {
+  day: DayKey;
+  isActive: boolean;
+  onClick: () => void;
+}) {
+  const meta = DAY_META[day];
+  const areaCount = LINEUP[day].length;
+
   return (
-    <div className="bg-white/[0.025] border border-white/[0.06] rounded-xl overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06]">
-        <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-white">
-          {area.label}
+    <button
+      onClick={onClick}
+      aria-pressed={isActive}
+      className={[
+        "flex-1 relative text-left px-6 sm:px-8 py-6 sm:py-7 rounded-2xl border-2",
+        "transition-all duration-300 overflow-hidden group",
+        isActive
+          ? "border-[#C9A84C] bg-[#C9A84C]/[0.08]"
+          : "border-white/[0.09] bg-white/[0.02] hover:border-white/[0.18] hover:bg-white/[0.04]",
+      ].join(" ")}
+    >
+      {/* Active: subtle gold top rule */}
+      {isActive && (
+        <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#C9A84C]/60 to-transparent" />
+      )}
+
+      {/* Status label */}
+      <div className="flex items-center justify-between mb-3">
+        <span className={[
+          "text-[10px] font-semibold uppercase tracking-[0.22em]",
+          isActive ? "text-[#C9A84C]" : "text-zinc-700",
+        ].join(" ")}>
+          {isActive ? "Selected" : "Select"}
         </span>
-        {area.note && (
-          <span className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#C9A84C]/70 bg-[#C9A84C]/10 border border-[#C9A84C]/20 rounded px-1.5 py-0.5 leading-none">
-            {area.note}
+        {isActive && (
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-pulse" />
           </span>
         )}
       </div>
 
-      {/* Slots */}
-      <div className="divide-y divide-white/[0.04]">
-        {area.slots.map((slot, i) => (
-          <div
-            key={i}
-            className="flex items-baseline gap-3 px-4 py-2.5 hover:bg-white/[0.03] transition-colors duration-150"
-          >
-            <span className="shrink-0 w-[6.5rem] text-[11px] text-zinc-600 tabular-nums font-mono leading-none">
-              {slot.time}
-            </span>
-            <span className={[
-              "text-[13px] leading-tight min-w-0",
-              i === last
-                ? "text-white font-semibold"   // closing act
-                : "text-zinc-300 font-normal",
-            ].join(" ")}>
-              {slot.artist}
-            </span>
+      {/* Day name — the main visual anchor */}
+      <div
+        className={[
+          "font-[var(--font-playfair)] font-black leading-none mb-2",
+          isActive ? "text-white" : "text-zinc-500 group-hover:text-zinc-300 transition-colors",
+        ].join(" ")}
+        style={{ fontSize: "clamp(2.25rem, 5vw, 3.5rem)", letterSpacing: "-0.025em" }}
+      >
+        {day}
+      </div>
+
+      {/* Date */}
+      <div className={[
+        "text-sm font-medium mb-4",
+        isActive ? "text-zinc-300" : "text-zinc-700",
+      ].join(" ")}>
+        {meta.date}
+      </div>
+
+      {/* Metadata chips */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className={[
+          "text-[11px] font-medium px-2.5 py-1 rounded-full border",
+          isActive
+            ? "bg-[#C9A84C]/[0.12] border-[#C9A84C]/[0.25] text-[#C9A84C]/90"
+            : "bg-white/[0.04] border-white/[0.07] text-zinc-600",
+        ].join(" ")}>
+          {areaCount} stages
+        </span>
+        <span className={[
+          "text-[11px] font-mono font-medium px-2.5 py-1 rounded-full border",
+          isActive
+            ? "bg-white/[0.05] border-white/[0.1] text-zinc-300"
+            : "bg-white/[0.02] border-white/[0.06] text-zinc-700",
+        ].join(" ")}>
+          {meta.timeRange}
+        </span>
+      </div>
+    </button>
+  );
+}
+
+// ── Area card ─────────────────────────────────────────────────────────────────
+
+function AreaCard({ area }: { area: Area }) {
+  const last = area.slots.length - 1;
+  // Penultimate slot is also emphasized (second-to-last = peak hour act)
+  const nearLast = last > 1 ? last - 1 : -1;
+
+  return (
+    <div className="flex flex-col bg-[#0D0D10] border border-white/[0.07] rounded-2xl overflow-hidden hover:border-white/[0.13] transition-colors duration-200">
+      {/* Card header */}
+      <div className="px-5 pt-5 pb-4 border-b border-white/[0.06]">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-400 mb-1">
+              {area.label}
+            </p>
+            {area.note ? (
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#C9A84C]/70">
+                {area.note}
+              </p>
+            ) : (
+              <p className="text-[10px] text-zinc-700 tabular-nums">
+                {area.slots.length} sets ·{" "}
+                {area.slots[0]?.time.split(" – ")[0]}
+                {" – "}
+                {area.slots[last]?.time.split(" – ")[1]}
+              </p>
+            )}
           </div>
-        ))}
+          {/* Area letter — large, decorative, low opacity */}
+          <span
+            className="font-[var(--font-playfair)] font-black text-white/[0.06] leading-none select-none"
+            style={{ fontSize: "3rem" }}
+            aria-hidden="true"
+          >
+            {area.id}
+          </span>
+        </div>
+      </div>
+
+      {/* Slot list */}
+      <div className="flex-1 divide-y divide-white/[0.04]">
+        {area.slots.map((slot, i) => {
+          const isClosing    = i === last;
+          const isPeakHour   = i === nearLast;
+          const isAfterMidnight = slot.time.startsWith("00:") ||
+            slot.time.startsWith("01:") ||
+            slot.time.startsWith("02:") ||
+            slot.time.startsWith("03:") ||
+            slot.time.startsWith("04:") ||
+            slot.time.startsWith("05:");
+
+          return (
+            <div
+              key={i}
+              className={[
+                "flex items-center gap-3 px-5 py-3 transition-colors duration-150",
+                isClosing  ? "bg-[#C9A84C]/[0.05] hover:bg-[#C9A84C]/[0.08]" : "hover:bg-white/[0.03]",
+              ].join(" ")}
+            >
+              {/* Time — start time only, keeps columns compact */}
+              <span className={[
+                "shrink-0 w-11 text-[11px] tabular-nums font-mono leading-none",
+                isAfterMidnight ? "text-[#C9A84C]/50" : "text-zinc-600",
+              ].join(" ")}>
+                {slot.time.split(" – ")[0]}
+              </span>
+
+              {/* Artist */}
+              <span className={[
+                "flex-1 text-[13px] leading-tight min-w-0 truncate",
+                isClosing  ? "text-white font-semibold"   : "",
+                isPeakHour && !isClosing ? "text-zinc-100 font-medium" : "",
+                !isClosing && !isPeakHour ? "text-zinc-400 font-normal" : "",
+              ].join(" ")}>
+                {slot.artist}
+              </span>
+
+              {/* End time — muted, right edge */}
+              <span className="shrink-0 text-[10px] tabular-nums font-mono text-zinc-700 leading-none">
+                {slot.time.split(" – ")[1]}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-// ── Main section ─────────────────────────────────────────────────────────────
+// ── Main section ──────────────────────────────────────────────────────────────
 
 export function LineupSection() {
   const [activeDay,  setActiveDay]  = useState<DayKey>("Friday");
   const [activeArea, setActiveArea] = useState<string>("V");
+  const [ytPlaying,  setYtPlaying]  = useState(false);
 
-  const shouldReduce = useReducedMotion();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const shouldReduce  = useReducedMotion();
+  const canvasRef     = useRef<HTMLCanvasElement>(null);
+  const ytDivRef      = useRef<HTMLDivElement>(null);
+  const onPlayingRef  = useRef<() => void>(() => setYtPlaying(true));
 
-  // Animate canvas only when motion is preferred
+  // Canvas runs whenever the video isn't confirmed playing
   useStageCanvas(canvasRef, !shouldReduce);
+
+  // YouTube IFrame API — video fades in once it reports PLAYING state
+  useYouTubeBackground(ytDivRef, !shouldReduce, onPlayingRef);
 
   const areas = LINEUP[activeDay];
 
-  const handleDayChange = (day: DayKey) => {
+  const handleDayChange = useCallback((day: DayKey) => {
     setActiveDay(day);
     setActiveArea(LINEUP[day][0].id);
-  };
+  }, []);
 
   const mobileArea = areas.find(a => a.id === activeArea) ?? areas[0];
 
   return (
-    <section className="relative bg-[#050507] overflow-hidden">
+    <section className="relative bg-[#030305] overflow-hidden">
 
-      {/* ── Stage hero background ────────────────────────────────── */}
-      <div className="relative h-[56vh] min-h-[360px] max-h-[520px]">
+      {/* ── Hero: video + canvas background ─────────────────────── */}
+      <div className="relative h-[70vh] min-h-[480px] max-h-[680px]">
 
-        {/* Animated canvas — hidden when prefers-reduced-motion */}
-        {!shouldReduce ? (
+        {/* Layer 0: Canvas — always rendered, video-independent fallback */}
+        {!shouldReduce && (
           <canvas
             ref={canvasRef}
-            className="absolute inset-0 w-full h-full"
+            className="absolute inset-0 w-full h-full z-0"
             aria-hidden="true"
           />
-        ) : (
-          /* Static cinematic fallback */
+        )}
+
+        {/* Static cinematic gradient for prefers-reduced-motion */}
+        {shouldReduce && (
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 z-0"
             style={{
               background: [
-                "radial-gradient(ellipse at 50% 88%, rgba(201,168,76,0.13) 0%, transparent 48%)",
-                "radial-gradient(ellipse at 20% 40%, rgba(180,210,255,0.04) 0%, transparent 42%)",
-                "radial-gradient(ellipse at 80% 40%, rgba(180,210,255,0.04) 0%, transparent 42%)",
-                "#050507",
+                "radial-gradient(ellipse at 50% 90%, rgba(201,168,76,0.14) 0%, transparent 50%)",
+                "radial-gradient(ellipse at 25% 35%, rgba(90,60,160,0.06) 0%, transparent 45%)",
+                "radial-gradient(ellipse at 75% 35%, rgba(60,100,200,0.06) 0%, transparent 45%)",
+                "#030305",
               ].join(", "),
             }}
             aria-hidden="true"
           />
         )}
 
-        {/* Text legibility: strong top fade, seamless bottom transition */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050507]/60 via-transparent to-[#050507]" />
+        {/* Layer 1: YouTube video — fades in once confirmed playing
+            Sized to cover container at correct 16:9 ratio (background-size: cover equivalent) */}
+        {!shouldReduce && (
+          <div
+            className={[
+              "absolute inset-0 z-10 overflow-hidden pointer-events-none",
+              "transition-opacity duration-[2000ms]",
+              ytPlaying ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+            aria-hidden="true"
+          >
+            <div
+              ref={ytDivRef}
+              style={{
+                position:  "absolute",
+                top:       "50%",
+                left:      "50%",
+                transform: "translate(-50%, -50%)",
+                /* Cover technique: width = max(100%, 178vh) keeps 16:9 */
+                width:     "max(100%, 178vh)",
+                height:    "max(100%, 56.25vw)",
+              }}
+            />
+          </div>
+        )}
 
-        {/* Hero copy */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+        {/* Layer 2: Cinematic dark overlays — readability + atmosphere */}
+        {/* Top darkening for text legibility */}
+        <div className="absolute inset-0 z-20 bg-gradient-to-b from-[#030305]/70 via-[#030305]/25 to-[#030305]" />
+        {/* Side vignette */}
+        <div className="absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_50%_50%,transparent_40%,rgba(3,3,5,0.5)_100%)]" />
+
+        {/* Layer 3: Hero copy */}
+        <div className="relative z-30 h-full flex flex-col items-center justify-center text-center px-6">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-[10px] uppercase tracking-[0.28em] text-zinc-500 mb-5 font-medium"
+            transition={{ duration: 0.9, delay: 0.1 }}
+            className="text-[10px] uppercase tracking-[0.32em] text-zinc-500 mb-6 font-medium"
           >
             Awakenings Festival 2026
           </motion.p>
 
           <motion.h2
-            initial={{ opacity: 0, y: 22 }}
+            initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.75, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="font-[var(--font-playfair)] font-black text-white leading-none mb-5"
-            style={{ fontSize: "clamp(3rem, 9vw, 7rem)", letterSpacing: "-0.03em" }}
+            transition={{ duration: 0.85, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="font-[var(--font-playfair)] font-black text-white leading-none mb-6"
+            style={{ fontSize: "clamp(3.5rem, 11vw, 8.5rem)", letterSpacing: "-0.035em" }}
           >
             Full Lineup
           </motion.h2>
@@ -439,50 +692,79 @@ export function LineupSection() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-            className="text-zinc-500 text-sm tracking-[0.12em] uppercase"
+            transition={{ duration: 0.8, delay: 0.42 }}
+            className="text-zinc-500 text-sm tracking-[0.16em] uppercase"
           >
-            July 10–12 · Hilvarenbeek
+            July 10–12 · Hilvarenbeek, Netherlands
           </motion.p>
         </div>
       </div>
 
-      {/* ── Lineup grid ──────────────────────────────────────────── */}
-      <div className="pt-14 pb-24 px-4 sm:px-6 lg:px-8">
+      {/* ── Schedule ─────────────────────────────────────────────── */}
+      <div className="pt-16 pb-28 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
 
-          {/* Day tabs */}
-          <div className="flex items-center justify-center mb-12">
-            <div className="flex border-b border-white/[0.08]">
+          {/* ── Day selector ────────────────────────────────────────
+              Two large cards — impossible to miss, immediately obvious */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mb-16"
+          >
+            <p className="text-[10px] uppercase tracking-[0.25em] text-zinc-600 text-center mb-6 font-medium">
+              Select a day
+            </p>
+            <div className="flex gap-3 sm:gap-4" role="group" aria-label="Day selection">
               {DAYS.map(day => (
-                <button
+                <DayCard
                   key={day}
+                  day={day}
+                  isActive={activeDay === day}
                   onClick={() => handleDayChange(day)}
-                  className={[
-                    "px-10 py-3 text-sm font-semibold tracking-wide border-b-2 -mb-px transition-colors duration-200",
-                    activeDay === day
-                      ? "border-[#C9A84C] text-white"
-                      : "border-transparent text-zinc-500 hover:text-zinc-300",
-                  ].join(" ")}
-                  aria-selected={activeDay === day}
-                  role="tab"
-                >
-                  {day}
-                </button>
+                />
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          {/* ── DESKTOP: full grid ────────────────────────────────
-              Hidden below md, uses AnimatePresence for day switch */}
+          {/* ── Active day context bar ──────────────────────────────── */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeDay + "-meta"}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-baseline justify-between gap-4 mb-10 pb-6 border-b border-white/[0.06]"
+            >
+              <div>
+                <h3
+                  className="font-[var(--font-playfair)] font-black text-white leading-none mb-1"
+                  style={{ fontSize: "clamp(1.75rem, 4vw, 2.75rem)", letterSpacing: "-0.02em" }}
+                >
+                  {activeDay}
+                </h3>
+                <p className="text-sm text-zinc-500">{DAY_META[activeDay].date}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-[11px] text-zinc-600 uppercase tracking-[0.14em] mb-0.5">
+                  {LINEUP[activeDay].length} stages
+                </p>
+                <p className="text-sm font-mono text-zinc-400">{DAY_META[activeDay].timeRange}</p>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* ── DESKTOP: area grid ──────────────────────────────────── */}
           <div className="hidden md:block">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeDay}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3 }}
               >
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {LINEUP[activeDay].map(area => (
@@ -493,14 +775,14 @@ export function LineupSection() {
             </AnimatePresence>
           </div>
 
-          {/* ── MOBILE: area tabs + single view ──────────────────
-              Shown below md only */}
+          {/* ── MOBILE: area tabs + single schedule ─────────────────── */}
           <div className="block md:hidden">
 
-            {/* Area selector — horizontal scroll */}
+            {/* Horizontal area tabs */}
             <div
-              className="flex gap-2 overflow-x-auto pb-3 mb-6 hide-scrollbar"
+              className="flex gap-2 overflow-x-auto pb-4 mb-8 hide-scrollbar"
               role="tablist"
+              aria-label="Stage selection"
             >
               {LINEUP[activeDay].map(area => (
                 <button
@@ -509,56 +791,68 @@ export function LineupSection() {
                   role="tab"
                   aria-selected={activeArea === area.id}
                   className={[
-                    "flex-shrink-0 px-4 py-2 rounded-lg text-xs font-semibold",
-                    "border transition-colors duration-150 whitespace-nowrap",
+                    "flex-shrink-0 px-4 py-2.5 rounded-xl text-xs font-semibold",
+                    "border transition-all duration-150 whitespace-nowrap",
                     activeArea === area.id
-                      ? "bg-[#C9A84C]/15 border-[#C9A84C]/40 text-[#C9A84C]"
-                      : "bg-white/[0.04] border-white/[0.08] text-zinc-400 hover:text-zinc-200",
+                      ? "bg-[#C9A84C]/[0.12] border-[#C9A84C]/40 text-[#C9A84C]"
+                      : "bg-white/[0.03] border-white/[0.07] text-zinc-500 hover:text-zinc-200 hover:border-white/[0.14]",
                   ].join(" ")}
                 >
-                  {area.note ? `${area.label} — ${area.note}` : area.label}
+                  {area.note ? `${area.label} · ${area.note}` : area.label}
                 </button>
               ))}
             </div>
 
-            {/* Selected area schedule */}
+            {/* Selected area content */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeDay + activeArea}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
+                exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
               >
                 {/* Area header */}
-                <div className="flex items-center gap-2 mb-4">
-                  <h3 className="text-base font-bold text-white">{mobileArea.label}</h3>
+                <div className="flex items-center gap-3 mb-5">
+                  <h4 className="text-lg font-bold text-white tracking-tight">{mobileArea.label}</h4>
                   {mobileArea.note && (
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#C9A84C]/70 bg-[#C9A84C]/10 border border-[#C9A84C]/20 rounded px-2 py-0.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#C9A84C]/70 bg-[#C9A84C]/[0.1] border border-[#C9A84C]/[0.2] rounded-full px-2.5 py-1">
                       {mobileArea.note}
                     </span>
                   )}
+                  <span className="ml-auto text-[11px] font-mono text-zinc-600">
+                    {mobileArea.slots[0]?.time.split(" – ")[0]}
+                    {" – "}
+                    {mobileArea.slots[mobileArea.slots.length - 1]?.time.split(" – ")[1]}
+                  </span>
                 </div>
 
                 {/* Slot list */}
-                <div className="divide-y divide-white/[0.06] border border-white/[0.06] rounded-xl overflow-hidden">
+                <div className="rounded-2xl border border-white/[0.07] overflow-hidden divide-y divide-white/[0.05]">
                   {mobileArea.slots.map((slot, i) => {
-                    const isLast = i === mobileArea.slots.length - 1;
+                    const isLast     = i === mobileArea.slots.length - 1;
+                    const isNearLast = i === mobileArea.slots.length - 2 && mobileArea.slots.length > 2;
                     return (
                       <div
                         key={i}
-                        className="flex items-center gap-4 px-4 py-3.5 bg-white/[0.02]"
+                        className={[
+                          "flex items-center gap-4 px-5 py-4",
+                          isLast ? "bg-[#C9A84C]/[0.06]" : "bg-[#0D0D10]",
+                        ].join(" ")}
                       >
-                        <span className="shrink-0 w-[7rem] text-[11px] text-zinc-600 tabular-nums font-mono">
-                          {slot.time}
+                        <span className="shrink-0 w-12 text-xs text-zinc-600 tabular-nums font-mono">
+                          {slot.time.split(" – ")[0]}
                         </span>
                         <span className={[
-                          "text-sm min-w-0",
-                          isLast
-                            ? "text-white font-semibold"
-                            : "text-zinc-300 font-normal",
+                          "flex-1 text-sm min-w-0",
+                          isLast     ? "text-white font-semibold" : "",
+                          isNearLast ? "text-zinc-100 font-medium" : "",
+                          !isLast && !isNearLast ? "text-zinc-400" : "",
                         ].join(" ")}>
                           {slot.artist}
+                        </span>
+                        <span className="shrink-0 text-[10px] text-zinc-700 tabular-nums font-mono">
+                          {slot.time.split(" – ")[1]}
                         </span>
                       </div>
                     );
