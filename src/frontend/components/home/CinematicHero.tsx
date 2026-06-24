@@ -273,6 +273,21 @@ export function CinematicHero() {
             data-content
             className="relative z-20 h-full flex flex-col px-6 sm:px-12 lg:px-20 max-w-[1400px] mx-auto w-full"
           >
+            {/* Dead-centre cover — sits exactly where YouTube renders its
+                play/pause button. Styled as a branded event-detail pill so
+                it looks intentional, not like a hack. */}
+            <div
+              className="absolute left-1/2 -translate-x-1/2 pointer-events-none select-none z-30"
+              style={{ top: "50%", transform: "translate(-50%, -50%)" }}
+            >
+              <div className="flex items-center gap-3 px-5 py-2 rounded-full border border-white/[0.12] bg-black/40 backdrop-blur-sm">
+                <span className="w-1 h-1 rounded-full bg-[#C9A84C]" />
+                <span className="text-white/70 text-[11px] uppercase tracking-[0.25em] font-medium whitespace-nowrap">
+                  Awakenings Festival · July 10–12, 2026
+                </span>
+                <span className="w-1 h-1 rounded-full bg-[#C9A84C]" />
+              </div>
+            </div>
             {/* Top spacer + provenance */}
             <div className="flex-1 flex items-start pt-10 sm:pt-14">
               <motion.p
