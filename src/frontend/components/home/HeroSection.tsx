@@ -39,32 +39,35 @@ export function HeroSection() {
   return (
     <section ref={ref} className="relative min-h-screen overflow-hidden">
 
-      {/* Full-bleed festival photography */}
+      {/* Full-bleed festival photography
+          photo-1522601157550: Kaskade at Ultra Music Festival — low-angle crowd
+          silhouettes, pyrotechnic fire, deep blue-purple + warm orange-amber haze */}
       <motion.div className="absolute inset-0 z-0" style={{ y: imageY }}>
         <Image
-          src="/festival-hero.png"
+          src="https://images.unsplash.com/photo-1522601157550-4282ae97472d?q=90&w=1920&auto=format&fit=crop"
           alt="Awakenings Festival"
           fill
           priority
           style={{
             objectFit: "cover",
-            objectPosition: "center 40%",
-            opacity: 0.55,
-            // Subtle grade: pull vivid pinks/cyans toward cinematic dark-gold palette
-            filter: "saturate(0.82) brightness(0.88)",
+            objectPosition: "center 38%",
+            opacity: 0.62,
+            // Preserve the warm amber-orange fire tones — they map to #C9A84C brand gold.
+            // Slight brightness reduction deepens the crowd silhouettes.
+            filter: "brightness(0.80) saturate(0.92)",
           }}
           className="scale-[1.04]"
         />
       </motion.div>
 
-      {/* Bottom fade — ensures headline legibility */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#020203] via-[#020203]/30 to-transparent" />
+      {/* Heavy bottom fade — keeps headline zone dark and text legible */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#020203] via-[#020203]/45 to-transparent" />
 
-      {/* Left darkening — keeps left-aligned text readable */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#020203]/70 via-[#020203]/20 to-transparent" />
+      {/* Left panel — readable text without killing the right-side drama */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#020203]/75 via-[#020203]/20 to-transparent" />
 
-      {/* Subtle warm amber tint — ties the image to the brand's gold accent */}
-      <div className="absolute inset-0 z-10 bg-[#C9A84C]/[0.04] pointer-events-none" />
+      {/* Very faint warm amber cast — bridges fire tones to brand gold */}
+      <div className="absolute inset-0 z-10 bg-[#C9A84C]/[0.03] pointer-events-none" />
 
       {/* Content */}
       <motion.div

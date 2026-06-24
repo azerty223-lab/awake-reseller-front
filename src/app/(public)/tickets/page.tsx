@@ -21,18 +21,18 @@ export default async function TicketsPage() {
       {/* Hero Banner */}
       <div className="relative h-64 sm:h-80 overflow-hidden bg-[#050507]">
         <Image
-          src="/festival-hero.png"
+          src="https://images.unsplash.com/photo-1522601157550-4282ae97472d?q=90&w=1920&auto=format&fit=crop"
           alt="Awakenings"
           fill
           style={{
             objectFit: "cover",
-            objectPosition: "center 55%",
-            opacity: 0.28,
-            filter: "saturate(0.75) brightness(0.85)",
+            objectPosition: "center 50%",
+            opacity: 0.30,
+            filter: "brightness(0.80) saturate(0.85)",
           }}
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050507] via-[#050507]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050507] via-[#050507]/50 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <div className="text-[10px] uppercase tracking-[0.2em] text-[#C9A84C] font-semibold mb-3">
             Available Now
