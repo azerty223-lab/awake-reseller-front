@@ -273,20 +273,6 @@ export function CinematicHero() {
             data-content
             className="relative z-20 h-full flex flex-col items-center justify-center text-center px-6 sm:px-12 lg:px-20 max-w-[1400px] mx-auto w-full gap-6"
           >
-            {/* Pill — covers YouTube button (absolute, offset right) */}
-            <div
-              className="absolute pointer-events-none select-none z-30"
-              style={{ top: "50%", left: "57%", transform: "translate(-50%, -50%)" }}
-            >
-              <div className="flex items-center gap-3 px-5 py-2 rounded-full border border-white/[0.12] bg-black/40 backdrop-blur-sm">
-                <span className="w-1 h-1 rounded-full bg-[#C9A84C]" />
-                <span className="text-white/70 text-[11px] uppercase tracking-[0.25em] font-medium whitespace-nowrap">
-                  Awakenings Festival · July 10–12, 2026
-                </span>
-                <span className="w-1 h-1 rounded-full bg-[#C9A84C]" />
-              </div>
-            </div>
-
             {/* Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
@@ -298,15 +284,21 @@ export function CinematicHero() {
               Awakenings<br />Festival 2026
             </motion.h1>
 
-            {/* Event info */}
-            <motion.p
+            {/* Dark pill — replaces plain text, covers YouTube button */}
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-xs text-zinc-400 tracking-[0.15em] uppercase font-light"
+              className="pointer-events-none select-none"
             >
-              July 10–12, 2026&nbsp;&nbsp;·&nbsp;&nbsp;Hilvarenbeek, Netherlands
-            </motion.p>
+              <div className="flex items-center gap-4 px-8 py-4 rounded-full border border-white/[0.15] bg-black/60 backdrop-blur-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] shrink-0" />
+                <span className="text-white/80 text-[12px] uppercase tracking-[0.28em] font-semibold whitespace-nowrap">
+                  Awakenings Festival · July 10–12, 2026
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] shrink-0" />
+              </div>
+            </motion.div>
 
             {/* Countdown */}
             <motion.div
