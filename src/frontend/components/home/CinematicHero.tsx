@@ -65,8 +65,8 @@ const CONTENT_PANELS: ContentPanel[] = [
 const TOTAL_PANELS = 1 + CONTENT_PANELS.length;
 
 // Charlotte de Witte @ Awakenings Festival 2025 (official Awakenings channel)
-// Direct iframe embed — no API required, guaranteed autoplay with start=20
-const YT_EMBED = "https://www.youtube.com/embed/m1SvbXLYEEc?autoplay=1&mute=1&loop=1&playlist=m1SvbXLYEEc&controls=0&disablekb=1&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&start=20";
+// Direct iframe embed — no API required, guaranteed autoplay with start=22
+const YT_EMBED = "https://www.youtube.com/embed/m1SvbXLYEEc?autoplay=1&mute=1&loop=1&playlist=m1SvbXLYEEc&controls=0&disablekb=1&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&start=22";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function CinematicHero() {
@@ -158,9 +158,8 @@ export function CinematicHero() {
         {/* ══ Panel 1 — YouTube video hero (m1SvbXLYEEc, 0:20→0:31) ══ */}
         <div className="relative w-screen h-screen shrink-0 overflow-hidden">
 
-          {/* YouTube iframe — direct embed, no API needed, plays immediately */}
+          {/* YouTube iframe — z-index 0, no GSAP transform (avoids stacking context) */}
           <iframe
-            data-parallax
             src={YT_EMBED}
             allow="autoplay; encrypted-media; picture-in-picture"
             title="Awakenings Festival background"
@@ -173,16 +172,18 @@ export function CinematicHero() {
               transform: "translate(-50%, -50%)",
               pointerEvents: "none",
               border: "none",
+              zIndex: 0,
             }}
             aria-hidden="true"
           />
 
-          {/* Overlay */}
+          {/* Overlay — z-index 10 keeps it above the iframe at all times */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
+              zIndex: 10,
               background: [
-                "linear-gradient(to bottom, rgba(0,0,0,0.45), rgba(0,0,0,0.88))",
+                "linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.88))",
                 "radial-gradient(circle at 50% 20%, rgba(210,170,55,0.18), transparent 45%)",
               ].join(", "),
             }}
