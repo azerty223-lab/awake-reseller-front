@@ -13,7 +13,7 @@ const features = [
   },
   {
     num: "02",
-    title: "Stripe-Secured Checkout",
+    title: "Secured-Payment Checkout",
     body: "Payments processed by Stripe — the same infrastructure trusted by Shopify, Amazon, and Uber.",
     detail: "PCI DSS Level 1",
   },
