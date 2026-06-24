@@ -281,7 +281,7 @@ export function CinematicHero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className="font-[var(--font-inter)] font-black text-white uppercase leading-tight mb-8"
-                style={{ fontSize: "clamp(2.5rem, 4.5vw, 4.5rem)", letterSpacing: "0.04em" }}
+                style={{ fontSize: "clamp(1.75rem, 3vw, 3rem)", letterSpacing: "0.04em" }}
               >
                 <span className="block">Awakenings</span>
                 <span style={{ display: "block", marginLeft: "clamp(2rem, 12vw, 10rem)" }}>
