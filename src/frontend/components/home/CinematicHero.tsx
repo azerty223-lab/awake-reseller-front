@@ -283,50 +283,48 @@ export function CinematicHero() {
             className="relative z-20 h-full flex flex-col items-center justify-center text-center px-6 sm:px-12 lg:px-20 max-w-[1400px] mx-auto w-full gap-6"
             style={{ marginTop: "80px" }}
           >
-            {/* Dark pill — covers YouTube button */}
+            {/* Dark container — pill label + countdown inside */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="pointer-events-none select-none mt-8"
+              className="pointer-events-none select-none mt-8 w-full max-w-xl"
             >
-              <div className="flex items-center gap-4 px-8 py-[19px] rounded-full border border-white/[0.15] bg-black/60 backdrop-blur-md">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] shrink-0" />
-                <span className="text-white/80 text-[12px] uppercase tracking-[0.28em] font-semibold whitespace-nowrap">
-                  Awakenings Festival · July 10–12, 2026
-                </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] shrink-0" />
-              </div>
-            </motion.div>
-
-            {/* Countdown */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.55 }}
-              className="flex items-baseline justify-center gap-6 sm:gap-10"
-            >
-              {[
-                { val: d, label: "days" },
-                { val: h, label: "hrs" },
-                { val: m, label: "min" },
-                { val: s, label: "sec" },
-              ].map(({ val, label }, i) => (
-                <div key={label} className="flex items-baseline gap-1.5">
-                  <span
-                    className="font-[var(--font-playfair)] font-black text-white tabular-nums"
-                    style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", letterSpacing: "-0.02em" }}
-                  >
-                    {String(val).padStart(2, "0")}
+              <div className="flex flex-col items-center gap-5 px-8 py-6 rounded-2xl border border-white/[0.15] bg-black/60 backdrop-blur-md">
+                {/* Label row */}
+                <div className="flex items-center gap-4">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] shrink-0" />
+                  <span className="text-white/80 text-[12px] uppercase tracking-[0.28em] font-semibold whitespace-nowrap">
+                    Awakenings Festival · July 10–12, 2026
                   </span>
-                  <span className="text-zinc-600 text-[10px] uppercase tracking-[0.15em] font-medium">
-                    {label}
-                  </span>
-                  {i < 3 && (
-                    <span className="text-zinc-700 ml-4 font-light text-xl leading-none select-none">·</span>
-                  )}
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] shrink-0" />
                 </div>
-              ))}
+
+                {/* Countdown inside the container */}
+                <div className="flex items-baseline justify-center gap-6 sm:gap-10">
+                  {[
+                    { val: d, label: "days" },
+                    { val: h, label: "hrs" },
+                    { val: m, label: "min" },
+                    { val: s, label: "sec" },
+                  ].map(({ val, label }, i) => (
+                    <div key={label} className="flex items-baseline gap-1.5">
+                      <span
+                        className="font-[var(--font-playfair)] font-black text-white tabular-nums"
+                        style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", letterSpacing: "-0.02em" }}
+                      >
+                        {String(val).padStart(2, "0")}
+                      </span>
+                      <span className="text-zinc-400 text-[10px] uppercase tracking-[0.15em] font-medium">
+                        {label}
+                      </span>
+                      {i < 3 && (
+                        <span className="text-zinc-600 ml-4 font-light text-xl leading-none select-none">·</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </motion.div>
 
             {/* CTA — directly under countdown */}
