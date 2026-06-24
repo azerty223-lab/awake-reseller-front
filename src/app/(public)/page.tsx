@@ -1,6 +1,7 @@
 ﻿import { HeroSection } from "@/frontend/components/home/HeroSection";
 import { FeaturedTickets } from "@/frontend/components/home/FeaturedTickets";
 import { FestivalInfo } from "@/frontend/components/home/FestivalInfo";
+import { LineupSection } from "@/frontend/components/home/LineupSection";
 import { TrustSection } from "@/frontend/components/home/TrustSection";
 import { NewsletterSection } from "@/frontend/components/home/NewsletterSection";
 import { FAQSection } from "@/frontend/components/home/FAQSection";
@@ -11,6 +12,7 @@ export default function HomePage() {
       <HeroSection />
       <FeaturedTickets />
       <FestivalInfo />
+      <LineupSection />
       <TrustSection />
       <NewsletterSection />
       <FAQSection />
