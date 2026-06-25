@@ -130,7 +130,7 @@ export function CinematicHero() {
               flexShrink: 0,
             }} />
             <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
-              Official Verified Resale
+             Verified Resale
             </span>
           </motion.div>
 
@@ -144,11 +144,12 @@ export function CinematicHero() {
             <span
               className="block"
               style={{
-                fontFamily:    SERIF,
-                fontWeight:    900,
-                fontSize:      "clamp(3.5rem, 10vw, 9rem)",
-                lineHeight:    0.84,
-                letterSpacing: "-0.048em",
+                fontFamily:    INTER,
+                fontWeight:    800,
+                fontSize:      "clamp(2.5rem, 7.5vw, 6.5rem)",
+                lineHeight:    1,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
                 color:         WARM_WHITE,
               }}
             >
@@ -236,11 +237,11 @@ export function CinematicHero() {
                       animate={{ opacity: 1   }}
                       transition={{ duration: 0.4, ease: "easeOut" }}
                       style={{
-                        fontFamily:         SERIF,
+                        fontFamily:         INTER,
                         fontWeight:         700,
-                        fontSize:           "clamp(3rem, 7vw, 6rem)",
+                        fontSize:           "clamp(2.75rem, 6.5vw, 5.5rem)",
                         lineHeight:         1,
-                        letterSpacing:      "-0.02em",
+                        letterSpacing:      "0.06em",
                         color:              WARM_WHITE,
                         fontVariantNumeric: "tabular-nums",
                         display:            "block",
@@ -251,12 +252,12 @@ export function CinematicHero() {
                     {/* Label */}
                     <span style={{
                       fontFamily:    INTER,
-                      fontWeight:    400,
-                      fontSize:      "11px",
-                      letterSpacing: "0.22em",
+                      fontWeight:    500,
+                      fontSize:      "10px",
+                      letterSpacing: "0.30em",
                       textTransform: "uppercase",
-                      color:         `rgba(184,146,58,0.70)`,
-                      marginTop:     "8px",
+                      color:         `rgba(184,146,58,0.75)`,
+                      marginTop:     "10px",
                     }}>
                       {label}
                     </span>
