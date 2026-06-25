@@ -20,7 +20,7 @@ const TIERS = [
       { label: "Site type",    value: "Personal tent space" },
       { label: "Facilities",  value: "Shared showers + WC" },
       { label: "Access",      value: "Festival + camping wristband" },
-      { label: "Duration",    value: "Thursday check-in — Monday checkout" },
+      { label: "Duration",    value: "Thu check-in — Mon checkout" },
     ],
     note: "Bring your own tent",
   },
@@ -215,7 +215,7 @@ export function AccommodationSection() {
                       <span style={{ fontFamily: INTER, fontSize: "12px", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(161,161,170,0.55)" }}>
                         {label}
                       </span>
-                      <span style={{ fontFamily: INTER, fontSize: "0.9375rem", color: "rgba(237,233,225,0.85)" }}>
+                      <span style={{ fontFamily: INTER, fontSize: "0.9375rem", color: "rgba(237,233,225,0.85)", whiteSpace: "nowrap" }}>
                         {value}
                       </span>
                     </div>
