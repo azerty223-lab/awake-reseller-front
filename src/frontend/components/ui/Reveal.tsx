@@ -7,8 +7,8 @@ interface RevealProps {
   children: React.ReactNode;
   delay?: number;
   duration?: number;
-  /** "up" = clip from bottom edge (curtain lifts). "left" = wipe from right edge. */
-  direction?: "up" | "left";
+  /** "up" = clip from bottom. "left" = wipe from right. "right" = wipe from left. */
+  direction?: "up" | "left" | "right";
   className?: string;
 }
 
@@ -32,9 +32,10 @@ export function Reveal({
   const ref  = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "0px 0px -60px 0px" });
 
-  const hidden: Record<RevealProps["direction"] & string, string> = {
-    up:   "inset(0 0 100% 0)",
-    left: "inset(0 100% 0 0)",
+  const hidden: Record<string, string> = {
+    up:    "inset(0 0 100% 0)",
+    left:  "inset(0 100% 0 0)",
+    right: "inset(0 0 0 100%)",
   };
 
   return (
