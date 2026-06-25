@@ -18,7 +18,7 @@ const TIERS = [
       { label: "Access",      value: "Festival + camping wristband" },
       { label: "Duration",    value: "Thu – Mon" },
     ],
-    note:       "Bring your own tent",
+    note:       "BYO tent",
     featured:   false,
   },
   {
@@ -67,7 +67,7 @@ export function AccommodationSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-5"
+          className="mb-8"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: `${CYAN}0.45)`, flexShrink: 0 }} />
@@ -150,13 +150,14 @@ export function AccommodationSection() {
 
                 {/* Title */}
                 <h3 style={{
-                  fontFamily:    "var(--font-playfair)",
-                  fontWeight:    900,
-                  fontSize:      "clamp(1.375rem, 2.8vw, 1.75rem)",
-                  letterSpacing: "-0.025em",
-                  lineHeight:    1,
+                  fontFamily:    INTER,
+                  fontWeight:    800,
+                  fontSize:      "clamp(1rem, 2vw, 1.1875rem)",
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                  lineHeight:    1.15,
                   color:         "rgba(237,233,225,0.95)",
-                  marginBottom:  "1rem",
+                  marginBottom:  "0.875rem",
                 }}>
                   {tier.title}
                 </h3>
@@ -199,12 +200,12 @@ export function AccommodationSection() {
                       </span>
                       <span style={{
                         fontFamily:  INTER,
-                        fontSize:    "0.875rem",
+                        fontSize:    "0.8125rem",
                         fontWeight:  400,
                         color:       "rgba(237,233,225,0.80)",
                         textAlign:   "right",
-                        whiteSpace:  "nowrap",
                         marginLeft:  "0.5rem",
+                        lineHeight:  1.4,
                       }}>
                         {value}
                       </span>
