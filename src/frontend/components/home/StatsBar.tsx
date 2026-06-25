@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { BadgeCheck, ShieldCheck, Zap, Headphones } from "lucide-react";
@@ -48,3 +48,4 @@ export function StatsBar() {
     </section>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -39,7 +39,7 @@ export function HeroSection() {
   return (
     <section ref={ref} className="relative min-h-screen overflow-hidden">
 
-      {/* Local video background — looping, muted, cover-fitted */}
+      {/* Local video background â€” looping, muted, cover-fitted */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <video
           src="/hero-bg.mp4"
@@ -58,7 +58,7 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Cinematic overlay — bottom darkening for text + warm amber glow at top */}
+      {/* Cinematic overlay â€” bottom darkening for text + warm amber glow at top */}
       <div
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
@@ -83,10 +83,10 @@ export function HeroSection() {
             transition={{ duration: 1, delay: 0.2 }}
             className="text-[10px] uppercase tracking-[0.3em] text-white/35 mb-10 font-medium"
           >
-            Ticket Resale — awakenings.com
+            Ticket Resale â€” awakenings.com
           </motion.p>
 
-          {/* Primary headline — designed, not generated */}
+          {/* Primary headline â€” designed, not generated */}
           <motion.h1
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
@@ -116,10 +116,10 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.55 }}
             className="text-sm text-zinc-400 tracking-[0.12em] uppercase mb-12 font-light"
           >
-            July 10–12, 2026&nbsp;&nbsp;·&nbsp;&nbsp;Hilvarenbeek, Netherlands
+            July 10â€“12, 2026&nbsp;&nbsp;Â·&nbsp;&nbsp;Hilvarenbeek, Netherlands
           </motion.p>
 
-          {/* Countdown — plain numbers, no decoration */}
+          {/* Countdown â€” plain numbers, no decoration */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -143,7 +143,7 @@ export function HeroSection() {
                   {label}
                 </span>
                 {i < 3 && (
-                  <span className="text-zinc-700 ml-3 font-light text-2xl leading-none select-none">·</span>
+                  <span className="text-zinc-700 ml-3 font-light text-2xl leading-none select-none">Â·</span>
                 )}
               </div>
             ))}
@@ -191,3 +191,4 @@ export function HeroSection() {
     </section>
   );
 }
+

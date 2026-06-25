@@ -16,7 +16,7 @@ const features = [
   {
     num: "02",
     title:  "Secured-Payment Checkout",
-    body:   "Payments processed by Stripe — the same infrastructure trusted by Shopify, Amazon, and Uber.",
+    body:   "Payments processed by Stripe â€” the same infrastructure trusted by Shopify, Amazon, and Uber.",
     detail: "PCI DSS Level 1",
   },
   {
@@ -28,8 +28,8 @@ const features = [
   {
     num: "04",
     title:  "Human Support",
-    body:   "Real people, real answers. Reach us via email or the contact form — response within 4 hours.",
-    detail: "9:00–22:00 CET",
+    body:   "Real people, real answers. Reach us via email or the contact form â€” response within 4 hours.",
+    detail: "9:00â€“22:00 CET",
   },
 ];
 
@@ -37,20 +37,20 @@ const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 export function TrustSection() {
   return (
-    <section className="relative py-24 sm:py-36 overflow-hidden bg-transparent">
+    <section className="relative py-5 overflow-hidden bg-transparent">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
         <div className="grid lg:grid-cols-[1fr_1.4fr] gap-16 lg:gap-24 items-start">
 
-          {/* ── Left: sticky heading ─────────────────────────── */}
+          {/* â”€â”€ Left: sticky heading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="lg:sticky lg:top-28">
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9 }}
-              style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}
+              style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}
             >
               <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
               <span style={{
@@ -122,7 +122,7 @@ export function TrustSection() {
             </motion.div>
           </div>
 
-          {/* ── Right: editorial feature rows ───────────────── */}
+          {/* â”€â”€ Right: editorial feature rows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div>
             {features.map((f, i) => (
               <Reveal key={f.num} delay={0.05 + i * 0.08} direction="left">
@@ -193,3 +193,4 @@ export function TrustSection() {
     </section>
   );
 }
+

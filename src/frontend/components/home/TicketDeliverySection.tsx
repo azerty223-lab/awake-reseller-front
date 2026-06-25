@@ -31,7 +31,7 @@ const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 export function TicketDeliverySection() {
   return (
-    <section className="relative py-24 sm:py-36 overflow-hidden">
+    <section className="relative py-5 overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
@@ -42,11 +42,11 @@ export function TicketDeliverySection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-14 sm:mb-20"
+          className="mb-6"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
-            <span style={{ fontFamily: INTER, fontSize: "11px", fontWeight: 400, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(237,233,225,0.50)" }}>
+            <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Ticket Delivery
             </span>
           </div>
@@ -59,7 +59,7 @@ export function TicketDeliverySection() {
           </h2>
         </motion.div>
 
-        {/* Timeline — 3 steps connected by a line on desktop */}
+        {/* Timeline */}
         <div className="relative">
 
           {/* Connecting line — desktop only */}
@@ -78,9 +78,7 @@ export function TicketDeliverySection() {
                 <div className="relative pt-2">
 
                   {/* Step indicator dot */}
-                  <div
-                    className="hidden md:flex items-center gap-4 mb-8"
-                  >
+                  <div className="hidden md:flex items-center gap-4 mb-8">
                     <div style={{
                       width:        "11px",
                       height:       "11px",
@@ -114,10 +112,10 @@ export function TicketDeliverySection() {
 
                   {/* Body */}
                   <p style={{
-                    fontFamily: INTER,
-                    fontSize:   "0.9375rem",
-                    lineHeight: 1.8,
-                    color:      "rgba(161,161,170,1)",
+                    fontFamily:   INTER,
+                    fontSize:     "0.9375rem",
+                    lineHeight:   1.8,
+                    color:        "rgba(161,161,170,1)",
                     marginBottom: "1.25rem",
                   }}>
                     {step.body}
@@ -148,23 +146,21 @@ export function TicketDeliverySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-16 sm:mt-20 pt-10 border-t border-white/[0.06]"
+          className="mt-12 pt-8 border-t border-white/[0.06]"
           style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}
         >
-          <div>
-            <p style={{ fontFamily: INTER, fontSize: "0.9375rem", color: "rgba(161,161,170,1)", lineHeight: 1.6 }}>
-              Questions about your order?{" "}
-              <Link
-                href="/contact"
-                style={{ color: "rgba(237,233,225,0.70)", textDecoration: "underline", textUnderlineOffset: "3px", textDecorationColor: "rgba(237,233,225,0.20)" }}
-                onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
-                onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.70)")}
-              >
-                Contact us
-              </Link>
-              {" "}— we respond within 4 hours during CET business hours.
-            </p>
-          </div>
+          <p style={{ fontFamily: INTER, fontSize: "0.9375rem", color: "rgba(161,161,170,1)", lineHeight: 1.6 }}>
+            Questions about your order?{" "}
+            <Link
+              href="/contact"
+              style={{ color: "rgba(237,233,225,0.70)", textDecoration: "underline", textUnderlineOffset: "3px", textDecorationColor: "rgba(237,233,225,0.20)" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.70)")}
+            >
+              Contact us
+            </Link>
+            {" — "}we respond within 4 hours during CET business hours.
+          </p>
           <Link
             href="/tickets"
             className="group flex items-center gap-2.5 shrink-0"

@@ -9,12 +9,12 @@ import { Marquee } from "@/frontend/components/ui/Marquee";
 
 const artists = [
   "Adam Beyer", "Charlotte de Witte", "Amelie Lens", "Richie Hawtin",
-  "Sven Väth", "Matador", "Alignment", "I Hate Models",
+  "Sven VÃ¤th", "Matador", "Alignment", "I Hate Models",
   "Paula Temple", "Boris Brejcha", "Enrico Sangiuliano", "SPFDJ",
 ];
 
 const facts = [
-  { label: "Festival dates", value: "July 10–12, 2026" },
+  { label: "Festival dates", value: "July 10â€“12, 2026" },
   { label: "Venue",          value: "Hilvarenbeek, Netherlands" },
   { label: "Stages",         value: "5 stages, indoor & outdoor" },
   { label: "Capacity",       value: "35,000+ attendees" },
@@ -24,7 +24,7 @@ const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 export function FestivalInfo() {
   return (
-    <section className="relative py-24 sm:py-36 overflow-hidden">
+    <section className="relative py-5 overflow-hidden">
 
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
@@ -34,14 +34,14 @@ export function FestivalInfo() {
         {/* Two-column editorial composition */}
         <div className="grid lg:grid-cols-2 gap-20 lg:gap-28 items-start">
 
-          {/* ── Left: headline + description ────────────────── */}
+          {/* â”€â”€ Left: headline + description â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div>
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9 }}
-              style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}
+              style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}
             >
               <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
               <span style={{
@@ -82,7 +82,7 @@ export function FestivalInfo() {
               }}
             >
               Since its founding, Awakenings has become the benchmark for
-              electronic music worldwide — known for uncompromising sound,
+              electronic music worldwide â€” known for uncompromising sound,
               visionary production, and a community built around a shared
               love of the music.
             </motion.p>
@@ -119,10 +119,10 @@ export function FestivalInfo() {
             </motion.div>
           </div>
 
-          {/* ── Right: fact list + artist marquee ──────────── */}
+          {/* â”€â”€ Right: fact list + artist marquee â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="space-y-14">
 
-            {/* Key facts — Reveal wipes each row in */}
+            {/* Key facts â€” Reveal wipes each row in */}
             <div>
               {facts.map(({ label, value }, i) => (
                 <Reveal key={label} delay={0.08 + i * 0.07} direction="left">
@@ -171,7 +171,7 @@ export function FestivalInfo() {
               </span>
 
               <div className="border-t border-white/[0.06] pt-4 space-y-3">
-                {/* Two opposing marquees — visual depth */}
+                {/* Two opposing marquees â€” visual depth */}
                 <Marquee
                   items={artists}
                   speed={60}
@@ -195,3 +195,4 @@ export function FestivalInfo() {
     </section>
   );
 }
+

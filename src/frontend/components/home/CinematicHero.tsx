@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -26,14 +26,14 @@ function useCountdown(target: Date) {
   return t;
 }
 
-// Cinematic fade — no movement. Used for the headline so it feels like a film dissolve.
+// Cinematic fade â€” no movement. Used for the headline so it feels like a film dissolve.
 const dissolve = (delay: number, duration = 1.4) => ({
   initial:    { opacity: 0 } as const,
   animate:    { opacity: 1 } as const,
   transition: { duration, delay, ease: "easeOut" } as const,
 });
 
-// Precise rise — minimal vertical movement. Used for supporting content.
+// Precise rise â€” minimal vertical movement. Used for supporting content.
 const rise = (delay: number) => ({
   initial:    { opacity: 0, y: 14 } as const,
   animate:    { opacity: 1, y: 0  } as const,
@@ -41,8 +41,8 @@ const rise = (delay: number) => ({
 });
 
 // Design tokens
-const WARM_WHITE = "#EDE9E1"; // off-white — warm, cinematic, not clinical
-const GOLD       = "#B8923A"; // darker gold — more industrial, less decorative
+const WARM_WHITE = "#EDE9E1"; // off-white â€” warm, cinematic, not clinical
+const GOLD       = "#B8923A"; // darker gold â€” more industrial, less decorative
 const INTER      = "var(--font-inter, Inter, system-ui, sans-serif)";
 const SERIF      = "var(--font-playfair)";
 
@@ -72,7 +72,7 @@ export function CinematicHero() {
         <source src="/hero-bg.mp4" type="video/mp4" />
       </video>
 
-      {/* Overlay — sharp darkening at bottom, nearly transparent at top */}
+      {/* Overlay â€” sharp darkening at bottom, nearly transparent at top */}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
@@ -83,7 +83,7 @@ export function CinematicHero() {
         }}
       />
 
-      {/* Ghost year — architectural background element.
+      {/* Ghost year â€” architectural background element.
           Type at this scale becomes texture, not information.
           Acne Studios / editorial technique: let the letter-forms own the space. */}
       <motion.span
@@ -112,7 +112,7 @@ export function CinematicHero() {
           style={{ paddingBottom: "clamp(3rem, 6.5vw, 5.5rem)" }}
         >
 
-          {/* ── Eyebrow ── */}
+          {/* â”€â”€ Eyebrow â”€â”€ */}
           <motion.div
             {...rise(0.1)}
             style={{
@@ -140,7 +140,7 @@ export function CinematicHero() {
             </span>
           </motion.div>
 
-          {/* ── Monumental headline ──
+          {/* â”€â”€ Monumental headline â”€â”€
               The headline IS the layout. It absorbs the space.
               No decoration. No shadow. No gradient. Just mass. */}
           <motion.h1
@@ -162,7 +162,7 @@ export function CinematicHero() {
             </span>
           </motion.h1>
 
-          {/* ── Info band ──
+          {/* â”€â”€ Info band â”€â”€
               Full-width rule acts as a horizon line between the monument
               and the information below. Year + location read as a single caption. */}
           <motion.div
@@ -192,7 +192,7 @@ export function CinematicHero() {
                 textTransform: "uppercase",
                 color:         "rgba(237,233,225,0.55)",
               }}>
-                10&thinsp;—&thinsp;12 July&ensp;·&ensp;2026
+                10&thinsp;â€”&thinsp;12 July&ensp;Â·&ensp;2026
               </span>
               <span style={{
                 fontFamily:    INTER,
@@ -202,16 +202,16 @@ export function CinematicHero() {
                 textTransform: "uppercase",
                 color:         "rgba(237,233,225,0.40)",
               }}>
-                Amsterdam&ensp;·&ensp;Gashouder&thinsp;+&thinsp;Hembrug
+                Amsterdam&ensp;Â·&ensp;Gashouder&thinsp;+&thinsp;Hembrug
               </span>
             </div>
           </motion.div>
 
-          {/* ── Countdown + CTA ──
+          {/* â”€â”€ Countdown + CTA â”€â”€
               Numbers are ultra-thin (weight 100): the luxury/fashion move.
               Tension comes from the contrast between the massive bold headline
-              and these hairline numerals — not from decoration.
-              CTA has no box, no border. Opacity at rest → full on hover. */}
+              and these hairline numerals â€” not from decoration.
+              CTA has no box, no border. Opacity at rest â†’ full on hover. */}
           <motion.div
             {...rise(0.65)}
             style={{
@@ -235,7 +235,7 @@ export function CinematicHero() {
                     paddingLeft:   i === 0 ? 0 : "clamp(1.25rem, 2.8vw, 2.25rem)",
                     paddingRight:  i === 3 ? 0 : "clamp(1.25rem, 2.8vw, 2.25rem)",
                   }}>
-                    {/* Number — Playfair 700 for impact, fade tick on change */}
+                    {/* Number â€” Playfair 700 for impact, fade tick on change */}
                     <motion.span
                       key={val}
                       initial={{ opacity: 0.3 }}
@@ -316,7 +316,7 @@ export function CinematicHero() {
         </div>
       </div>
 
-      {/* Scroll indicator — bottom center */}
+      {/* Scroll indicator â€” bottom center */}
       <motion.div
         {...dissolve(1.8, 1.0)}
         className="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 pointer-events-none select-none"
@@ -341,3 +341,4 @@ export function CinematicHero() {
     </section>
   );
 }
+

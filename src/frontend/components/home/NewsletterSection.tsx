@@ -29,20 +29,20 @@ export function NewsletterSection() {
   };
 
   return (
-    <section className="relative py-24 sm:py-36 overflow-hidden">
+    <section className="relative py-5 overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-28 items-center">
 
-          {/* ── Left: atmospheric copy ───────────────────────── */}
+          {/* â”€â”€ Left: atmospheric copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div>
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9 }}
-              style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}
+              style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}
             >
               <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
               <span style={{
@@ -79,12 +79,12 @@ export function NewsletterSection() {
                 color:      "rgba(161,161,170,1)",
               }}
             >
-              New ticket listings, price changes, and sale alerts — straight
+              New ticket listings, price changes, and sale alerts â€” straight
               to your inbox. Join 2,400+ people already subscribed.
             </motion.p>
           </div>
 
-          {/* ── Right: form ──────────────────────────────────── */}
+          {/* â”€â”€ Right: form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -190,3 +190,4 @@ export function NewsletterSection() {
     </section>
   );
 }
+

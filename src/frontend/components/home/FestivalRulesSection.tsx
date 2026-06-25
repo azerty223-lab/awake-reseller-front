@@ -41,7 +41,7 @@ const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 export function FestivalRulesSection() {
   return (
-    <section className="relative py-24 sm:py-36 overflow-hidden">
+    <section className="relative py-5 overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
@@ -52,11 +52,11 @@ export function FestivalRulesSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-14 sm:mb-20"
+          className="mb-6"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
-            <span style={{ fontFamily: INTER, fontSize: "11px", fontWeight: 400, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(237,233,225,0.50)" }}>
+            <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Important
             </span>
           </div>
@@ -69,7 +69,7 @@ export function FestivalRulesSection() {
           </h2>
         </motion.div>
 
-        {/* Rules — two-column grid of editorial rows */}
+        {/* Rules â€” two-column grid of editorial rows */}
         <div className="grid grid-cols-1 lg:grid-cols-2" style={{ gap: "1px", background: "rgba(237,233,225,0.05)" }}>
           {RULES.map((rule, i) => (
             <Reveal key={rule.index} delay={0.04 + i * 0.05} direction="left">
@@ -136,3 +136,4 @@ export function FestivalRulesSection() {
     </section>
   );
 }
+

@@ -1,88 +1,88 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useReducedMotion, motion, AnimatePresence } from "framer-motion";
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface Slot { time: string; artist: string; }
 interface Area { id: string; label: string; note?: string; slots: Slot[]; }
 type DayKey = "Friday" | "Saturday" | "Sunday";
 
-// ── Lineup data ──────────────────────────────────────────────────────────────
+// â”€â”€ Lineup data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const LINEUP: Record<DayKey, Area[]> = {
   Friday: [
     {
       id: "V", label: "Area V",
       slots: [
-        { time: "15:00 – 17:30", artist: "Saidah" },
-        { time: "17:30 – 19:00", artist: "Pegassi" },
-        { time: "19:00 – 20:30", artist: "Patrick Mason" },
-        { time: "20:30 – 22:00", artist: "I Hate Models" },
-        { time: "22:00 – 23:30", artist: "DJ Gigola & Funk Tribu" },
-        { time: "23:30 – 01:00", artist: "Amelie Lens" },
+        { time: "15:00 â€“ 17:30", artist: "Saidah" },
+        { time: "17:30 â€“ 19:00", artist: "Pegassi" },
+        { time: "19:00 â€“ 20:30", artist: "Patrick Mason" },
+        { time: "20:30 â€“ 22:00", artist: "I Hate Models" },
+        { time: "22:00 â€“ 23:30", artist: "DJ Gigola & Funk Tribu" },
+        { time: "23:30 â€“ 01:00", artist: "Amelie Lens" },
       ],
     },
     {
       id: "A", label: "Area A",
       slots: [
-        { time: "15:00 – 17:00", artist: "Olive Anguz" },
-        { time: "17:00 – 18:30", artist: "Franck & Upper90" },
-        { time: "18:30 – 20:00", artist: "Serafina" },
-        { time: "20:00 – 22:00", artist: "Future.666 & Überkikz" },
-        { time: "22:00 – 23:30", artist: "Cloudy" },
-        { time: "23:30 – 01:00", artist: "Adrián Mills" },
+        { time: "15:00 â€“ 17:00", artist: "Olive Anguz" },
+        { time: "17:00 â€“ 18:30", artist: "Franck & Upper90" },
+        { time: "18:30 â€“ 20:00", artist: "Serafina" },
+        { time: "20:00 â€“ 22:00", artist: "Future.666 & Ãœberkikz" },
+        { time: "22:00 â€“ 23:30", artist: "Cloudy" },
+        { time: "23:30 â€“ 01:00", artist: "AdriÃ¡n Mills" },
       ],
     },
     {
       id: "B", label: "Area B",
       slots: [
-        { time: "15:00 – 16:30", artist: "AAT" },
-        { time: "16:30 – 18:30", artist: "M-high & Sidney Charles" },
-        { time: "18:30 – 20:00", artist: "Cloonee" },
-        { time: "20:00 – 21:30", artist: "Wade" },
-        { time: "21:30 – 23:30", artist: "East End Dubs & Vintage Culture" },
-        { time: "23:30 – 01:00", artist: "Gordo" },
+        { time: "15:00 â€“ 16:30", artist: "AAT" },
+        { time: "16:30 â€“ 18:30", artist: "M-high & Sidney Charles" },
+        { time: "18:30 â€“ 20:00", artist: "Cloonee" },
+        { time: "20:00 â€“ 21:30", artist: "Wade" },
+        { time: "21:30 â€“ 23:30", artist: "East End Dubs & Vintage Culture" },
+        { time: "23:30 â€“ 01:00", artist: "Gordo" },
       ],
     },
     {
       id: "C", label: "Area C",
       slots: [
-        { time: "15:00 – 17:00", artist: "Helsloot" },
-        { time: "17:00 – 18:30", artist: "KASIA" },
-        { time: "18:30 – 20:00", artist: "Marco Faraone" },
-        { time: "20:00 – 21:30", artist: "Alan Fitzpatrick" },
-        { time: "21:30 – 23:00", artist: "Anfisa Letyago" },
-        { time: "23:00 – 01:00", artist: "Joris Voorn" },
+        { time: "15:00 â€“ 17:00", artist: "Helsloot" },
+        { time: "17:00 â€“ 18:30", artist: "KASIA" },
+        { time: "18:30 â€“ 20:00", artist: "Marco Faraone" },
+        { time: "20:00 â€“ 21:30", artist: "Alan Fitzpatrick" },
+        { time: "21:30 â€“ 23:00", artist: "Anfisa Letyago" },
+        { time: "23:00 â€“ 01:00", artist: "Joris Voorn" },
       ],
     },
     {
       id: "X", label: "Area X",
       slots: [
-        { time: "16:00 – 18:00", artist: "Bullzeye" },
-        { time: "18:00 – 19:30", artist: "Elli Acula" },
-        { time: "19:30 – 21:00", artist: "Marrøn" },
-        { time: "21:00 – 23:00", artist: "DJ Rush" },
-        { time: "23:00 – 01:00", artist: "Speedy J" },
+        { time: "16:00 â€“ 18:00", artist: "Bullzeye" },
+        { time: "18:00 â€“ 19:30", artist: "Elli Acula" },
+        { time: "19:30 â€“ 21:00", artist: "MarrÃ¸n" },
+        { time: "21:00 â€“ 23:00", artist: "DJ Rush" },
+        { time: "23:00 â€“ 01:00", artist: "Speedy J" },
       ],
     },
     {
       id: "H", label: "Area H",
       slots: [
-        { time: "16:30 – 18:00", artist: "BIANKA" },
-        { time: "18:00 – 19:30", artist: "Zisko" },
-        { time: "19:30 – 21:00", artist: "Mac Declos" },
-        { time: "21:00 – 22:30", artist: "Philippa Pacho" },
-        { time: "22:30 – 00:00", artist: "Lobster" },
+        { time: "16:30 â€“ 18:00", artist: "BIANKA" },
+        { time: "18:00 â€“ 19:30", artist: "Zisko" },
+        { time: "19:30 â€“ 21:00", artist: "Mac Declos" },
+        { time: "21:00 â€“ 22:30", artist: "Philippa Pacho" },
+        { time: "22:30 â€“ 00:00", artist: "Lobster" },
       ],
     },
     {
       id: "N", label: "Area N", note: "Camping After",
       slots: [
-        { time: "00:30 – 02:00", artist: "Locus Error" },
-        { time: "02:00 – 03:30", artist: "Estella Boersma" },
-        { time: "03:30 – 05:00", artist: "Lacchesi" },
+        { time: "00:30 â€“ 02:00", artist: "Locus Error" },
+        { time: "02:00 â€“ 03:30", artist: "Estella Boersma" },
+        { time: "03:30 â€“ 05:00", artist: "Lacchesi" },
       ],
     },
   ],
@@ -90,91 +90,91 @@ const LINEUP: Record<DayKey, Area[]> = {
     {
       id: "V", label: "Area V",
       slots: [
-        { time: "13:00 – 15:00", artist: "Benja & Franc Fala" },
-        { time: "15:00 – 16:30", artist: "Adam Ten" },
-        { time: "16:30 – 18:00", artist: "Miss Monique" },
-        { time: "18:00 – 19:30", artist: "Enrico Sangiuliano" },
-        { time: "19:30 – 21:30", artist: "Joris Voorn & Kevin de Vries" },
-        { time: "21:30 – 23:00", artist: "Joseph Capriati" },
-        { time: "23:00 – 01:00", artist: "Adam Beyer" },
+        { time: "13:00 â€“ 15:00", artist: "Benja & Franc Fala" },
+        { time: "15:00 â€“ 16:30", artist: "Adam Ten" },
+        { time: "16:30 â€“ 18:00", artist: "Miss Monique" },
+        { time: "18:00 â€“ 19:30", artist: "Enrico Sangiuliano" },
+        { time: "19:30 â€“ 21:30", artist: "Joris Voorn & Kevin de Vries" },
+        { time: "21:30 â€“ 23:00", artist: "Joseph Capriati" },
+        { time: "23:00 â€“ 01:00", artist: "Adam Beyer" },
       ],
     },
     {
       id: "A", label: "Area A",
       slots: [
-        { time: "13:00 – 14:30", artist: "Kara Okay" },
-        { time: "14:30 – 16:00", artist: "Paige Tomlinson" },
-        { time: "16:00 – 17:45", artist: "Southstar" },
-        { time: "17:45 – 19:15", artist: "Mischluft" },
-        { time: "19:15 – 21:00", artist: "DJ Heartstring" },
-        { time: "21:00 – 23:00", artist: "Malugi" },
-        { time: "23:00 – 01:00", artist: "Anetha" },
+        { time: "13:00 â€“ 14:30", artist: "Kara Okay" },
+        { time: "14:30 â€“ 16:00", artist: "Paige Tomlinson" },
+        { time: "16:00 â€“ 17:45", artist: "Southstar" },
+        { time: "17:45 â€“ 19:15", artist: "Mischluft" },
+        { time: "19:15 â€“ 21:00", artist: "DJ Heartstring" },
+        { time: "21:00 â€“ 23:00", artist: "Malugi" },
+        { time: "23:00 â€“ 01:00", artist: "Anetha" },
       ],
     },
     {
       id: "B", label: "Area B",
       slots: [
-        { time: "13:00 – 15:00", artist: "Julian Fijma" },
-        { time: "15:00 – 17:00", artist: "Jamback & Marsolo" },
-        { time: "17:00 – 19:00", artist: "Enzo Siragusa" },
-        { time: "19:00 – 21:00", artist: "Max Dean & Prospa" },
-        { time: "21:00 – 23:00", artist: "Josh Baker" },
-        { time: "23:00 – 01:00", artist: "Kettama" },
+        { time: "13:00 â€“ 15:00", artist: "Julian Fijma" },
+        { time: "15:00 â€“ 17:00", artist: "Jamback & Marsolo" },
+        { time: "17:00 â€“ 19:00", artist: "Enzo Siragusa" },
+        { time: "19:00 â€“ 21:00", artist: "Max Dean & Prospa" },
+        { time: "21:00 â€“ 23:00", artist: "Josh Baker" },
+        { time: "23:00 â€“ 01:00", artist: "Kettama" },
       ],
     },
     {
       id: "C", label: "Area C",
       slots: [
-        { time: "13:00 – 15:30", artist: "Niiomi" },
-        { time: "15:30 – 18:30", artist: "NOVA:II" },
-        { time: "18:30 – 21:00", artist: "Mahmut Orhan & Shimza" },
-        { time: "21:00 – 23:00", artist: "Colyn" },
-        { time: "23:00 – 01:00", artist: "Stephan Bodzin (live)" },
+        { time: "13:00 â€“ 15:30", artist: "Niiomi" },
+        { time: "15:30 â€“ 18:30", artist: "NOVA:II" },
+        { time: "18:30 â€“ 21:00", artist: "Mahmut Orhan & Shimza" },
+        { time: "21:00 â€“ 23:00", artist: "Colyn" },
+        { time: "23:00 â€“ 01:00", artist: "Stephan Bodzin (live)" },
       ],
     },
     {
       id: "X", label: "Area X",
       slots: [
-        { time: "13:00 – 14:45", artist: "SHE/HER" },
-        { time: "14:45 – 16:15", artist: "Grace Dahl" },
-        { time: "16:15 – 18:00", artist: "Adiel" },
-        { time: "18:00 – 19:45", artist: "Rødhåd" },
-        { time: "19:45 – 21:30", artist: "Len Faki" },
-        { time: "21:30 – 23:15", artist: "FJAAK" },
-        { time: "23:15 – 01:00", artist: "Dax J" },
+        { time: "13:00 â€“ 14:45", artist: "SHE/HER" },
+        { time: "14:45 â€“ 16:15", artist: "Grace Dahl" },
+        { time: "16:15 â€“ 18:00", artist: "Adiel" },
+        { time: "18:00 â€“ 19:45", artist: "RÃ¸dhÃ¥d" },
+        { time: "19:45 â€“ 21:30", artist: "Len Faki" },
+        { time: "21:30 â€“ 23:15", artist: "FJAAK" },
+        { time: "23:15 â€“ 01:00", artist: "Dax J" },
       ],
     },
     {
       id: "Y", label: "Area Y",
       slots: [
-        { time: "13:00 – 15:00", artist: "Fiene" },
-        { time: "15:00 – 16:30", artist: "DIØN" },
-        { time: "16:30 – 18:15", artist: "Indira Paganotto" },
-        { time: "18:15 – 19:45", artist: "Nico Moreno" },
-        { time: "19:45 – 21:30", artist: "Fatima Hajji" },
-        { time: "21:30 – 23:15", artist: "Azyr" },
-        { time: "23:15 – 01:00", artist: "DYEN" },
+        { time: "13:00 â€“ 15:00", artist: "Fiene" },
+        { time: "15:00 â€“ 16:30", artist: "DIÃ˜N" },
+        { time: "16:30 â€“ 18:15", artist: "Indira Paganotto" },
+        { time: "18:15 â€“ 19:45", artist: "Nico Moreno" },
+        { time: "19:45 â€“ 21:30", artist: "Fatima Hajji" },
+        { time: "21:30 â€“ 23:15", artist: "Azyr" },
+        { time: "23:15 â€“ 01:00", artist: "DYEN" },
       ],
     },
     {
       id: "H", label: "Area H",
       slots: [
-        { time: "15:00 – 17:00", artist: "ALI3N" },
-        { time: "17:00 – 18:30", artist: "Isabel Soto" },
-        { time: "18:30 – 19:30", artist: "Vladimir Dubyshkin (live)" },
-        { time: "19:30 – 21:00", artist: "Beste Hira" },
-        { time: "21:00 – 22:30", artist: "Rene Wise" },
-        { time: "22:30 – 00:00", artist: "Akua & Henning Baer" },
+        { time: "15:00 â€“ 17:00", artist: "ALI3N" },
+        { time: "17:00 â€“ 18:30", artist: "Isabel Soto" },
+        { time: "18:30 â€“ 19:30", artist: "Vladimir Dubyshkin (live)" },
+        { time: "19:30 â€“ 21:00", artist: "Beste Hira" },
+        { time: "21:00 â€“ 22:30", artist: "Rene Wise" },
+        { time: "22:30 â€“ 00:00", artist: "Akua & Henning Baer" },
       ],
     },
     {
       id: "S", label: "Area S", note: "Ubuntu",
       slots: [
-        { time: "15:00 – 17:00", artist: "GHXST Bunny & Nick SA" },
-        { time: "17:00 – 18:00", artist: "Shimza" },
-        { time: "18:00 – 20:00", artist: "Shwelly M" },
-        { time: "20:00 – 21:30", artist: "Philou Louzolo" },
-        { time: "21:30 – 23:00", artist: "Athie Umgido" },
+        { time: "15:00 â€“ 17:00", artist: "GHXST Bunny & Nick SA" },
+        { time: "17:00 â€“ 18:00", artist: "Shimza" },
+        { time: "18:00 â€“ 20:00", artist: "Shwelly M" },
+        { time: "20:00 â€“ 21:30", artist: "Philou Louzolo" },
+        { time: "21:30 â€“ 23:00", artist: "Athie Umgido" },
       ],
     },
   ],
@@ -183,83 +183,83 @@ const LINEUP: Record<DayKey, Area[]> = {
     {
       id: "V", label: "Area V",
       slots: [
-        { time: "13:00 – 15:00", artist: "Julya Karma" },
-        { time: "15:00 – 16:30", artist: "Innellea" },
-        { time: "16:30 – 18:00", artist: "Boris Brejcha" },
-        { time: "18:00 – 19:30", artist: "Adriatique" },
-        { time: "19:30 – 21:00", artist: "Richie Hawtin" },
-        { time: "21:00 – 23:00", artist: "Charlotte de Witte" },
+        { time: "13:00 â€“ 15:00", artist: "Julya Karma" },
+        { time: "15:00 â€“ 16:30", artist: "Innellea" },
+        { time: "16:30 â€“ 18:00", artist: "Boris Brejcha" },
+        { time: "18:00 â€“ 19:30", artist: "Adriatique" },
+        { time: "19:30 â€“ 21:00", artist: "Richie Hawtin" },
+        { time: "21:00 â€“ 23:00", artist: "Charlotte de Witte" },
       ],
     },
     {
       id: "A", label: "Area A",
       slots: [
-        { time: "13:00 – 14:30", artist: "Lisa Korver" },
-        { time: "14:30 – 16:00", artist: "Lucky Done Gone" },
-        { time: "16:00 – 18:00", artist: "LAMMER" },
-        { time: "18:00 – 19:30", artist: "Bad Boombox" },
-        { time: "19:30 – 21:15", artist: "ØTTA" },
-        { time: "21:15 – 23:00", artist: "MCR-T & Partiboi69" },
+        { time: "13:00 â€“ 14:30", artist: "Lisa Korver" },
+        { time: "14:30 â€“ 16:00", artist: "Lucky Done Gone" },
+        { time: "16:00 â€“ 18:00", artist: "LAMMER" },
+        { time: "18:00 â€“ 19:30", artist: "Bad Boombox" },
+        { time: "19:30 â€“ 21:15", artist: "Ã˜TTA" },
+        { time: "21:15 â€“ 23:00", artist: "MCR-T & Partiboi69" },
       ],
     },
     {
       id: "B", label: "Area B",
       slots: [
-        { time: "13:00 – 15:00", artist: "Easttown" },
-        { time: "15:00 – 16:30", artist: "Joëlla Jackson" },
-        { time: "16:30 – 18:00", artist: "Toman" },
-        { time: "18:00 – 19:30", artist: "Mau P" },
-        { time: "19:30 – 21:00", artist: "Franky Rizardo" },
-        { time: "21:00 – 23:00", artist: "Marco Carola" },
+        { time: "13:00 â€“ 15:00", artist: "Easttown" },
+        { time: "15:00 â€“ 16:30", artist: "JoÃ«lla Jackson" },
+        { time: "16:30 â€“ 18:00", artist: "Toman" },
+        { time: "18:00 â€“ 19:30", artist: "Mau P" },
+        { time: "19:30 â€“ 21:00", artist: "Franky Rizardo" },
+        { time: "21:00 â€“ 23:00", artist: "Marco Carola" },
       ],
     },
     {
       id: "C", label: "Area C",
       slots: [
-        { time: "13:00 – 14:30", artist: "Kaufmann" },
-        { time: "14:30 – 16:00", artist: "Mha Iri" },
-        { time: "16:00 – 17:45", artist: "Chris Avantgarde" },
-        { time: "17:45 – 19:15", artist: "Bart Skils" },
-        { time: "19:15 – 21:00", artist: "Pan-Pot" },
-        { time: "21:00 – 23:00", artist: "Eli Brown & HI-LO" },
+        { time: "13:00 â€“ 14:30", artist: "Kaufmann" },
+        { time: "14:30 â€“ 16:00", artist: "Mha Iri" },
+        { time: "16:00 â€“ 17:45", artist: "Chris Avantgarde" },
+        { time: "17:45 â€“ 19:15", artist: "Bart Skils" },
+        { time: "19:15 â€“ 21:00", artist: "Pan-Pot" },
+        { time: "21:00 â€“ 23:00", artist: "Eli Brown & HI-LO" },
       ],
     },
     {
       id: "X", label: "Area X",
       slots: [
-        { time: "13:00 – 14:45", artist: "Julia Maria" },
-        { time: "14:45 – 16:30", artist: "Ignez" },
-        { time: "16:30 – 18:00", artist: "Nina Kraviz" },
-        { time: "18:00 – 19:30", artist: "Freddy K" },
-        { time: "19:30 – 21:00", artist: "Ben Klock" },
-        { time: "21:00 – 23:00", artist: "Chlär & Yanamaste" },
+        { time: "13:00 â€“ 14:45", artist: "Julia Maria" },
+        { time: "14:45 â€“ 16:30", artist: "Ignez" },
+        { time: "16:30 â€“ 18:00", artist: "Nina Kraviz" },
+        { time: "18:00 â€“ 19:30", artist: "Freddy K" },
+        { time: "19:30 â€“ 21:00", artist: "Ben Klock" },
+        { time: "21:00 â€“ 23:00", artist: "ChlÃ¤r & Yanamaste" },
       ],
     },
     {
       id: "Y", label: "Area Y",
       slots: [
-        { time: "13:00 – 14:30", artist: "Samoh (live)" },
-        { time: "14:30 – 16:00", artist: "Nikolina" },
-        { time: "16:00 – 17:30", artist: "BIIA" },
-        { time: "17:30 – 19:00", artist: "Novah" },
-        { time: "19:00 – 21:00", artist: "999999999" },
-        { time: "21:00 – 23:00", artist: "Cynthia Spiering & Reinier Zonneveld" },
+        { time: "13:00 â€“ 14:30", artist: "Samoh (live)" },
+        { time: "14:30 â€“ 16:00", artist: "Nikolina" },
+        { time: "16:00 â€“ 17:30", artist: "BIIA" },
+        { time: "17:30 â€“ 19:00", artist: "Novah" },
+        { time: "19:00 â€“ 21:00", artist: "999999999" },
+        { time: "21:00 â€“ 23:00", artist: "Cynthia Spiering & Reinier Zonneveld" },
       ],
     },
     {
       id: "H", label: "Area H",
       slots: [
-        { time: "15:00 – 16:30", artist: "Valody" },
-        { time: "16:30 – 18:00", artist: "Rosati" },
-        { time: "18:00 – 20:00", artist: "SHDW" },
-        { time: "20:00 – 22:00", artist: "Stranger & Talismann" },
+        { time: "15:00 â€“ 16:30", artist: "Valody" },
+        { time: "16:30 â€“ 18:00", artist: "Rosati" },
+        { time: "18:00 â€“ 20:00", artist: "SHDW" },
+        { time: "20:00 â€“ 22:00", artist: "Stranger & Talismann" },
       ],
     },
     {
       id: "N", label: "Area N", note: "Camping After",
       slots: [
-        { time: "23:00 – 01:00", artist: "Ares Carter" },
-        { time: "01:00 – 03:00", artist: "Joyhauser" },
+        { time: "23:00 â€“ 01:00", artist: "Ares Carter" },
+        { time: "01:00 â€“ 03:00", artist: "Joyhauser" },
       ],
     },
   ],
@@ -269,13 +269,13 @@ const DAYS: DayKey[] = ["Friday", "Saturday", "Sunday"];
 
 // Static metadata per day (date + headline hours for main stages)
 const DAY_META: Record<DayKey, { date: string; timeRange: string }> = {
-  Friday:   { date: "Friday · July 10, 2026",   timeRange: "15:00 – 01:00" },
-  Saturday: { date: "Saturday · July 11, 2026", timeRange: "13:00 – 01:00" },
-  Sunday:   { date: "Sunday · July 12, 2026",   timeRange: "13:00 – 23:00" },
+  Friday:   { date: "Friday Â· July 10, 2026",   timeRange: "15:00 â€“ 01:00" },
+  Saturday: { date: "Saturday Â· July 11, 2026", timeRange: "13:00 â€“ 01:00" },
+  Sunday:   { date: "Sunday Â· July 12, 2026",   timeRange: "13:00 â€“ 23:00" },
 };
 
-// ── YouTube background types ──────────────────────────────────────────────────
-// Minimal declarations — avoids a full @types/youtube dependency.
+// â”€â”€ YouTube background types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Minimal declarations â€” avoids a full @types/youtube dependency.
 
 interface YTPlayer { destroy(): void; }
 interface YTPlayerOptions {
@@ -296,7 +296,7 @@ declare global {
   }
 }
 
-// ── YouTube IFrame API hook ───────────────────────────────────────────────────
+// â”€â”€ YouTube IFrame API hook â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Official video: 999999999 @ Awakenings Festival 2025 (Awakenings YouTube channel)
 // Fallback: canvas animation below
 
@@ -359,7 +359,7 @@ function useYouTubeBackground(
   }, [enabled]); // divRef and onPlayingRef are stable refs
 }
 
-// ── Canvas stage animation ────────────────────────────────────────────────────
+// â”€â”€ Canvas stage animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Enhanced beam setup: wider spread, blue accent beams, richer haze
 
 interface Beam {
@@ -413,7 +413,7 @@ function useStageCanvas(
       const sx = W * 0.5;
       const sy = H * 0.72;
 
-      // Stage glow — warm amber halo
+      // Stage glow â€” warm amber halo
       const glow = ctx!.createRadialGradient(sx, sy, 0, sx, sy, W * 0.45);
       glow.addColorStop(0,   "rgba(201,168,76,0.14)");
       glow.addColorStop(0.4, "rgba(201,168,76,0.05)");
@@ -421,7 +421,7 @@ function useStageCanvas(
       ctx!.fillStyle = glow;
       ctx!.fillRect(0, 0, W, H);
 
-      // Wide ambient fill — slight purple depth
+      // Wide ambient fill â€” slight purple depth
       const amb = ctx!.createRadialGradient(sx, H * 0.3, 0, sx, H * 0.3, W * 0.6);
       amb.addColorStop(0,   "rgba(60,40,100,0.08)");
       amb.addColorStop(1,   "rgba(0,0,0,0)");
@@ -485,7 +485,7 @@ function useStageCanvas(
   }, [enabled]);
 }
 
-// ── Day selector card ─────────────────────────────────────────────────────────
+// â”€â”€ Day selector card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function DayCard({
   day, isActive, onClick,
@@ -529,7 +529,7 @@ function DayCard({
         )}
       </div>
 
-      {/* Day name — the main visual anchor */}
+      {/* Day name â€” the main visual anchor */}
       <div
         className={[
           "font-[var(--font-playfair)] font-black leading-none mb-2",
@@ -571,7 +571,7 @@ function DayCard({
   );
 }
 
-// ── Area card ─────────────────────────────────────────────────────────────────
+// â”€â”€ Area card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function AreaCard({ area }: { area: Area }) {
   const last = area.slots.length - 1;
@@ -593,14 +593,14 @@ function AreaCard({ area }: { area: Area }) {
               </p>
             ) : (
               <p className="text-[10px] text-zinc-700 tabular-nums">
-                {area.slots.length} sets ·{" "}
-                {area.slots[0]?.time.split(" – ")[0]}
-                {" – "}
-                {area.slots[last]?.time.split(" – ")[1]}
+                {area.slots.length} sets Â·{" "}
+                {area.slots[0]?.time.split(" â€“ ")[0]}
+                {" â€“ "}
+                {area.slots[last]?.time.split(" â€“ ")[1]}
               </p>
             )}
           </div>
-          {/* Area letter — large, decorative, low opacity */}
+          {/* Area letter â€” large, decorative, low opacity */}
           <span
             className="font-[var(--font-playfair)] font-black text-white/[0.06] leading-none select-none"
             style={{ fontSize: "3rem" }}
@@ -631,12 +631,12 @@ function AreaCard({ area }: { area: Area }) {
                 isClosing  ? "bg-[#C9A84C]/[0.05] hover:bg-[#C9A84C]/[0.08]" : "hover:bg-white/[0.03]",
               ].join(" ")}
             >
-              {/* Time — start time only, keeps columns compact */}
+              {/* Time â€” start time only, keeps columns compact */}
               <span className={[
                 "shrink-0 w-11 text-[11px] tabular-nums font-mono leading-none",
                 isAfterMidnight ? "text-[#C9A84C]/50" : "text-zinc-600",
               ].join(" ")}>
-                {slot.time.split(" – ")[0]}
+                {slot.time.split(" â€“ ")[0]}
               </span>
 
               {/* Artist */}
@@ -649,9 +649,9 @@ function AreaCard({ area }: { area: Area }) {
                 {slot.artist}
               </span>
 
-              {/* End time — muted, right edge */}
+              {/* End time â€” muted, right edge */}
               <span className="shrink-0 text-[10px] tabular-nums font-mono text-zinc-700 leading-none">
-                {slot.time.split(" – ")[1]}
+                {slot.time.split(" â€“ ")[1]}
               </span>
             </div>
           );
@@ -661,7 +661,7 @@ function AreaCard({ area }: { area: Area }) {
   );
 }
 
-// ── Main section ──────────────────────────────────────────────────────────────
+// â”€â”€ Main section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function LineupSection() {
   const [activeDay,  setActiveDay]  = useState<DayKey>("Friday");
@@ -676,7 +676,7 @@ export function LineupSection() {
   // Canvas runs whenever the video isn't confirmed playing
   useStageCanvas(canvasRef, !shouldReduce);
 
-  // YouTube IFrame API — video fades in once it reports PLAYING state
+  // YouTube IFrame API â€” video fades in once it reports PLAYING state
   useYouTubeBackground(ytDivRef, !shouldReduce, onPlayingRef);
 
   const areas = LINEUP[activeDay];
@@ -691,10 +691,10 @@ export function LineupSection() {
   return (
     <section className="relative bg-[#030305] overflow-hidden">
 
-{/* ── Hero: video + canvas background ─────────────────────── */}
+{/* â”€â”€ Hero: video + canvas background â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="relative h-[70vh] min-h-[480px] max-h-[680px]">
 
-        {/* Layer 0: Canvas — always rendered, video-independent fallback */}
+        {/* Layer 0: Canvas â€” always rendered, video-independent fallback */}
         {!shouldReduce && (
           <canvas
             ref={canvasRef}
@@ -719,7 +719,7 @@ export function LineupSection() {
           />
         )}
 
-        {/* Layer 1: YouTube video — fades in once confirmed playing
+        {/* Layer 1: YouTube video â€” fades in once confirmed playing
             Sized to cover container at correct 16:9 ratio (background-size: cover equivalent) */}
         {!shouldReduce && (
           <div
@@ -745,7 +745,7 @@ export function LineupSection() {
           </div>
         )}
 
-        {/* Layer 2: Cinematic dark overlays — readability + atmosphere */}
+        {/* Layer 2: Cinematic dark overlays â€” readability + atmosphere */}
         {/* Top darkening for text legibility */}
         <div className="absolute inset-0 z-20 bg-gradient-to-b from-[#030305]/70 via-[#030305]/25 to-[#030305]" />
         {/* Side vignette */}
@@ -781,17 +781,17 @@ export function LineupSection() {
             transition={{ duration: 0.8, delay: 0.42 }}
             className="text-zinc-500 text-sm tracking-[0.16em] uppercase"
           >
-            July 10–12 · Hilvarenbeek, Netherlands
+            July 10â€“12 Â· Hilvarenbeek, Netherlands
           </motion.p>
         </div>
       </div>
 
-      {/* ── Schedule ─────────────────────────────────────────────── */}
+      {/* â”€â”€ Schedule â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="relative z-10 pt-4 pb-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
 
-          {/* ── Day selector ────────────────────────────────────────
-              Two large cards — impossible to miss, immediately obvious */}
+          {/* â”€â”€ Day selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              Two large cards â€” impossible to miss, immediately obvious */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -814,7 +814,7 @@ export function LineupSection() {
             </div>
           </motion.div>
 
-          {/* ── Active day context bar ──────────────────────────────── */}
+          {/* â”€â”€ Active day context bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <AnimatePresence>
             <motion.div
               key={activeDay + "-meta"}
@@ -842,7 +842,7 @@ export function LineupSection() {
             </motion.div>
           </AnimatePresence>
 
-          {/* ── DESKTOP: area grid ──────────────────────────────────── */}
+          {/* â”€â”€ DESKTOP: area grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="hidden md:block">
             <AnimatePresence>
               <motion.div
@@ -861,7 +861,7 @@ export function LineupSection() {
             </AnimatePresence>
           </div>
 
-          {/* ── MOBILE: area tabs + single schedule ─────────────────── */}
+          {/* â”€â”€ MOBILE: area tabs + single schedule â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="block md:hidden">
 
             {/* Horizontal area tabs */}
@@ -884,7 +884,7 @@ export function LineupSection() {
                       : "bg-white/[0.03] border-white/[0.07] text-zinc-500 hover:text-zinc-200 hover:border-white/[0.14]",
                   ].join(" ")}
                 >
-                  {area.note ? `${area.label} · ${area.note}` : area.label}
+                  {area.note ? `${area.label} Â· ${area.note}` : area.label}
                 </button>
               ))}
             </div>
@@ -907,9 +907,9 @@ export function LineupSection() {
                     </span>
                   )}
                   <span className="ml-auto text-[11px] font-mono text-zinc-600">
-                    {mobileArea.slots[0]?.time.split(" – ")[0]}
-                    {" – "}
-                    {mobileArea.slots[mobileArea.slots.length - 1]?.time.split(" – ")[1]}
+                    {mobileArea.slots[0]?.time.split(" â€“ ")[0]}
+                    {" â€“ "}
+                    {mobileArea.slots[mobileArea.slots.length - 1]?.time.split(" â€“ ")[1]}
                   </span>
                 </div>
 
@@ -927,7 +927,7 @@ export function LineupSection() {
                         ].join(" ")}
                       >
                         <span className="shrink-0 w-12 text-xs text-zinc-600 tabular-nums font-mono">
-                          {slot.time.split(" – ")[0]}
+                          {slot.time.split(" â€“ ")[0]}
                         </span>
                         <span className={[
                           "flex-1 text-sm min-w-0",
@@ -938,7 +938,7 @@ export function LineupSection() {
                           {slot.artist}
                         </span>
                         <span className="shrink-0 text-[10px] text-zinc-700 tabular-nums font-mono">
-                          {slot.time.split(" – ")[1]}
+                          {slot.time.split(" â€“ ")[1]}
                         </span>
                       </div>
                     );
@@ -953,3 +953,4 @@ export function LineupSection() {
     </section>
   );
 }
+

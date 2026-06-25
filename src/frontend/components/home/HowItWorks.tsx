@@ -10,7 +10,7 @@ const STEPS = [
   {
     number: "01",
     title:  "Find your pass",
-    body:   "Browse verified resale tickets across every area and day. Real-time availability, fully transparent prices — no hidden fees, no guesswork.",
+    body:   "Browse verified resale tickets across every area and day. Real-time availability, fully transparent prices â€” no hidden fees, no guesswork.",
   },
   {
     number: "02",
@@ -20,7 +20,7 @@ const STEPS = [
   {
     number: "03",
     title:  "Receive your ticket",
-    body:   "We handle the official Awakenings name-change process. Your personalised e-ticket arrives within 3–5 business days, ready to scan at the gate.",
+    body:   "We handle the official Awakenings name-change process. Your personalised e-ticket arrives within 3â€“5 business days, ready to scan at the gate.",
   },
 ];
 
@@ -30,7 +30,7 @@ export function HowItWorks() {
   const sectionRef = useRef<HTMLElement>(null);
 
   // GSAP ScrollTrigger: ghost numbers scrub from invisible to subtle as each
-  // row enters the viewport, then fade back out as it exits — creates depth
+  // row enters the viewport, then fade back out as it exits â€” creates depth
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     if (!sectionRef.current) return;
@@ -60,7 +60,7 @@ export function HowItWorks() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-24 sm:py-36 overflow-hidden">
+    <section ref={sectionRef} className="relative py-5 overflow-hidden">
 
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
@@ -73,9 +73,9 @@ export function HowItWorks() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-20 sm:mb-28"
+          className="mb-6"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
             <span style={{
               fontFamily:    INTER,
@@ -107,7 +107,7 @@ export function HowItWorks() {
                          hover:border-white/[0.10] transition-colors duration-700"
             >
 
-              {/* Ghost number — GSAP scrub controls opacity */}
+              {/* Ghost number â€” GSAP scrub controls opacity */}
               <span
                 className="step-ghost absolute right-0 top-1/2 -translate-y-1/2 font-[var(--font-playfair)] font-black
                            pointer-events-none select-none"
@@ -123,7 +123,7 @@ export function HowItWorks() {
                 {step.number}
               </span>
 
-              {/* Content grid: index — title + body */}
+              {/* Content grid: index â€” title + body */}
               <div className="relative grid sm:grid-cols-[5rem_1fr] md:grid-cols-[8rem_1fr] gap-6 sm:gap-10 lg:gap-16 items-start">
 
                 {/* Step index */}
@@ -189,3 +189,4 @@ export function HowItWorks() {
     </section>
   );
 }
+

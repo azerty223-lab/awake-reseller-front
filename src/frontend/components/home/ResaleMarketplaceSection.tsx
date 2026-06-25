@@ -7,10 +7,10 @@ import { LineReveal } from "@/frontend/components/ui/LineReveal";
 import { Reveal } from "@/frontend/components/ui/Reveal";
 
 const STATS = [
-  { value: "100%",      label: "Tickets\nauthenticated" },
-  { value: "3–5",       label: "Business days\ndelivery" },
-  { value: "< 4h",      label: "Support\nresponse" },
-  { value: "Official",  label: "Name transfer\nprocess" },
+  { value: "100%",     label: "Tickets\nauthenticated" },
+  { value: "3–5",      label: "Business days\ndelivery" },
+  { value: "< 4h",     label: "Support\nresponse" },
+  { value: "Official", label: "Name transfer\nprocess" },
 ];
 
 const VERIFICATION = [
@@ -35,13 +35,13 @@ const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 export function ResaleMarketplaceSection() {
   return (
-    <section className="relative py-24 sm:py-36 overflow-hidden">
+    <section className="relative py-5 overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
         {/* Header + opening statement */}
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start mb-16 sm:mb-24">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start mb-8">
 
           {/* Left */}
           <div>
@@ -50,10 +50,10 @@ export function ResaleMarketplaceSection() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9 }}
-              style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}
+              style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.75rem" }}
             >
               <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
-              <span style={{ fontFamily: INTER, fontSize: "11px", fontWeight: 400, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(237,233,225,0.50)" }}>
+              <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
                 Verified Resale
               </span>
             </motion.div>
@@ -86,23 +86,18 @@ export function ResaleMarketplaceSection() {
               style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}
             >
               <div style={{
-                width:       "32px",
-                height:      "32px",
-                borderRadius: "50%",
-                border:       "1px solid rgba(184,146,58,0.30)",
-                display:      "flex",
-                alignItems:   "center",
+                width:          "32px",
+                height:         "32px",
+                borderRadius:   "50%",
+                border:         "1px solid rgba(184,146,58,0.30)",
+                display:        "flex",
+                alignItems:     "center",
                 justifyContent: "center",
-                flexShrink:   0,
+                flexShrink:     0,
               }}>
                 <ShieldCheck style={{ width: "15px", height: "15px", color: "rgba(184,146,58,0.65)" }} />
               </div>
-              <span style={{
-                fontFamily:    INTER,
-                fontSize:      "13px",
-                color:         "rgba(237,233,225,0.60)",
-                letterSpacing: "0.01em",
-              }}>
+              <span style={{ fontFamily: INTER, fontSize: "13px", color: "rgba(237,233,225,0.60)", letterSpacing: "0.01em" }}>
                 Official Awakenings ticket transfer partner
               </span>
             </motion.div>
@@ -115,10 +110,7 @@ export function ResaleMarketplaceSection() {
             viewport={{ once: true }}
             transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div
-              className="grid grid-cols-2"
-              style={{ gap: "1px", background: "rgba(237,233,225,0.07)" }}
-            >
+            <div className="grid grid-cols-2" style={{ gap: "1px", background: "rgba(237,233,225,0.07)" }}>
               {STATS.map((stat) => (
                 <div key={stat.label} className="bg-[#050507]" style={{ padding: "clamp(1.5rem, 3vw, 2rem)" }}>
                   <div
@@ -163,7 +155,6 @@ export function ResaleMarketplaceSection() {
               <div className="group relative border-t border-white/[0.06] py-8 sm:py-10 hover:border-white/[0.10] transition-colors duration-500">
                 <div className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full transition-all duration-700"
                      style={{ background: "rgba(184,146,58,0.15)" }} />
-
                 <div className="grid grid-cols-[3.5rem_1fr] sm:grid-cols-[5rem_1fr] gap-6 sm:gap-10 items-start">
                   <span style={{ fontFamily: INTER, fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(184,146,58,0.65)", paddingTop: "4px" }}>
                     {step.index}
@@ -192,39 +183,21 @@ export function ResaleMarketplaceSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          style={{ marginTop: "3rem", display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}
+          style={{ marginTop: "2rem", display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}
         >
           <Link
             href="/tickets"
             className="group inline-flex items-center gap-3"
-            style={{
-              fontFamily:    INTER,
-              fontSize:      "13px",
-              fontWeight:    500,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color:         "rgba(237,233,225,0.75)",
-              transition:    "color 0.3s ease",
-            }}
+            style={{ fontFamily: INTER, fontSize: "13px", fontWeight: 500, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(237,233,225,0.75)", transition: "color 0.3s ease" }}
             onMouseEnter={e => (e.currentTarget.style.color = "rgba(237,233,225,1)")}
             onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.75)")}
           >
             Browse verified tickets
-            <ArrowRight
-              className="group-hover:translate-x-0.5 transition-transform duration-300"
-              style={{ width: "13px", height: "13px" }}
-            />
+            <ArrowRight className="group-hover:translate-x-0.5 transition-transform duration-300" style={{ width: "13px", height: "13px" }} />
           </Link>
           <Link
             href="/about"
-            style={{
-              fontFamily:    INTER,
-              fontSize:      "13px",
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color:         "rgba(237,233,225,0.35)",
-              transition:    "color 0.3s ease",
-            }}
+            style={{ fontFamily: INTER, fontSize: "13px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(237,233,225,0.35)", transition: "color 0.3s ease" }}
             onMouseEnter={e => (e.currentTarget.style.color = "rgba(237,233,225,0.60)")}
             onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.35)")}
           >

@@ -11,8 +11,8 @@ const PASSES = [
     id:          "weekend",
     label:       "Weekend Pass",
     title:       "3-Day Access",
-    dates:       "July 10 — 12",
-    description: "The complete Awakenings experience. Three days across all six stages — from the Friday evening opening through Sunday's closing ceremony.",
+    dates:       "July 10 â€” 12",
+    description: "The complete Awakenings experience. Three days across all six stages â€” from the Friday evening opening through Sunday's closing ceremony.",
     includes: [
       "All 6+ stages",
       "Friday evening entry",
@@ -30,7 +30,7 @@ const PASSES = [
     description: "The peak day. Maximum capacity with headline acts running across every stage simultaneously.",
     includes: [
       "All active stages",
-      "13:00 — 01:00",
+      "13:00 â€” 01:00",
       "Day wristband included",
     ],
     note: null,
@@ -44,7 +44,7 @@ const PASSES = [
     description: "The closing day. Charlotte de Witte, Richie Hawtin, and the ceremonial final hours of the festival.",
     includes: [
       "All active stages",
-      "13:00 — 23:00",
+      "13:00 â€” 23:00",
       "Day wristband included",
     ],
     note: "Closing ceremony",
@@ -56,7 +56,7 @@ const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 export function FestivalAccessSection() {
   return (
-    <section className="relative py-24 sm:py-36 overflow-hidden">
+    <section className="relative py-5 overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
@@ -67,11 +67,11 @@ export function FestivalAccessSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-14 sm:mb-18"
+          className="mb-6"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
-            <span style={{ fontFamily: INTER, fontSize: "11px", fontWeight: 400, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(237,233,225,0.50)" }}>
+            <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Festival Access
             </span>
           </div>
@@ -84,7 +84,7 @@ export function FestivalAccessSection() {
           </h2>
         </motion.div>
 
-        {/* 1px gap grid — the gap background creates hairline dividers */}
+        {/* 1px gap grid â€” the gap background creates hairline dividers */}
         <div
           className="grid grid-cols-1 md:grid-cols-3"
           style={{ gap: "1px", background: "rgba(237,233,225,0.07)" }}
@@ -165,7 +165,7 @@ export function FestivalAccessSection() {
                       fontSize:     "13px",
                       color:        "rgba(237,233,225,0.55)",
                     }}>
-                      <span style={{ color: "rgba(184,146,58,0.50)", flexShrink: 0 }}>—</span>
+                      <span style={{ color: "rgba(184,146,58,0.50)", flexShrink: 0 }}>â€”</span>
                       {feat}
                     </li>
                   ))}
@@ -225,3 +225,4 @@ export function FestivalAccessSection() {
     </section>
   );
 }
+

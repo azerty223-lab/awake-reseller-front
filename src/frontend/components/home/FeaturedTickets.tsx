@@ -70,7 +70,7 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
         className="group flex items-center gap-4 py-4 border-b border-white/[0.06]
                    hover:bg-white/[0.03] transition-colors duration-300 relative"
       >
-        {/* Left accent — appears on hover */}
+        {/* Left accent â€” appears on hover */}
         <div className="absolute left-0 top-0 bottom-0 w-px bg-[#B8923A]/0 group-hover:bg-[#B8923A]/35
                         transition-colors duration-500" />
 
@@ -153,7 +153,7 @@ export function FeaturedTickets() {
   }, []);
 
   return (
-    <section className="relative py-24 sm:py-32 overflow-hidden">
+    <section className="relative py-5 overflow-hidden">
 
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
@@ -169,7 +169,7 @@ export function FeaturedTickets() {
           className="flex items-end justify-between mb-14"
         >
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1rem, 2.5vw, 1.75rem)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
               <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
               <span style={{
                 fontFamily:    INTER,
@@ -286,3 +286,4 @@ export function FeaturedTickets() {
     </section>
   );
 }
+

@@ -20,7 +20,7 @@ const TIERS = [
       { label: "Site type",    value: "Personal tent space" },
       { label: "Facilities",  value: "Shared showers + WC" },
       { label: "Access",      value: "Festival + camping wristband" },
-      { label: "Duration",    value: "Thursday check-in — Monday checkout" },
+      { label: "Duration",    value: "Thursday check-in â€” Monday checkout" },
     ],
     note: "Bring your own tent",
   },
@@ -35,7 +35,7 @@ const TIERS = [
       { label: "Tent type",   value: "Pre-pitched bell tent" },
       { label: "Included",    value: "Beds, bedding, electricity" },
       { label: "Facilities",  value: "Upgraded shower block" },
-      { label: "Duration",    value: "Friday check-in — Monday checkout" },
+      { label: "Duration",    value: "Friday check-in â€” Monday checkout" },
     ],
     note: "Most popular upgrade",
   },
@@ -50,7 +50,7 @@ const TIERS = [
       { label: "Unit type",   value: "Private glamping pod" },
       { label: "Facilities",  value: "Private shower + WC, A/C" },
       { label: "Included",    value: "Concierge, welcome package" },
-      { label: "Duration",    value: "Friday check-in — Monday checkout" },
+      { label: "Duration",    value: "Friday check-in â€” Monday checkout" },
     ],
     note: "Limited availability",
   },
@@ -89,7 +89,7 @@ export function AccommodationSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-24 sm:py-36 overflow-hidden">
+    <section ref={sectionRef} className="relative py-5 overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
@@ -100,11 +100,11 @@ export function AccommodationSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-14 sm:mb-20"
+          className="mb-6"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
-            <span style={{ fontFamily: INTER, fontSize: "11px", fontWeight: 400, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(237,233,225,0.50)" }}>
+            <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Camping & Resort
             </span>
           </div>
@@ -125,7 +125,7 @@ export function AccommodationSection() {
             key={tier.id}
             className="acc-row group relative border-t border-white/[0.06] py-12 sm:py-16"
           >
-            {/* Ghost number — GSAP scroll-scrubbed */}
+            {/* Ghost number â€” GSAP scroll-scrubbed */}
             <span
               className="acc-ghost absolute right-0 top-1/2 -translate-y-1/2 font-[var(--font-playfair)] font-black pointer-events-none select-none"
               style={{
@@ -271,3 +271,4 @@ export function AccommodationSection() {
     </section>
   );
 }
+
