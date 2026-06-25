@@ -14,9 +14,9 @@ const PASSES = [
     index:       "01",
     title:       "3-Day Access",
     dates:       "July 10 — 12",
-    description: "The complete Awakenings experience. Three days across all six stages — from the Friday evening opening through Sunday's closing ceremony.",
-    includes:    ["All 6+ stages", "Friday evening entry", "Saturday & Sunday full day", "Camping add-on available"],
-    note:        "Recommended",
+    description: "Three days. Every stage. From Friday's opening act straight through to Sunday's last hour — nothing cut, nothing missed.",
+    includes:    ["6 stages, indoor & outdoor", "From Friday evening", "Full Sat & Sun", "Camping add-on available"],
+    note:        "Best value",
   },
   {
     id:          "saturday",
@@ -24,8 +24,8 @@ const PASSES = [
     index:       "02",
     title:       "Day Access",
     dates:       "July 11",
-    description: "The peak day. Maximum capacity with headline acts running across every stage simultaneously.",
-    includes:    ["All active stages", "13:00 – 01:00", "Day wristband included"],
+    description: "The peak. Every stage locked in at full capacity — headline after headline, back to back. Plan a route at the gate and abandon it by noon.",
+    includes:    ["All 6 stages", "13:00 until 01:00", "Day wristband"],
     note:        null,
   },
   {
@@ -34,9 +34,9 @@ const PASSES = [
     index:       "03",
     title:       "Day Access",
     dates:       "July 12",
-    description: "The closing day. Charlotte de Witte, Richie Hawtin, and the ceremonial final hours of the festival.",
-    includes:    ["All active stages", "13:00 – 23:00", "Day wristband included"],
-    note:        "Closing ceremony",
+    description: "The closing night. Charlotte de Witte. Richie Hawtin. The kind of ending that makes everyone wish it went one more day.",
+    includes:    ["All 6 stages", "13:00 until 23:00", "Day wristband", "Closing ceremony"],
+    note:        "Closing night",
   },
 ];
 
@@ -220,8 +220,8 @@ export function FestivalAccessSection() {
           </div>
           <h2 className="font-[var(--font-playfair)] font-black text-white"
               style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.025em", lineHeight: 0.92 }}>
-            <LineReveal>Choose your</LineReveal>
-            <LineReveal delay={0.09}>access</LineReveal>
+            <LineReveal>Your ticket</LineReveal>
+            <LineReveal delay={0.09}>to the festival</LineReveal>
           </h2>
         </motion.div>
 
@@ -247,7 +247,7 @@ export function FestivalAccessSection() {
                     animate={{ x: s.x, rotateY: s.rotateY, scale: s.scale, opacity: s.opacity, zIndex: s.zIndex, filter: `blur(${s.blur}px)` }}
                     transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], zIndex: { duration: 0 }, filter: { duration: 0.4 } }}
                     onClick={() => !isActive && (pos < 0 ? prev() : next())}
-                    style={{ position: "absolute", top: 0, left: "50%", width: "390px", marginLeft: "-195px", height: "100%", cursor: isActive ? "default" : "pointer" }}
+                    style={{ position: "absolute", top: 0, left: "50%", width: "min(390px, 100%)", marginLeft: "max(-195px, -50%)", height: "100%", cursor: isActive ? "default" : "pointer" }}
                   >
                     {/* Card shell */}
                     <div style={{
