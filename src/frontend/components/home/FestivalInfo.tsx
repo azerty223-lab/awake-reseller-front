@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
+import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
 
 const artists = [
   "Adam Beyer", "Charlotte de Witte", "Amelie Lens", "Richie Hawtin",
@@ -23,16 +24,11 @@ export function FestivalInfo() {
   return (
     <section className="relative py-4 overflow-hidden">
 
-      {/* Large atmospheric image — intentional placement */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=1920&auto=format&fit=crop"
-          alt=""
-          fill
-          style={{ objectFit: "cover", objectPosition: "center 60%", opacity: 0.08 }}
-        />
-      </div>
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-transparent to-[#020203]/80" />
+      <SectionBackground
+        src="/bg-festival.jpg"
+        objectPosition="center 60%"
+        overlay="rgba(8,8,8,0.84)"
+      />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 

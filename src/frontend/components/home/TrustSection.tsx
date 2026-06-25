@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
+import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
 
 const features = [
   {
@@ -35,12 +36,13 @@ const features = [
 export function TrustSection() {
   return (
     <section className="relative py-4 overflow-hidden bg-transparent">
+      <SectionBackground src="/bg-trust.jpg" objectPosition="center 50%" overlay="rgba(8,8,8,0.87)" />
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
       {/* Local blue glow */}
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-900/8 blur-[140px] rounded-full pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-16 items-start">
 
           {/* Left: sticky heading column */}

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Search, Lock, MailCheck } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
+import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
 
 const STEPS = [
   {
@@ -28,6 +29,7 @@ const STEPS = [
 export function HowItWorks() {
   return (
     <section className="relative py-4 overflow-hidden">
+      <SectionBackground src="/bg-howitworks.jpg" objectPosition="center 35%" overlay="rgba(8,8,8,0.87)" />
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 

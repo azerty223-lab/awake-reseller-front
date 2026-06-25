@@ -8,6 +8,7 @@ import { EchoHeading } from "@/frontend/components/ui/EchoHeading";
 import type { Ticket as PrismaTicket } from "@prisma/client";
 import { useCartStore } from "@/frontend/store/cart";
 import { formatPrice } from "@/backend/lib/utils";
+import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
 
 const CATEGORY_LABEL: Record<string, string> = {
   WEEKEND:         "Weekend",
@@ -157,7 +158,8 @@ export function FeaturedTickets() {
 
   return (
     <section className="relative py-4 overflow-hidden">
-      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
+      <SectionBackground src="/bg-tickets.jpg" objectPosition="center 40%" overlay="rgba(8,8,8,0.88)" />
+      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
         {/* Section header */}
         <motion.div

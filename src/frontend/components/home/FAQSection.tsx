@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
 
 const faqs = [
   {
@@ -36,8 +37,9 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-4 bg-transparent">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+    <section id="faq" className="py-4 bg-transparent relative overflow-hidden">
+      <SectionBackground src="/bg-faq.jpg" objectPosition="center 55%" overlay="rgba(8,8,8,0.86)" />
+      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <motion.div
           className="text-center mb-14"

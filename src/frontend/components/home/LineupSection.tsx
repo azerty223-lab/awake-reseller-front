@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useReducedMotion, motion, AnimatePresence } from "framer-motion";
+import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -690,6 +691,7 @@ export function LineupSection() {
 
   return (
     <section className="relative bg-[#030305] overflow-hidden">
+      <SectionBackground src="/bg-lineup.jpg" objectPosition="center 25%" overlay="rgba(3,3,5,0.90)" />
 
       {/* ── Hero: video + canvas background ─────────────────────── */}
       <div className="relative h-[70vh] min-h-[480px] max-h-[680px]">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
 
 export function NewsletterSection() {
   const [email, setEmail] = useState("");
@@ -27,10 +28,11 @@ export function NewsletterSection() {
 
   return (
     <section className="relative py-4 overflow-hidden">
+      <SectionBackground src="/bg-newsletter.jpg" objectPosition="center 45%" overlay="rgba(8,8,8,0.88)" />
       {/* Restrained horizontal rule top */}
       <div className="absolute top-0 left-6 right-6 sm:left-12 lg:left-20 sm:right-12 lg:right-20 h-px bg-white/[0.06]" />
 
-      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
           {/* Left: copy */}

@@ -41,7 +41,7 @@ async function main() {
       dayLabel: "Sunday 12 July",
       originalPrice: 79.50,
       resalePrice: 110,
-      currency: "EUR",
+      currency: "EUR",  
       quantity: 2,
       sold: 0,
       isVisible: true,

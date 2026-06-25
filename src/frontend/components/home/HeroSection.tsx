@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
@@ -26,96 +26,36 @@ function useCountdown(target: Date) {
   return time;
 }
 
-// Local type — only the methods we need from YT.Player
-interface _YTPlayer {
-  getCurrentTime(): number;
-  seekTo(seconds: number, allowSeekAhead: boolean): void;
-  destroy(): void;
-}
 
 export function HeroSection() {
   const router = useRouter();
   const ref    = useRef<HTMLElement>(null);
-  const ytRef  = useRef<HTMLDivElement>(null);  // YouTube player target div
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
   const opacity  = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const { d, h, m, s } = useCountdown(FESTIVAL_DATE);
 
-  // YouTube IFrame API — plays seconds 20→32 on a tight loop
-  useEffect(() => {
-    const div = ytRef.current;
-    if (!div) return;
-
-    let player: _YTPlayer | null = null;
-    let pollId: ReturnType<typeof setInterval>;
-
-    function createPlayer() {
-      if (!window.YT?.Player || !div) return;
-
-      player = new window.YT.Player(div, {
-        videoId: "m1SvbXLYEEc",
-        width: "100%",
-        height: "100%",
-        playerVars: {
-          autoplay: 1, mute: 1,
-          controls: 0, disablekb: 1,
-          rel: 0, playsinline: 1,
-          modestbranding: 1, iv_load_policy: 3,
-          start: 20,           // begin at second 20
-        },
-        events: {
-          onReady: () => {
-            // Poll at 200 ms; once we hit second 32, jump back to 20
-            pollId = setInterval(() => {
-              try {
-                if ((player?.getCurrentTime() ?? 0) >= 32) {
-                  player?.seekTo(20, true);
-                }
-              } catch { /* player destroyed during cleanup */ }
-            }, 200);
-          },
-        },
-      }) as unknown as _YTPlayer;
-    }
-
-    if (window.YT?.Player) {
-      createPlayer();
-    } else {
-      if (!document.getElementById("yt-api-script")) {
-        const s = document.createElement("script");
-        s.id  = "yt-api-script";
-        s.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(s);
-      }
-      const prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => { prev?.(); createPlayer(); };
-    }
-
-    return () => { clearInterval(pollId); player?.destroy(); };
-  }, []);
-
   return (
     <section ref={ref} className="relative min-h-screen overflow-hidden">
 
-      {/* Full-bleed festival photography
-          photo-1522601157550: Kaskade at Ultra Music Festival — low-angle crowd
-          silhouettes, pyrotechnic fire, deep blue-purple + warm orange-amber haze */}
-      {/* YouTube video background — official Awakenings channel
-          Charlotte de Witte @ Awakenings Festival 2025 (video: m1SvbXLYEEc)
-          Cover sizing: max(177.78vh, 100%) × max(100vh, 56.25vw) maintains 16:9 */}
-      {/* YouTube player — cover-sized wrapper, YT.Player replaces inner div */}
+      {/* Local video background — looping, muted, cover-fitted */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div style={{
-          position: "absolute",
-          top: "50%", left: "50%",
-          width: "max(177.78vh, 100%)",
-          height: "max(100vh, 56.25vw)",
-          transform: "translate(-50%, -50%)",
-        }}>
-          <div ref={ytRef} style={{ width: "100%", height: "100%" }} />
-        </div>
+        <video
+          src="/hero-bg.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position: "absolute",
+            top: "50%", left: "50%",
+            width: "max(177.78vh, 100%)",
+            height: "max(100vh, 56.25vw)",
+            transform: "translate(-50%, -50%)",
+            objectFit: "cover",
+          }}
+        />
       </div>
 
       {/* Cinematic overlay — bottom darkening for text + warm amber glow at top */}

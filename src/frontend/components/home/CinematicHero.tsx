@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
-// ── Countdown ─────────────────────────────────────────────────────────────────
 const FESTIVAL_DATE = new Date("2026-07-10T15:00:00+02:00");
 
 function useCountdown(target: Date) {
@@ -27,299 +26,290 @@ function useCountdown(target: Date) {
   return t;
 }
 
-// ── Shared entrance animation factory ─────────────────────────────────────────
-// Each layer enters with a staggered delay for a composed, cinematic reveal.
-const enter = (delay: number) => ({
-  initial:    { opacity: 0, y: 16 } as const,
-  animate:    { opacity: 1, y: 0  } as const,
-  transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] as const },
+// Cinematic fade — no movement. Used for the headline so it feels like a film dissolve.
+const dissolve = (delay: number, duration = 1.4) => ({
+  initial:    { opacity: 0 } as const,
+  animate:    { opacity: 1 } as const,
+  transition: { duration, delay, ease: "easeOut" } as const,
 });
 
-// ── Design tokens (kept co-located for easy tuning) ───────────────────────────
-const GOLD         = "#C9A84C";
-const GOLD_LIGHT   = "#E8CC78";
-const GOLD_GRAD    = `linear-gradient(90deg, ${GOLD} 0%, ${GOLD_LIGHT} 50%, ${GOLD} 100%)`;
-const INTER        = "var(--font-inter, Inter, system-ui, sans-serif)";
-const PLAYFAIR     = "var(--font-playfair)";
+// Precise rise — minimal vertical movement. Used for supporting content.
+const rise = (delay: number) => ({
+  initial:    { opacity: 0, y: 14 } as const,
+  animate:    { opacity: 1, y: 0  } as const,
+  transition: { duration: 1.1, delay, ease: [0.16, 1, 0.3, 1] as const },
+});
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// Design tokens
+const WARM_WHITE = "#EDE9E1"; // off-white — warm, cinematic, not clinical
+const GOLD       = "#B8923A"; // darker gold — more industrial, less decorative
+const INTER      = "var(--font-inter, Inter, system-ui, sans-serif)";
+const SERIF      = "var(--font-playfair)";
+
 export function CinematicHero() {
-  const router   = useRouter();
+  const router = useRouter();
   const { d, h, m, s } = useCountdown(FESTIVAL_DATE);
 
+  const units = [
+    { val: d, label: "Days"  },
+    { val: h, label: "Hours" },
+    { val: m, label: "Min"   },
+    { val: s, label: "Sec"   },
+  ];
+
   return (
-    /*
-     * -mt-16 sm:-mt-20 negates <main>'s pt-16 sm:pt-20 so the hero is
-     * truly full-bleed behind the transparent navbar.
-     */
     <section
       className="relative overflow-hidden -mt-16 sm:-mt-20"
-      style={{ height: "100vh" }}
+      style={{ height: "100vh", background: "#080808" }}
     >
 
-      {/* ── Background video ────────────────────────────────────────────── */}
+      {/* Video */}
       <video
         autoPlay muted loop playsInline aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ objectPosition: "center 30%", zIndex: 0 }}
+        style={{ objectPosition: "center 28%", zIndex: 0 }}
       >
-        <source src="/hero.mp4" type="video/mp4" />
+        <source src="/hero-bg.mp4" type="video/mp4" />
       </video>
 
-      {/*
-       * ── Cinematic overlay ────────────────────────────────────────────────
-       * Transparent at the top so the crowd energy stays visible.
-       * Graduates to near-opaque at the bottom where text lives.
-       * The gold radial adds a subtle brand warmth from above.
-       */}
+      {/* Overlay — sharp darkening at bottom, nearly transparent at top */}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{
           zIndex: 1,
-          background: [
-            "linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.40) 54%, rgba(0,0,0,0.10) 100%)",
-            `radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.09), transparent 65%)`,
-          ].join(", "),
+          background:
+            "linear-gradient(to top, rgba(5,5,5,0.97) 0%, rgba(5,5,5,0.60) 38%, rgba(5,5,5,0.12) 100%)",
         }}
       />
 
-      {/* ── Content — bottom-anchored, left-aligned editorial layout ────── */}
-      <div
-        className="absolute inset-0 flex flex-col justify-end"
-        style={{ zIndex: 2 }}
+      {/* Ghost year — architectural background element.
+          Type at this scale becomes texture, not information.
+          Acne Studios / editorial technique: let the letter-forms own the space. */}
+      <motion.span
+        {...dissolve(1.0, 2.4)}
+        aria-hidden="true"
+        className="absolute pointer-events-none select-none"
+        style={{
+          bottom:        "-8%",
+          right:         "-3%",
+          fontFamily:    SERIF,
+          fontWeight:    900,
+          fontSize:      "min(52vw, 780px)",
+          lineHeight:    1,
+          letterSpacing: "-0.06em",
+          color:         "rgba(237,233,225,0.028)",
+          zIndex:        1,
+        }}
       >
+        2026
+      </motion.span>
+
+      {/* Content layer */}
+      <div className="absolute inset-0 flex flex-col justify-end" style={{ zIndex: 2 }}>
         <div
           className="w-full max-w-[1380px] mx-auto px-6 sm:px-12 lg:px-20"
-          style={{ paddingBottom: "clamp(3rem, 7vw, 6rem)" }}
+          style={{ paddingBottom: "clamp(3rem, 6.5vw, 5.5rem)" }}
         >
 
-          {/* ── Eyebrow ───────────────────────────────────────────────────
-           * Ultra-small, ultra-tracked caps. The gold rule acts as a
-           * visual anchor — restraint here amplifies the headline below.
-           */}
+          {/* ── Eyebrow ── */}
           <motion.div
-            {...enter(0.15)}
-            style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.75rem, 3.5vw, 2.75rem)" }}
+            {...rise(0.1)}
+            style={{
+              display:       "flex",
+              alignItems:    "center",
+              gap:           "12px",
+              marginBottom:  "clamp(1.5rem, 3.8vw, 3.25rem)",
+            }}
           >
-            <span style={{ display: "block", width: "18px", height: "1px", background: GOLD, flexShrink: 0 }} />
-            <span
-              style={{
-                fontFamily:    INTER,
-                fontSize:      "9px",
-                fontWeight:    500,
-                textTransform: "uppercase",
-                letterSpacing: "0.4em",
-                color:         "rgba(255,255,255,0.45)",
-              }}
-            >
+            <span style={{
+              width:      "16px",
+              height:     "1px",
+              background: `rgba(184,146,58,0.50)`,
+              flexShrink: 0,
+            }} />
+            <span style={{
+              fontFamily:    INTER,
+              fontSize:      "7px",
+              fontWeight:    400,
+              textTransform: "uppercase",
+              letterSpacing: "0.52em",
+              color:         "rgba(237,233,225,0.22)",
+            }}>
               Official Verified Resale
             </span>
           </motion.div>
 
-          {/* ── Primary headline ──────────────────────────────────────────
-           *
-           * TWO-TIER SCALE — the luxury signal:
-           *
-           * "Awakenings"   → massive, dominant, full-weight serif
-           *                  (brand mark, owns the space)
-           *
-           * "Festival 2026" → intentionally much smaller, lighter weight,
-           *                   gold-tinted, wide tracking
-           *                   (descriptor, refines without competing)
-           *
-           * The dramatic scale jump is the editorial hierarchy —
-           * the same pattern as "BALENCIAGA / Paris" or "DIOR / Haute Couture".
-           * Both lines share the h1 for correct DOM/SEO semantics.
-           */}
+          {/* ── Monumental headline ──
+              The headline IS the layout. It absorbs the space.
+              No decoration. No shadow. No gradient. Just mass. */}
           <motion.h1
-            {...enter(0.3)}
+            {...dissolve(0.15, 1.6)}
             style={{ margin: 0, padding: 0 }}
           >
             <span
               className="block"
               style={{
-                fontFamily:    PLAYFAIR,
+                fontFamily:    SERIF,
                 fontWeight:    900,
-                fontSize:      "clamp(4.25rem, 12vw, 10rem)",
-                lineHeight:    0.87,
-                letterSpacing: "-0.035em",
-                color:         "#fff",
-                textShadow:    "0 8px 80px rgba(0,0,0,0.40)",
+                fontSize:      "clamp(5rem, 15.5vw, 13.5rem)",
+                lineHeight:    0.84,
+                letterSpacing: "-0.048em",
+                color:         WARM_WHITE,
               }}
             >
               Awakenings
             </span>
-
-            <span
-              className="block"
-              style={{
-                fontFamily:    PLAYFAIR,
-                fontWeight:    400,
-                fontSize:      "clamp(1.05rem, 2.3vw, 1.9rem)",
-                lineHeight:    1,
-                letterSpacing: "0.12em",
-                marginTop:     "clamp(0.55rem, 1.1vw, 0.95rem)",
-                background:    GOLD_GRAD,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor:  "transparent",
-                backgroundClip:       "text",
-              }}
-            >
-              Festival 2026
-            </span>
           </motion.h1>
 
-          {/* ── Location metadata ─────────────────────────────────────────
-           * Treated as a luxury address line — very small, very tracked,
-           * muted. Information without decoration.
-           */}
-          <motion.p
-            {...enter(0.45)}
-            style={{
-              fontFamily:    INTER,
-              fontWeight:    400,
-              fontSize:      "clamp(0.65rem, 1vw, 0.78rem)",
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color:         "rgba(255,255,255,0.35)",
-              marginTop:     "clamp(1.75rem, 3.5vw, 2.5rem)",
-              marginBottom:  0,
-            }}
+          {/* ── Info band ──
+              Full-width rule acts as a horizon line between the monument
+              and the information below. Year + location read as a single caption. */}
+          <motion.div
+            {...rise(0.45)}
+            style={{ marginTop: "clamp(1.75rem, 3.8vw, 3.25rem)" }}
           >
-            July 10–12&ensp;·&ensp;Amsterdam&ensp;·&ensp;Gashouder &amp; Hembrugterrein
-          </motion.p>
+            <div style={{
+              width:        "100%",
+              height:       "1px",
+              background:   "rgba(237,233,225,0.06)",
+              marginBottom: "clamp(0.85rem, 1.8vw, 1.5rem)",
+            }} />
 
-          {/* ── Gold rule — separates metadata from the action row ──────── */}
-          <motion.div
-            {...enter(0.52)}
-            style={{
-              width:      "28px",
-              height:     "1px",
-              background: `rgba(201,168,76,0.40)`,
-              margin:     "clamp(1.25rem, 2.8vw, 2rem) 0",
-            }}
-          />
+            {/* Two-column caption: year left, location right */}
+            <div style={{
+              display:        "flex",
+              justifyContent: "space-between",
+              alignItems:     "baseline",
+              flexWrap:       "wrap",
+              gap:            "0.75rem 2rem",
+            }}>
+              <span style={{
+                fontFamily:    INTER,
+                fontSize:      "7px",
+                fontWeight:    400,
+                letterSpacing: "0.38em",
+                textTransform: "uppercase",
+                color:         "rgba(237,233,225,0.20)",
+              }}>
+                10&thinsp;—&thinsp;12 July&ensp;·&ensp;2026
+              </span>
+              <span style={{
+                fontFamily:    INTER,
+                fontSize:      "7px",
+                fontWeight:    400,
+                letterSpacing: "0.32em",
+                textTransform: "uppercase",
+                color:         "rgba(237,233,225,0.14)",
+              }}>
+                Amsterdam&ensp;·&ensp;Gashouder&thinsp;+&thinsp;Hembrug
+              </span>
+            </div>
+          </motion.div>
 
-          {/* ── Action row: countdown + CTA ───────────────────────────────
-           * Countdown uses a "label above / number below" pattern —
-           * reads like a luxury timepiece rather than a generic web widget.
-           * Labels are gold (brand accent), numbers are white serif.
-           */}
+          {/* ── Countdown + CTA ──
+              Numbers are ultra-thin (weight 100): the luxury/fashion move.
+              Tension comes from the contrast between the massive bold headline
+              and these hairline numerals — not from decoration.
+              CTA has no box, no border. Opacity at rest → full on hover. */}
           <motion.div
-            {...enter(0.62)}
+            {...rise(0.65)}
             style={{
+              marginTop:  "clamp(2.5rem, 5.5vw, 4.5rem)",
               display:    "flex",
-              flexDirection: "row",
               alignItems: "flex-end",
               flexWrap:   "wrap",
-              gap:        "clamp(1.5rem, 4vw, 0px)",
+              columnGap:  "clamp(2rem, 5vw, 4.5rem)",
+              rowGap:     "2.5rem",
             }}
           >
-            {/* Countdown units */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-end",
-                gap: "clamp(1.25rem, 3vw, 2.25rem)",
-                paddingRight: "clamp(1.5rem, 3.5vw, 2.5rem)",
-              }}
-            >
-              {[
-                { val: d, label: "Days" },
-                { val: h, label: "Hrs"  },
-                { val: m, label: "Min"  },
-                { val: s, label: "Sec"  },
-              ].map(({ val, label }) => (
-                <div
-                  key={label}
-                  style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "6px" }}
-                >
-                  {/* Label above — gold, micro */}
-                  <span
-                    style={{
+
+            {/* Countdown strip */}
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 0 }}>
+              {units.map(({ val, label }, i) => (
+                <Fragment key={label}>
+                  <div style={{
+                    display:       "flex",
+                    flexDirection: "column",
+                    alignItems:    "flex-start",
+                    paddingLeft:   i === 0 ? 0 : "clamp(1.25rem, 2.8vw, 2.25rem)",
+                    paddingRight:  i === 3 ? 0 : "clamp(1.25rem, 2.8vw, 2.25rem)",
+                  }}>
+                    {/* Number — hairline weight, opacity tick on change */}
+                    <motion.span
+                      key={val}
+                      initial={{ opacity: 0.25 }}
+                      animate={{ opacity: 1    }}
+                      transition={{ duration: 0.45, ease: "easeOut" }}
+                      style={{
+                        fontFamily:         INTER,
+                        fontWeight:         100,
+                        fontSize:           "clamp(2.75rem, 6.5vw, 5.75rem)",
+                        lineHeight:         1,
+                        letterSpacing:      "0.01em",
+                        color:              WARM_WHITE,
+                        fontVariantNumeric: "tabular-nums",
+                        display:            "block",
+                      }}
+                    >
+                      {String(val).padStart(2, "0")}
+                    </motion.span>
+                    {/* Label */}
+                    <span style={{
                       fontFamily:    INTER,
-                      fontSize:      "8px",
-                      fontWeight:    500,
+                      fontWeight:    400,
+                      fontSize:      "6.5px",
+                      letterSpacing: "0.28em",
                       textTransform: "uppercase",
-                      letterSpacing: "0.24em",
-                      color:         GOLD,
-                    }}
-                  >
-                    {label}
-                  </span>
-                  {/* Number — dominant serif */}
-                  <span
-                    style={{
-                      fontFamily:         PLAYFAIR,
-                      fontWeight:         900,
-                      fontSize:           "clamp(1.75rem, 3.8vw, 2.75rem)",
-                      lineHeight:         1,
-                      letterSpacing:      "-0.025em",
-                      color:              "#fff",
-                      fontVariantNumeric: "tabular-nums",
-                    }}
-                  >
-                    {String(val).padStart(2, "0")}
-                  </span>
-                </div>
+                      color:         `rgba(184,146,58,0.40)`,
+                      marginTop:     "8px",
+                    }}>
+                      {label}
+                    </span>
+                  </div>
+
+                  {/* Hairline vertical rule between units */}
+                  {i < 3 && (
+                    <div style={{
+                      width:      "1px",
+                      height:     "clamp(2.75rem, 6.5vw, 5.75rem)",
+                      background: "rgba(237,233,225,0.06)",
+                      flexShrink: 0,
+                    }} />
+                  )}
+                </Fragment>
               ))}
             </div>
 
-            {/* Vertical separator — only on wider viewports */}
-            <div
-              className="hidden sm:block shrink-0"
-              style={{
-                width:      "1px",
-                height:     "40px",
-                background: "rgba(255,255,255,0.10)",
-                marginRight: "clamp(1.5rem, 3.5vw, 2.5rem)",
-              }}
-            />
-
-            {/*
-             * ── CTA button ─────────────────────────────────────────────────
-             * Sharp 2px radius (vs pill) signals luxury/fashion.
-             * Medium-weight, tracked uppercase, small text — refined, precise.
-             * The gold fill is the single moment of brand warmth in the layout.
-             */}
+            {/* CTA — no button, no border, no box.
+                The link IS the typography. */}
             <button
               onClick={() => router.push("/tickets")}
               className="group flex items-center gap-2.5"
               style={{
-                background:   `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_LIGHT} 100%)`,
-                padding:      "12px 24px",
-                borderRadius: "2px",
-                border:       "none",
-                cursor:       "pointer",
-                transition:   "transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease",
+                background:  "none",
+                border:      "none",
+                padding:     "0 0 calc(6.5px + 8px) 0", // aligns baseline with countdown labels
+                cursor:      "pointer",
+                opacity:     0.38,
+                transition:  "opacity 0.5s ease",
               }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLButtonElement;
-                el.style.transform  = "translateY(-2px)";
-                el.style.boxShadow  = "0 0 40px rgba(201,168,76,0.40), 0 6px 20px rgba(0,0,0,0.30)";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLButtonElement;
-                el.style.transform  = "none";
-                el.style.boxShadow  = "none";
-              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.80"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.38"; }}
             >
-              <span
-                style={{
-                  fontFamily:    INTER,
-                  fontWeight:    500,
-                  fontSize:      "10px",
-                  letterSpacing: "0.20em",
-                  textTransform: "uppercase",
-                  color:         "#000",
-                }}
-              >
+              <span style={{
+                fontFamily:    INTER,
+                fontWeight:    300,
+                fontSize:      "9px",
+                letterSpacing: "0.34em",
+                textTransform: "uppercase",
+                color:         WARM_WHITE,
+              }}>
                 Browse Tickets
               </span>
               <ArrowRight
-                className="group-hover:translate-x-px transition-transform duration-300"
-                style={{ width: "12px", height: "12px", color: "#000" }}
+                className="group-hover:translate-x-1 transition-transform duration-500"
+                style={{ width: "10px", height: "10px", color: WARM_WHITE }}
               />
             </button>
 
@@ -327,26 +317,26 @@ export function CinematicHero() {
         </div>
       </div>
 
-      {/* ── Scroll cue — minimal, bottom-right ──────────────────────────── */}
+      {/* Scroll indicator — bottom center */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.7 }}
-        className="absolute bottom-8 right-8 sm:right-12 lg:right-20 z-10 pointer-events-none select-none"
-        style={{ display: "flex", alignItems: "center", gap: "12px" }}
+        {...dissolve(1.8, 1.0)}
+        className="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 pointer-events-none select-none"
+        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}
       >
-        <span
-          style={{
-            fontFamily:    INTER,
-            fontSize:      "8px",
-            textTransform: "uppercase",
-            letterSpacing: "0.38em",
-            color:         "rgba(255,255,255,0.20)",
-          }}
-        >
+        <span style={{
+          fontFamily:    INTER,
+          fontSize:      "6.5px",
+          textTransform: "uppercase",
+          letterSpacing: "0.48em",
+          color:         "rgba(237,233,225,0.12)",
+        }}>
           Scroll
         </span>
-        <div style={{ width: "28px", height: "1px", background: "rgba(255,255,255,0.12)" }} />
+        <div style={{
+          width:      "1px",
+          height:     "24px",
+          background: "linear-gradient(to bottom, rgba(237,233,225,0.10), transparent)",
+        }} />
       </motion.div>
 
     </section>
