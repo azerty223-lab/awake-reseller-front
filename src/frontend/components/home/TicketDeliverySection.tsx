@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
-import { Reveal } from "@/frontend/components/ui/Reveal";
 
 const STEPS = [
   {
@@ -73,7 +72,27 @@ export function TicketDeliverySection() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 lg:gap-12 relative">
             {STEPS.map((step, i) => (
-              <Reveal key={step.index} delay={0.1 + i * 0.12}>
+              /* Step 0: scale entrance  |  Step 1: slide from right  |  Step 2: blade clip-path */
+              <motion.div
+                key={step.index}
+                initial={
+                  i === 0 ? { scale: 0.93, opacity: 0 } :
+                  i === 1 ? { x: 32, opacity: 0 } :
+                            { clipPath: "inset(0 0 100% 0)", opacity: 0.6 }
+                }
+                whileInView={
+                  i === 0 ? { scale: 1, opacity: 1 } :
+                  i === 1 ? { x: 0, opacity: 1 } :
+                            { clipPath: "inset(0 0 0% 0)", opacity: 1 }
+                }
+                viewport={{ once: true, margin: "0px 0px -40px 0px" }}
+                transition={{
+                  duration: 0.75,
+                  delay: 0.1 + i * 0.14,
+                  ease: [0.16, 1, 0.3, 1],
+                  ...(i === 0 ? { type: "spring", stiffness: 160, damping: 20, mass: 1 } : {}),
+                }}
+              >
                 <div className="relative pt-2">
 
                   {/* Step indicator dot */}
@@ -134,7 +153,7 @@ export function TicketDeliverySection() {
                     {step.detail}
                   </span>
                 </div>
-              </Reveal>
+              </motion.div>
             ))}
           </div>
         </div>

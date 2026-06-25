@@ -180,10 +180,10 @@ export function AccommodationSection() {
                 </h3>
 
                 <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, filter: "blur(5px)", y: 8 }}
+                  whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.9, delay: 0.20, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.9, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
                   style={{
                     fontFamily: INTER,
                     fontSize:   "0.9375rem",
@@ -204,21 +204,27 @@ export function AccommodationSection() {
               >
                 {/* Detail table */}
                 <div style={{ marginBottom: "1.75rem" }}>
-                  {tier.details.map(({ label, value }) => (
-                    <div key={label} style={{
-                      display:         "flex",
-                      justifyContent:  "space-between",
-                      alignItems:      "baseline",
-                      padding:         "0.75rem 0",
-                      borderBottom:    "1px solid rgba(237,233,225,0.05)",
-                    }}>
+                  {tier.details.map(({ label, value }, j) => (
+                    <motion.div
+                      key={label}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.45, delay: 0.14 + j * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                      style={{
+                        display:         "flex",
+                        justifyContent:  "space-between",
+                        alignItems:      "baseline",
+                        padding:         "0.75rem 0",
+                        borderBottom:    "1px solid rgba(237,233,225,0.05)",
+                      }}>
                       <span style={{ fontFamily: INTER, fontSize: "12px", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(161,161,170,0.55)" }}>
                         {label}
                       </span>
                       <span style={{ fontFamily: INTER, fontSize: "0.9375rem", color: "rgba(237,233,225,0.85)", whiteSpace: "nowrap" }}>
                         {value}
                       </span>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
 

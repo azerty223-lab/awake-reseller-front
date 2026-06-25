@@ -71,7 +71,7 @@ export function FestivalRulesSection() {
         {/* Rules — two-column grid of editorial rows */}
         <div className="grid grid-cols-1 lg:grid-cols-2" style={{ gap: "1px", background: "rgba(237,233,225,0.05)" }}>
           {RULES.map((rule, i) => (
-            <Reveal key={rule.index} delay={0.04 + i * 0.05} direction="left" className="bg-[#050507] h-full">
+            <Reveal key={rule.index} delay={0.04 + i * 0.04} direction={i % 2 === 0 ? "left" : "right"} className="bg-[#050507] h-full">
               <div
                 className="bg-[#050507] group relative hover:bg-white/[0.015] transition-colors duration-500"
                 style={{ padding: "clamp(1.75rem, 3.5vw, 2.5rem)" }}

@@ -82,8 +82,16 @@ export function ResaleMarketplaceSection() {
             transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="grid grid-cols-2" style={{ gap: "1px", background: "rgba(237,233,225,0.07)" }}>
-              {STATS.map((stat) => (
-                <div key={stat.label} className="bg-[#050507]" style={{ padding: "clamp(1.5rem, 3vw, 2rem)" }}>
+              {STATS.map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  className="bg-[#050507]"
+                  style={{ padding: "clamp(1.5rem, 3vw, 2rem)" }}
+                  initial={{ scale: 0.88, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.55, delay: 0.1 + i * 0.09, type: "spring", stiffness: 180, damping: 22 }}
+                >
                   <div
                     className="font-[var(--font-playfair)] font-black text-white"
                     style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.03em", lineHeight: 1, marginBottom: "0.625rem" }}
@@ -101,7 +109,7 @@ export function ResaleMarketplaceSection() {
                   }}>
                     {stat.label}
                   </p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -122,7 +130,7 @@ export function ResaleMarketplaceSection() {
 
         <div>
           {VERIFICATION.map((step, i) => (
-            <Reveal key={step.index} delay={0.06 + i * 0.08} direction="left">
+            <Reveal key={step.index} delay={0.06 + i * 0.10} direction={i % 2 === 0 ? "left" : "right"}>
               <div className="group relative border-t border-white/[0.06] py-8 sm:py-10 hover:border-white/[0.10] transition-colors duration-500">
                 <div className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full transition-all duration-700"
                      style={{ background: "rgba(184,146,58,0.15)" }} />

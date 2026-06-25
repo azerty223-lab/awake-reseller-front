@@ -60,10 +60,10 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
 
   return (
     <motion.div
-      initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0.5 }}
-      whileInView={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
-      viewport={{ once: true, margin: "0px 0px -40px 0px" }}
-      transition={{ duration: 0.85, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ x: -24, opacity: 0 }}
+      whileInView={{ x: 0, opacity: 1 }}
+      viewport={{ once: true, margin: "0px 0px -30px 0px" }}
+      transition={{ duration: 0.65, delay: index * 0.07 + index * index * 0.005, ease: [0.16, 1, 0.3, 1] }}
     >
       <Link
         href={`/tickets/${ticket.slug}`}

@@ -73,17 +73,19 @@ export function FAQSection() {
           </h2>
         </motion.div>
 
-        {/* Editorial accordion — no cards, just horizontal rules */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-        >
+        {/* Editorial accordion — each item staggers individually */}
+        <div>
           {faqs.map((faq, i) => {
             const isOpen = openIndex === i;
             return (
-              <div key={i} className="border-t border-white/[0.06] last-of-type:border-b">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
+                transition={{ duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                className="border-t border-white/[0.06] last-of-type:border-b"
+              >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
                   className="group w-full flex items-start gap-6 sm:gap-8 py-7 text-left
@@ -174,10 +176,10 @@ export function FAQSection() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Footer CTA */}
         <motion.div
