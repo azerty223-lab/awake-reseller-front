@@ -40,35 +40,41 @@ export function ResaleMarketplaceSection() {
     <section className="relative py-5 overflow-hidden">
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
-        {/* ── Two-column editorial layout ──────────── */}
+        {/* ── Eyebrow + headline — full width ─────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-8"
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.875rem" }}>
+            <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
+            <span style={{ fontFamily: I, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
+              Verified Resale
+            </span>
+          </div>
+          <h2
+            className="font-[var(--font-playfair)] font-black text-white"
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.025em", lineHeight: 0.92 }}
+          >
+            <LineReveal>Verified resale tickets,</LineReveal>
+            <LineReveal delay={0.09}>
+              <span style={{ color: "rgba(237,233,225,0.50)" }}>transferred safely to your name.</span>
+            </LineReveal>
+          </h2>
+        </motion.div>
+
+        {/* ── Same row: intro+CTAs | Buyer Protection ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start">
 
-          {/* Left: headline + copy + CTAs */}
+          {/* Left: intro + CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* Eyebrow */}
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.875rem" }}>
-              <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
-              <span style={{ fontFamily: I, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
-                Verified Resale
-              </span>
-            </div>
-
-            {/* Headline */}
-            <h2
-              className="font-[var(--font-playfair)] font-black text-white"
-              style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.025em", lineHeight: 0.92, marginBottom: "1.25rem" }}
-            >
-              <LineReveal>Verified resale tickets,</LineReveal>
-              <LineReveal delay={0.09}>
-                <span style={{ color: "rgba(237,233,225,0.50)" }}>transferred safely to your name.</span>
-              </LineReveal>
-            </h2>
-
             {/* Intro */}
             <p style={{ fontFamily: I, fontSize: "0.9375rem", lineHeight: 1.8, color: "rgba(161,161,170,0.78)", marginBottom: "2rem" }}>
               Every resale ticket is checked before delivery. We verify the order, handle the
