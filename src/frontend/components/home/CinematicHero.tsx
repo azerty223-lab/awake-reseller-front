@@ -1,10 +1,10 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
-import { useRouter }       from "next/navigation";
-import { motion, useReducedMotion, animate } from "motion/react";
+import { Fragment, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "motion/react";
 
-/* ── Countdown ────────────────────────────────────────────────────────── */
+/* ── Festival countdown ─────────────────────────────────────────────── */
 const FESTIVAL_DATE = new Date("2026-07-10T15:00:00+02:00");
 
 function useCountdown(target: Date) {
@@ -26,76 +26,49 @@ function useCountdown(target: Date) {
   return t;
 }
 
-/* ── Count-up on mount (skill rec: "stat counter animations") ─────────── */
-function useCountUp(target: number, duration = 1.8, delay = 0) {
-  const [val, setVal] = useState(0);
-  const done = useRef(false);
-  useEffect(() => {
-    if (done.current) return;
-    done.current = true;
-    const ctrl = animate(0, target, {
-      duration,
-      delay,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (v) => setVal(Math.round(v)),
-    });
-    return () => ctrl.stop();
-  }, [target, duration, delay]); // eslint-disable-line
-  return val;
-}
+/* ── Design tokens ──────────────────────────────────────────────────── */
+const W = "#EDE9E1";                              // warm white
+const G = "#B8923A";                              // gold
+const I = "var(--font-inter, Inter, system-ui, sans-serif)";
 
-/* ── Tokens ───────────────────────────────────────────────────────────── */
-const BEBAS = "var(--font-bebas, 'Bebas Neue', Impact, sans-serif)";
-const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
-const GOLD  = "#CA8A04";   // ui-ux-pro-max recommended CTA color
-const WHITE = "#EDE9E1";   // warm white
+/* ── Reusable entrance variants ─────────────────────────────────────── */
+const up = (delay: number) => ({
+  initial:    { opacity: 0, y: 22 } as const,
+  animate:    { opacity: 1, y: 0  } as const,
+  transition: { duration: 1.0, delay, ease: [0.16, 1, 0.3, 1] as const },
+});
 
-/* ── Component ───────────────────────────────────────────────────────── */
+const reveal = (delay: number) => ({
+  initial:    { clipPath: "inset(0 0 100% 0)", opacity: 0.7 } as const,
+  animate:    { clipPath: "inset(0 0 0% 0)",   opacity: 1   } as const,
+  transition: { duration: 1.1, delay, ease: [0.16, 1, 0.3, 1] as const },
+});
+
+const fade = (delay: number, dur = 1.2) => ({
+  initial:    { opacity: 0 } as const,
+  animate:    { opacity: 1 } as const,
+  transition: { duration: dur, delay, ease: "easeOut" as const },
+});
+
+/* ── Component ──────────────────────────────────────────────────────── */
 export function CinematicHero() {
-  const router      = useRouter();
-  const prefersLess = useReducedMotion(); // skill checklist: prefers-reduced-motion
+  const router = useRouter();
   const { d, h, m, s } = useCountdown(FESTIVAL_DATE);
 
-  // Count-up only on first render (skill: "number count-up" effect)
-  const days  = useCountUp(d, 1.6, 0.9);
-  const hours = useCountUp(h, 1.4, 1.0);
-  const mins  = useCountUp(m, 1.2, 1.1);
-  const secs  = useCountUp(s, 1.0, 1.2);
-
   const units = [
-    { live: d, display: days,  label: "Days"  },
-    { live: h, display: hours, label: "Hrs"   },
-    { live: m, display: mins,  label: "Min"   },
-    { live: s, display: secs,  label: "Sec"   },
+    { val: d, label: "Days"  },
+    { val: h, label: "Hours" },
+    { val: m, label: "Min"   },
+    { val: s, label: "Sec"   },
   ];
-
-  /* Shared entrance props — respects prefers-reduced-motion */
-  const up = (delay: number) => ({
-    initial:    { opacity: 0, y: prefersLess ? 0 : 20 } as const,
-    animate:    { opacity: 1, y: 0 } as const,
-    transition: { duration: prefersLess ? 0.01 : 0.9, delay, ease: [0.16, 1, 0.3, 1] as const },
-  });
-
-  const blade = (delay: number) => ({
-    initial:    { clipPath: prefersLess ? "inset(0)" : "inset(0 0 100% 0)", opacity: prefersLess ? 1 : 0.6 } as const,
-    animate:    { clipPath: "inset(0 0 0% 0)", opacity: 1 } as const,
-    transition: { duration: prefersLess ? 0.01 : 1.15, delay, ease: [0.16, 1, 0.3, 1] as const },
-  });
-
-  const ghost = (delay: number) => ({
-    initial:    { opacity: 0 } as const,
-    animate:    { opacity: 1 } as const,
-    transition: { duration: prefersLess ? 0.01 : 3.5, delay, ease: "easeOut" as const },
-  });
 
   return (
     <section
       className="relative overflow-hidden -mt-16 sm:-mt-20"
       style={{ height: "100vh", background: "#050505" }}
-      aria-label="Awakenings Festival 2026 — Official Verified Resale"
     >
 
-      {/* ── Video ──────────────────────────────────────────────────── */}
+      {/* ── Video ─────────────────────────────────────────────────── */}
       <video
         autoPlay muted loop playsInline preload="auto" aria-hidden="true"
         poster="/festival-hero.png"
@@ -105,92 +78,116 @@ export function CinematicHero() {
         <source src="/hero-bg.mp4" type="video/mp4" />
       </video>
 
-      {/* ── Overlay: two-pass for perfect readability at all scroll positions */}
+      {/* ── Layered overlay ───────────────────────────────────────── */}
+      {/* Bottom 60% darkens to near-black so text is always crisp   */}
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none" style={{ zIndex: 1,
         background: [
-          "linear-gradient(to top,  rgba(4,4,4,0.97) 0%,   rgba(4,4,4,0.65) 44%, rgba(4,4,4,0.08) 100%)",
-          "linear-gradient(to bottom, rgba(4,4,4,0.55) 0%, transparent 20%)",
+          "linear-gradient(to top, rgba(4,4,4,0.98) 0%, rgba(4,4,4,0.70) 42%, rgba(4,4,4,0.10) 100%)",
+          "linear-gradient(to bottom, rgba(4,4,4,0.50) 0%, transparent 18%)",
         ].join(", "),
       }} />
 
-      {/* ── Ghost watermark ─────────────────────────────────────────── */}
+      {/* ── Ghost watermark ───────────────────────────────────────── */}
       <motion.span
-        {...ghost(1.4)}
+        {...fade(1.2, 3.0)}
         aria-hidden="true"
         className="absolute pointer-events-none select-none"
         style={{
-          bottom: "-4%", right: "-2%", zIndex: 1,
-          fontFamily: BEBAS, fontSize: "min(58vw, 860px)",
-          lineHeight: 1, letterSpacing: "0.08em", textTransform: "uppercase",
-          color: "rgba(237,233,225,0.025)",
+          bottom: "-6%", right: "-2%",
+          fontFamily: I, fontWeight: 900,
+          fontSize: "min(55vw, 820px)",
+          lineHeight: 1, letterSpacing: "0.10em",
+          textTransform: "uppercase",
+          color: "rgba(237,233,225,0.022)",
+          zIndex: 1,
         }}
       >
         2026
       </motion.span>
 
-      {/* ── Content ─────────────────────────────────────────────────── */}
+      {/* ── Content ───────────────────────────────────────────────── */}
       <div className="absolute inset-0 flex flex-col justify-end" style={{ zIndex: 2 }}>
         <div
           className="w-full max-w-[1380px] mx-auto px-6 sm:px-12 lg:px-20"
-          style={{ paddingBottom: "clamp(2.5rem, 5vw, 5rem)" }}
+          style={{ paddingBottom: "clamp(2.5rem, 5.5vw, 5rem)" }}
         >
 
           {/* Eyebrow */}
-          <motion.div {...up(0.15)} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "clamp(1rem, 2.5vw, 2rem)" }}>
-            <div style={{ width: "18px", height: "1px", background: `rgba(202,138,4,0.60)`, flexShrink: 0 }} />
-            <span style={{ fontFamily: INTER, fontSize: "11px", fontWeight: 600, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(237,233,225,0.55)" }}>
+          <motion.div {...up(0.15)} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "clamp(1.25rem, 3vw, 2.5rem)" }}>
+            <div style={{ width: "20px", height: "1px", background: `rgba(184,146,58,0.55)`, flexShrink: 0 }} />
+            <span style={{ fontFamily: I, fontSize: "11px", fontWeight: 600, letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(237,233,225,0.55)" }}>
               Official Verified Resale
             </span>
           </motion.div>
 
-          {/* ── Main headline — Bebas Neue (skill: "Bold Statement" for events) */}
-          <div style={{ overflow: "hidden", lineHeight: 1, marginBottom: "clamp(0.2rem, 0.6vw, 0.5rem)" }}>
-            <motion.h1 {...blade(0.28)} style={{ margin: 0, padding: 0 }}>
+          {/* ── Headline ──────────────────────────────────────────── */}
+          <div style={{ overflow: "hidden", marginBottom: "clamp(0.35rem, 0.8vw, 0.6rem)" }}>
+            <motion.h1
+              {...reveal(0.30)}
+              style={{ margin: 0, padding: 0 }}
+            >
               <span style={{
                 display:       "block",
-                fontFamily:    BEBAS,
-                fontSize:      "clamp(4.5rem, 14vw, 12.5rem)",
-                lineHeight:    0.90,
-                letterSpacing: "0.06em",
+                fontFamily:    I,
+                fontWeight:    800,
+                fontSize:      "clamp(3.25rem, 9.5vw, 8.5rem)",
+                lineHeight:    0.92,
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                color:         WHITE,
+                color:         W,
               }}>
                 Awakenings
               </span>
             </motion.h1>
           </div>
 
-          {/* Subtitle */}
+          {/* Subtitle row */}
           <div style={{ overflow: "hidden", marginBottom: "clamp(1.5rem, 3.5vw, 3rem)" }}>
-            <motion.div {...blade(0.44)} style={{ display: "flex", alignItems: "center", gap: "clamp(0.75rem, 2vw, 1.75rem)", flexWrap: "wrap" }}>
-              <span style={{ fontFamily: BEBAS, fontSize: "clamp(1.5rem, 3.8vw, 3.25rem)", letterSpacing: "0.08em", textTransform: "uppercase", color: GOLD, lineHeight: 1 }}>
+            <motion.div {...reveal(0.48)} style={{ display: "flex", alignItems: "baseline", gap: "clamp(1rem, 2.5vw, 2rem)", flexWrap: "wrap" }}>
+              <span style={{
+                fontFamily:    I,
+                fontWeight:    700,
+                fontSize:      "clamp(1rem, 2.4vw, 2.1rem)",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color:         G,
+                lineHeight:    1,
+              }}>
                 Festival
               </span>
-              <div style={{ width: "1px", height: "clamp(1.2rem, 2.5vw, 2rem)", background: "rgba(237,233,225,0.20)", flexShrink: 0, alignSelf: "center" }} />
-              <span style={{ fontFamily: BEBAS, fontSize: "clamp(1.5rem, 3.8vw, 3.25rem)", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(237,233,225,0.45)", lineHeight: 1 }}>
+              <span style={{ width: "1px", height: "clamp(1rem, 2vw, 1.5rem)", background: "rgba(237,233,225,0.18)", flexShrink: 0, alignSelf: "center" }} />
+              <span style={{
+                fontFamily:    I,
+                fontWeight:    500,
+                fontSize:      "clamp(1rem, 2.4vw, 2.1rem)",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color:         "rgba(237,233,225,0.55)",
+                lineHeight:    1,
+              }}>
                 2026
               </span>
             </motion.div>
           </div>
 
           {/* Meta strip */}
-          <motion.div {...up(0.60)}>
-            <div style={{ width: "100%", height: "1px", background: "rgba(237,233,225,0.12)", marginBottom: "clamp(0.75rem, 1.5vw, 1.25rem)" }} />
-            <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem 2rem" }}>
-              <span style={{ fontFamily: INTER, fontSize: "11px", fontWeight: 400, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(237,233,225,0.50)" }}>
+          <motion.div {...up(0.62)}>
+            <div style={{ width: "100%", height: "1px", background: "rgba(237,233,225,0.10)", marginBottom: "clamp(0.875rem, 1.8vw, 1.5rem)" }} />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem 2rem" }}>
+              <span style={{ fontFamily: I, fontSize: "11px", fontWeight: 400, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(237,233,225,0.45)" }}>
                 July 10 — 12, 2026
               </span>
-              <span style={{ fontFamily: INTER, fontSize: "11px", fontWeight: 400, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(237,233,225,0.30)" }}>
+              <span style={{ fontFamily: I, fontSize: "11px", fontWeight: 400, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(237,233,225,0.30)" }}>
                 Beekse Bergen · Hilvarenbeek, NL
               </span>
             </div>
           </motion.div>
 
-          {/* ── Action strip ─────────────────────────────────────────── */}
+          {/* ── Action strip: countdown + CTA ─────────────────────── */}
           <motion.div
-            {...up(0.80)}
+            {...up(0.82)}
             style={{
-              marginTop:      "clamp(1.75rem, 4vw, 3.5rem)",
+              marginTop:      "clamp(2rem, 4.5vw, 4rem)",
               display:        "flex",
               alignItems:     "center",
               justifyContent: "space-between",
@@ -198,94 +195,105 @@ export function CinematicHero() {
               gap:            "2rem",
             }}
           >
-
-            {/* Countdown — count-up on mount, live ticks after */}
+            {/* Countdown */}
             <div style={{ display: "flex", alignItems: "flex-start", gap: 0 }}>
-              {units.map(({ live, display, label }, i) => (
+              {units.map(({ val, label }, i) => (
                 <Fragment key={label}>
                   <div style={{
-                    display: "flex", flexDirection: "column", alignItems: "flex-start",
-                    paddingLeft:  i === 0 ? 0 : "clamp(1rem, 2.2vw, 1.75rem)",
-                    paddingRight: i === 3 ? 0 : "clamp(1rem, 2.2vw, 1.75rem)",
+                    display:       "flex",
+                    flexDirection: "column",
+                    alignItems:    "flex-start",
+                    paddingLeft:   i === 0 ? 0 : "clamp(1.1rem, 2.5vw, 2rem)",
+                    paddingRight:  i === 3 ? 0 : "clamp(1.1rem, 2.5vw, 2rem)",
                   }}>
-                    {/* Number */}
+                    {/* Animated digit */}
                     <motion.span
-                      key={live}
-                      initial={{ opacity: 0.25, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      key={val}
+                      initial={{ opacity: 0.2, y: -4 }}
+                      animate={{ opacity: 1,   y: 0  }}
                       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                       style={{
-                        fontFamily: BEBAS,
-                        fontSize:   "clamp(2.75rem, 6.5vw, 5.5rem)",
-                        lineHeight: 0.90,
-                        letterSpacing: "0.04em",
-                        color:      WHITE,
-                        display:    "block",
+                        fontFamily:         I,
+                        fontWeight:         700,
+                        fontSize:           "clamp(2.5rem, 6vw, 5rem)",
+                        lineHeight:         1,
+                        letterSpacing:      "0.06em",
+                        color:              W,
                         fontVariantNumeric: "tabular-nums",
+                        display:            "block",
                       }}
-                      aria-label={`${display} ${label}`}
                     >
-                      {String(display).padStart(2, "0")}
+                      {String(val).padStart(2, "0")}
                     </motion.span>
                     {/* Label */}
                     <span style={{
-                      fontFamily: INTER, fontWeight: 500,
-                      fontSize: "9px", letterSpacing: "0.30em", textTransform: "uppercase",
-                      color: `rgba(202,138,4,0.75)`, marginTop: "7px",
+                      fontFamily:    I,
+                      fontWeight:    500,
+                      fontSize:      "9px",
+                      letterSpacing: "0.32em",
+                      textTransform: "uppercase",
+                      color:         `rgba(184,146,58,0.70)`,
+                      marginTop:     "8px",
+                      display:       "block",
                     }}>
                       {label}
                     </span>
                   </div>
                   {i < 3 && (
-                    <div style={{ width: "1px", height: "clamp(2.75rem, 6.5vw, 5.5rem)", background: "rgba(237,233,225,0.12)", flexShrink: 0 }} />
+                    <div style={{
+                      width:      "1px",
+                      height:     "clamp(2.5rem, 6vw, 5rem)",
+                      background: "rgba(237,233,225,0.12)",
+                      flexShrink: 0,
+                    }} />
                   )}
                 </Fragment>
               ))}
             </div>
 
-            {/* CTA — skill rec: #CA8A04, 44×44 min touch target, cursor-pointer */}
+            {/* CTA button */}
             <button
               onClick={() => router.push("/tickets")}
+              className="group relative overflow-hidden"
               style={{
-                background:     "rgba(202,138,4,0.08)",
-                border:         "1px solid rgba(202,138,4,0.55)",
-                padding:        "clamp(13px, 1.5vw, 17px) clamp(24px, 3vw, 44px)",
-                minHeight:      "44px",   // skill checklist: 44×44px touch targets
-                cursor:         "pointer", // skill checklist: cursor-pointer
-                display:        "flex",
-                alignItems:     "center",
-                gap:            "12px",
-                flexShrink:     0,
-                transition:     "background 0.25s ease, border-color 0.25s ease, transform 0.15s ease",
-                outline:        "none",
+                background:    "transparent",
+                border:        "1px solid rgba(237,233,225,0.38)",
+                padding:       "clamp(12px, 1.6vw, 16px) clamp(24px, 3vw, 40px)",
+                cursor:        "pointer",
+                display:       "flex",
+                alignItems:    "center",
+                gap:           "12px",
+                transition:    "border-color 0.4s ease, background 0.4s ease",
+                flexShrink:    0,
               }}
               onMouseEnter={e => {
                 const b = e.currentTarget as HTMLButtonElement;
-                b.style.background   = "rgba(202,138,4,0.18)";
-                b.style.borderColor  = "rgba(202,138,4,0.90)";
+                b.style.borderColor = "rgba(184,146,58,0.80)";
+                b.style.background  = "rgba(184,146,58,0.08)";
               }}
               onMouseLeave={e => {
                 const b = e.currentTarget as HTMLButtonElement;
-                b.style.background   = "rgba(202,138,4,0.08)";
-                b.style.borderColor  = "rgba(202,138,4,0.55)";
+                b.style.borderColor = "rgba(237,233,225,0.38)";
+                b.style.background  = "transparent";
               }}
-              onFocus={e => { // skill checklist: focus states visible
-                (e.currentTarget as HTMLButtonElement).style.outline = `2px solid rgba(202,138,4,0.80)`;
-              }}
-              onBlur={e => {
-                (e.currentTarget as HTMLButtonElement).style.outline = "none";
-              }}
-              onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-              onMouseUp={e   => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-              aria-label="Browse available tickets"
             >
-              <span style={{ fontFamily: INTER, fontWeight: 700, fontSize: "clamp(11px, 1.2vw, 13px)", letterSpacing: "0.22em", textTransform: "uppercase", color: GOLD }}>
+              <span style={{
+                fontFamily:    I,
+                fontWeight:    700,
+                fontSize:      "clamp(11px, 1.2vw, 13px)",
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                color:         W,
+              }}>
                 Browse Tickets
               </span>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"
-                style={{ color: GOLD, flexShrink: 0, transition: "transform 0.3s ease" }}
-                className="group-hover:translate-x-1">
-                <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              {/* Arrow */}
+              <svg
+                className="group-hover:translate-x-1 transition-transform duration-400"
+                width="13" height="13" viewBox="0 0 13 13" fill="none"
+                style={{ color: W, flexShrink: 0 }}
+              >
+                <path d="M1 6.5h11M7.5 2l4.5 4.5L7.5 11" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
 
@@ -293,22 +301,21 @@ export function CinematicHero() {
         </div>
       </div>
 
-      {/* ── Animated scroll cue ─────────────────────────────────────── */}
+      {/* ── Scroll indicator ──────────────────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 2.2, ease: "easeOut" }}
-        className="absolute bottom-7 left-1/2 -translate-x-1/2 pointer-events-none select-none"
-        style={{ zIndex: 3, display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}
-        aria-hidden="true"
+        {...fade(2.0, 1.0)}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none select-none"
+        style={{ zIndex: 3, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}
       >
-        <span style={{ fontFamily: INTER, fontSize: "7px", letterSpacing: "0.46em", textTransform: "uppercase", color: "rgba(237,233,225,0.18)" }}>
+        <span style={{ fontFamily: I, fontSize: "7px", letterSpacing: "0.50em", textTransform: "uppercase", color: "rgba(237,233,225,0.18)" }}>
           Scroll
         </span>
-        <div style={{ position: "relative", width: "1px", height: "30px", overflow: "hidden" }}>
+        {/* Animated descending line */}
+        <div style={{ position: "relative", width: "1px", height: "32px", overflow: "hidden" }}>
           <motion.div
-            animate={prefersLess ? {} : { y: ["0%", "110%"] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-            style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent, rgba(202,138,4,0.55), transparent)" }}
+            animate={{ y: ["0%", "100%"] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
+            style={{ position: "absolute", top: 0, left: 0, width: "1px", height: "100%", background: "linear-gradient(to bottom, transparent, rgba(237,233,225,0.35), transparent)" }}
           />
         </div>
       </motion.div>

@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from "next";
-import { Playfair_Display, Inter, Bebas_Neue } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/frontend/components/ui/Toaster";
 import { LenisProvider } from "@/frontend/providers/LenisProvider";
@@ -13,13 +13,6 @@ const playfair = Playfair_Display({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  display: "swap",
-});
-
-const bebas = Bebas_Neue({
-  variable: "--font-bebas",
-  subsets: ["latin"],
-  weight:  "400",
   display: "swap",
 });
 
@@ -56,7 +49,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${inter.variable} ${bebas.variable} h-full`}
+      className={`${playfair.variable} ${inter.variable} h-full`}
       style={{ colorScheme: "dark" }}
     >
       <body className="min-h-full bg-[#0a0a0a] text-white antialiased font-[var(--font-inter)]">
