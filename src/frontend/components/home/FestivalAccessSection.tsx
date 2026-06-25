@@ -11,15 +11,15 @@ const PASSES = [
     id:          "weekend",
     label:       "Weekend Pass",
     title:       "3-Day Access",
-    dates:       "July 10 â€” 12",
-    description: "The complete Awakenings experience. Three days across all six stages â€” from the Friday evening opening through Sunday's closing ceremony.",
+    dates:       "July 10–12",
+    description: "The complete Awakenings experience. Three days across all six stages — from the Friday evening opening through Sunday's closing ceremony.",
     includes: [
       "All 6+ stages",
       "Friday evening entry",
       "Saturday & Sunday full day",
       "Camping add-on available",
     ],
-    note: "Recommended",
+    note:   "Recommended",
     accent: true,
   },
   {
@@ -30,10 +30,10 @@ const PASSES = [
     description: "The peak day. Maximum capacity with headline acts running across every stage simultaneously.",
     includes: [
       "All active stages",
-      "13:00 â€” 01:00",
+      "13:00 – 01:00",
       "Day wristband included",
     ],
-    note: null,
+    note:   null,
     accent: false,
   },
   {
@@ -44,10 +44,10 @@ const PASSES = [
     description: "The closing day. Charlotte de Witte, Richie Hawtin, and the ceremonial final hours of the festival.",
     includes: [
       "All active stages",
-      "13:00 â€” 23:00",
+      "13:00 – 23:00",
       "Day wristband included",
     ],
-    note: "Closing ceremony",
+    note:   "Closing ceremony",
     accent: false,
   },
 ];
@@ -69,7 +69,7 @@ export function FestivalAccessSection() {
           transition={{ duration: 0.9 }}
           className="mb-6"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
             <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Festival Access
@@ -84,22 +84,22 @@ export function FestivalAccessSection() {
           </h2>
         </motion.div>
 
-        {/* 1px gap grid â€” the gap background creates hairline dividers */}
+        {/* 1px gap grid — bg-[#050507] on Reveal prevents parent bg showing through clipped/shorter cards */}
         <div
           className="grid grid-cols-1 md:grid-cols-3"
           style={{ gap: "1px", background: "rgba(237,233,225,0.07)" }}
         >
           {PASSES.map((pass, i) => (
-            <Reveal key={pass.id} delay={i * 0.08}>
+            <Reveal key={pass.id} delay={i * 0.08} className="bg-[#050507] h-full">
               <div
-                className="flex flex-col bg-[#050507] hover:bg-white/[0.015] transition-colors duration-500"
-                style={{ padding: "clamp(2rem, 4vw, 2.75rem)", minHeight: "clamp(360px, 45vw, 480px)" }}
+                className="flex flex-col bg-[#050507] h-full hover:bg-white/[0.015] transition-colors duration-500"
+                style={{ padding: "clamp(2rem, 4vw, 2.75rem)" }}
               >
                 {/* Top accent */}
                 <div style={{
-                  height:     "1px",
-                  width:      pass.accent ? "48px" : "22px",
-                  background: pass.accent ? "rgba(184,146,58,0.65)" : "rgba(237,233,225,0.18)",
+                  height:       "1px",
+                  width:        pass.accent ? "48px" : "22px",
+                  background:   pass.accent ? "rgba(184,146,58,0.65)" : "rgba(237,233,225,0.18)",
                   marginBottom: "2rem",
                 }} />
 
@@ -141,7 +141,7 @@ export function FestivalAccessSection() {
                 {/* Thin divider */}
                 <div style={{ width: "100%", height: "1px", background: "rgba(237,233,225,0.05)", marginBottom: "1.5rem" }} />
 
-                {/* Description */}
+                {/* Description — flex:1 pushes features+footer down */}
                 <p style={{
                   fontFamily:   INTER,
                   fontSize:     "0.9375rem",
@@ -157,21 +157,21 @@ export function FestivalAccessSection() {
                 <ul style={{ listStyle: "none", padding: 0, margin: 0, marginBottom: "2rem" }}>
                   {pass.includes.map((feat) => (
                     <li key={feat} style={{
-                      display:      "flex",
-                      alignItems:   "baseline",
-                      gap:          "0.75rem",
+                      display:       "flex",
+                      alignItems:    "baseline",
+                      gap:           "0.75rem",
                       paddingBottom: "0.45rem",
-                      fontFamily:   INTER,
-                      fontSize:     "13px",
-                      color:        "rgba(237,233,225,0.55)",
+                      fontFamily:    INTER,
+                      fontSize:      "13px",
+                      color:         "rgba(237,233,225,0.55)",
                     }}>
-                      <span style={{ color: "rgba(184,146,58,0.50)", flexShrink: 0 }}>â€”</span>
+                      <span style={{ color: "rgba(184,146,58,0.50)", flexShrink: 0 }}>—</span>
                       {feat}
                     </li>
                   ))}
                 </ul>
 
-                {/* Footer: note + link */}
+                {/* Footer: note + browse link */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
                   {pass.note && (
                     <span style={{
@@ -225,4 +225,3 @@ export function FestivalAccessSection() {
     </section>
   );
 }
-

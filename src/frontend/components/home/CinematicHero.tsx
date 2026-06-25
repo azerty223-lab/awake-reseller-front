@@ -128,14 +128,7 @@ export function CinematicHero() {
               background: `rgba(184,146,58,0.50)`,
               flexShrink: 0,
             }} />
-            <span style={{
-              fontFamily:    INTER,
-              fontSize:      "11px",
-              fontWeight:    400,
-              textTransform: "uppercase",
-              letterSpacing: "0.28em",
-              color:         "rgba(237,233,225,0.50)",
-            }}>
+            <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Official Verified Resale
             </span>
           </motion.div>
@@ -152,7 +145,7 @@ export function CinematicHero() {
               style={{
                 fontFamily:    SERIF,
                 fontWeight:    900,
-                fontSize:      "clamp(5rem, 15.5vw, 13.5rem)",
+                fontSize:      "clamp(3.5rem, 10vw, 9rem)",
                 lineHeight:    0.84,
                 letterSpacing: "-0.048em",
                 color:         WARM_WHITE,
@@ -192,7 +185,7 @@ export function CinematicHero() {
                 textTransform: "uppercase",
                 color:         "rgba(237,233,225,0.55)",
               }}>
-                10&thinsp;â€”&thinsp;12 July&ensp;Â·&ensp;2026
+                July 10–12, 2026
               </span>
               <span style={{
                 fontFamily:    INTER,
@@ -202,7 +195,7 @@ export function CinematicHero() {
                 textTransform: "uppercase",
                 color:         "rgba(237,233,225,0.40)",
               }}>
-                Amsterdam&ensp;Â·&ensp;Gashouder&thinsp;+&thinsp;Hembrug
+                Beekse Bergen · Hilvarenbeek, NL
               </span>
             </div>
           </motion.div>

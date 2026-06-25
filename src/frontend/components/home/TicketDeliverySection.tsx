@@ -15,9 +15,9 @@ const STEPS = [
   },
   {
     index:    "02",
-    title:    "Official Name Transfer",
-    body:     "We initiate the official Awakenings name-change process — the same system used by the festival itself. Your details are submitted directly to the registry.",
-    detail:   "3–5 business days",
+    title:    "Order Confirmed",
+    body:     "A confirmation email lands in your inbox immediately — containing your payment receipt, full ticket details, and a real-time tracking link. You will receive your personalised ticket very soon.",
+    detail:   "Instant confirmation · Ticket info",
   },
   {
     index:    "03",
