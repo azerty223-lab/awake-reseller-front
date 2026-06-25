@@ -6,6 +6,7 @@ import { Footer } from "@/frontend/components/layout/Footer";
 import { CartDrawer } from "@/frontend/components/layout/CartDrawer";
 import { VisitorTracker } from "@/frontend/components/analytics/VisitorTracker";
 import { AnimatedBackground } from "@/frontend/components/layout/AnimatedBackground";
+import { ChatWidget } from "@/frontend/components/chat/ChatWidget";
 
 export default function PublicLayout({
   children,
@@ -22,6 +23,7 @@ export default function PublicLayout({
       <Footer />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <VisitorTracker />
+      <ChatWidget />
     </div>
   );
 }
