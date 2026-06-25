@@ -171,14 +171,7 @@ export function FeaturedTickets() {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
               <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
-              <span style={{
-                fontFamily:    INTER,
-                fontSize:      "11px",
-                fontWeight:    400,
-                letterSpacing: "0.28em",
-                textTransform: "uppercase",
-                color:         "rgba(237,233,225,0.50)",
-              }}>
+              <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
                 Available now
               </span>
             </div>
