@@ -571,87 +571,101 @@ function DayCard({
   );
 }
 
-// ── Area card ─────────────────────────────────────────────────────────────────
+// ── Stage section (replaces AreaCard) ────────────────────────────────────────
+// Premium festival schedule lane — no boxed cards, no giant background letters.
+// Each stage is a horizontal section with a thin accent rail, a compact header,
+// and agenda-style set rows with typographic headliner emphasis.
 
-function AreaCard({ area }: { area: Area }) {
-  const last = area.slots.length - 1;
-  // Penultimate slot is also emphasized (second-to-last = peak hour act)
+function isAfterMidnight(time: string) {
+  return ["00:", "01:", "02:", "03:", "04:", "05:"].some(h => time.startsWith(h));
+}
+
+function StageSection({ area }: { area: Area }) {
+  const last     = area.slots.length - 1;
   const nearLast = last > 1 ? last - 1 : -1;
+  const startT   = area.slots[0]?.time.split(" – ")[0] ?? "";
+  const endT     = area.slots[last]?.time.split(" – ")[1] ?? "";
+  const isNight  = !!area.note; // "Camping After" etc.
 
   return (
-    <div className="flex flex-col bg-[#0D0D10] border border-white/[0.07] rounded-2xl overflow-hidden hover:border-white/[0.13] transition-colors duration-200">
-      {/* Card header */}
-      <div className="px-5 pt-5 pb-4 border-b border-white/[0.06]">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-400 mb-1">
-              {area.label}
-            </p>
-            {area.note ? (
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#06B6D4]/70">
-                {area.note}
-              </p>
-            ) : (
-              <p className="text-[10px] text-zinc-700 tabular-nums">
-                {area.slots.length} sets ·{" "}
-                {area.slots[0]?.time.split(" – ")[0]}
-                {" – "}
-                {area.slots[last]?.time.split(" – ")[1]}
-              </p>
-            )}
-          </div>
-          {/* Area letter — large, decorative, low opacity */}
-          <span
-            className="font-[var(--font-playfair)] font-black text-white/[0.06] leading-none select-none"
-            style={{ fontSize: "3rem" }}
-            aria-hidden="true"
-          >
-            {area.id}
+    <div className="mb-6">
+
+      {/* ── Stage header ──────────────────────────────────────────── */}
+      <div className="flex items-center gap-3 pb-3 mb-1 border-b border-white/[0.07]">
+
+        {/* Accent rail */}
+        <div className={[
+          "w-0.5 h-5 rounded-full shrink-0",
+          isNight ? "bg-[#06B6D4]/50" : "bg-white/20",
+        ].join(" ")} aria-hidden="true" />
+
+        {/* Stage name */}
+        <span className="text-[11.5px] font-semibold uppercase tracking-[0.18em] text-zinc-300 leading-none">
+          {area.label}
+        </span>
+
+        {/* "Camping After" or similar badge */}
+        {area.note && (
+          <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#06B6D4]/65 bg-[#06B6D4]/[0.08] border border-[#06B6D4]/[0.18] rounded-full px-2 py-0.5 leading-none">
+            {area.note}
           </span>
-        </div>
+        )}
+
+        {/* Set count + time range — pushed right */}
+        <span className="ml-auto text-[10px] font-mono tabular-nums text-zinc-700 shrink-0">
+          {area.slots.length} sets&nbsp;·&nbsp;{startT}–{endT}
+        </span>
       </div>
 
-      {/* Slot list */}
-      <div className="flex-1 divide-y divide-white/[0.04]">
+      {/* ── Set rows ──────────────────────────────────────────────── */}
+      <div>
         {area.slots.map((slot, i) => {
-          const isClosing    = i === last;
-          const isPeakHour   = i === nearLast;
-          const isAfterMidnight = slot.time.startsWith("00:") ||
-            slot.time.startsWith("01:") ||
-            slot.time.startsWith("02:") ||
-            slot.time.startsWith("03:") ||
-            slot.time.startsWith("04:") ||
-            slot.time.startsWith("05:");
+          const isClosing  = i === last;
+          const isPeak     = i === nearLast;
+          const isLate     = isAfterMidnight(slot.time.split(" – ")[0]);
+          const [sT, eT]   = slot.time.split(" – ");
 
           return (
             <div
               key={i}
               className={[
-                "flex items-center gap-3 px-5 py-3 transition-colors duration-150",
-                isClosing  ? "bg-[#06B6D4]/[0.05] hover:bg-[#06B6D4]/[0.08]" : "hover:bg-white/[0.03]",
+                "group/row flex items-center gap-3 px-2 rounded-md",
+                "transition-colors duration-100 cursor-default",
+                isClosing ? "py-2.5 hover:bg-[#06B6D4]/[0.06]"
+                          : "py-1.5 hover:bg-white/[0.025]",
               ].join(" ")}
             >
-              {/* Time — start time only, keeps columns compact */}
+              {/* Start time */}
               <span className={[
-                "shrink-0 w-11 text-[11px] tabular-nums font-mono leading-none",
-                isAfterMidnight ? "text-[#06B6D4]/50" : "text-zinc-600",
+                "shrink-0 w-10 text-[11px] tabular-nums font-mono leading-none",
+                isLate ? "text-[#06B6D4]/45" : "text-zinc-700",
               ].join(" ")}>
-                {slot.time.split(" – ")[0]}
+                {sT}
               </span>
 
-              {/* Artist */}
+              {/* Artist name — size + weight reflect billing tier */}
               <span className={[
-                "flex-1 text-[13px] leading-tight min-w-0 truncate",
-                isClosing  ? "text-white font-semibold"   : "",
-                isPeakHour && !isClosing ? "text-zinc-100 font-medium" : "",
-                !isClosing && !isPeakHour ? "text-zinc-400 font-normal" : "",
+                "flex-1 min-w-0 truncate leading-tight",
+                isClosing
+                  ? "text-[14px] font-bold text-white tracking-tight"
+                  : isPeak
+                    ? "text-[13px] font-semibold text-zinc-100"
+                    : "text-[12.5px] font-normal text-zinc-500",
               ].join(" ")}>
                 {slot.artist}
               </span>
 
-              {/* End time — muted, right edge */}
-              <span className="shrink-0 text-[10px] tabular-nums font-mono text-zinc-700 leading-none">
-                {slot.time.split(" – ")[1]}
+              {/* Closing act: cyan headliner dot */}
+              {isClosing && (
+                <span
+                  className="shrink-0 w-1 h-1 rounded-full bg-[#06B6D4]/60"
+                  aria-hidden="true"
+                />
+              )}
+
+              {/* End time */}
+              <span className="shrink-0 text-[10px] tabular-nums font-mono text-zinc-800 leading-none">
+                {eT}
               </span>
             </div>
           );
@@ -853,7 +867,8 @@ export function LineupSection() {
             </motion.div>
           </AnimatePresence>
 
-          {/* ── DESKTOP: area grid ──────────────────────────────────── */}
+          {/* ── DESKTOP: 2-column stage agenda ─────────────────────── */}
+          {/* StageSection replaces AreaCard — no boxed cards, schedule lanes */}
           <div className="hidden md:block">
             <AnimatePresence>
               <motion.div
@@ -863,9 +878,9 @@ export function LineupSection() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.25 }}
               >
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 gap-x-10 gap-y-0">
                   {LINEUP[activeDay].map(area => (
-                    <AreaCard key={area.id + activeDay} area={area} />
+                    <StageSection key={area.id + activeDay} area={area} />
                   ))}
                 </div>
               </motion.div>
@@ -924,32 +939,40 @@ export function LineupSection() {
                   </span>
                 </div>
 
-                {/* Slot list */}
-                <div className="rounded-2xl border border-white/[0.07] overflow-hidden divide-y divide-white/[0.05]">
+                {/* Slot list — styled to match the desktop schedule aesthetic */}
+                <div className="border-t border-white/[0.06]">
                   {mobileArea.slots.map((slot, i) => {
-                    const isLast     = i === mobileArea.slots.length - 1;
-                    const isNearLast = i === mobileArea.slots.length - 2 && mobileArea.slots.length > 2;
+                    const total    = mobileArea.slots.length;
+                    const isLast   = i === total - 1;
+                    const isNearLast = i === total - 2 && total > 2;
+                    const [sT, eT] = slot.time.split(" – ");
+                    const isLate   = isAfterMidnight(sT);
+
                     return (
                       <div
                         key={i}
                         className={[
-                          "flex items-center gap-4 px-5 py-4",
-                          isLast ? "bg-[#06B6D4]/[0.06]" : "bg-[#0D0D10]",
+                          "flex items-center gap-3 px-1 rounded-md transition-colors duration-100",
+                          isLast ? "py-3 hover:bg-[#06B6D4]/[0.06]" : "py-2 hover:bg-white/[0.025]",
                         ].join(" ")}
                       >
-                        <span className="shrink-0 w-12 text-xs text-zinc-600 tabular-nums font-mono">
-                          {slot.time.split(" – ")[0]}
+                        <span className={[
+                          "shrink-0 w-11 text-[11px] tabular-nums font-mono",
+                          isLate ? "text-[#06B6D4]/45" : "text-zinc-700",
+                        ].join(" ")}>
+                          {sT}
                         </span>
                         <span className={[
-                          "flex-1 text-sm min-w-0",
-                          isLast     ? "text-white font-semibold" : "",
-                          isNearLast ? "text-zinc-100 font-medium" : "",
-                          !isLast && !isNearLast ? "text-zinc-400" : "",
+                          "flex-1 min-w-0 truncate leading-tight",
+                          isLast     ? "text-[14px] font-bold text-white tracking-tight" : "",
+                          isNearLast ? "text-[13px] font-semibold text-zinc-100"         : "",
+                          !isLast && !isNearLast ? "text-[12.5px] font-normal text-zinc-500" : "",
                         ].join(" ")}>
                           {slot.artist}
                         </span>
-                        <span className="shrink-0 text-[10px] text-zinc-700 tabular-nums font-mono">
-                          {slot.time.split(" – ")[1]}
+                        {isLast && <span className="shrink-0 w-1 h-1 rounded-full bg-[#06B6D4]/60" aria-hidden="true" />}
+                        <span className="shrink-0 text-[10px] tabular-nums font-mono text-zinc-800">
+                          {eT}
                         </span>
                       </div>
                     );
