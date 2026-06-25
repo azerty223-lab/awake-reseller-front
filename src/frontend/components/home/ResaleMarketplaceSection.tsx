@@ -41,7 +41,7 @@ export function ResaleMarketplaceSection() {
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
         {/* ── Two-column editorial layout ──────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start">
 
           {/* Left: headline + copy + CTAs */}
           <motion.div

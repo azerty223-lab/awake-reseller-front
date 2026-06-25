@@ -39,7 +39,7 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="relative pt-5 pb-24 overflow-hidden">
+    <section id="faq" className="relative pt-5 pb-40 overflow-hidden">
 
       <div className="max-w-3xl mx-auto px-6 sm:px-12">
 
