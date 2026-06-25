@@ -6,7 +6,6 @@ import { LineupSection }            from "@/frontend/components/home/LineupSecti
 import { TicketDeliverySection }    from "@/frontend/components/home/TicketDeliverySection";
 import { FestivalRulesSection }     from "@/frontend/components/home/FestivalRulesSection";
 import { ResaleMarketplaceSection } from "@/frontend/components/home/ResaleMarketplaceSection";
-import { NewsletterSection }        from "@/frontend/components/home/NewsletterSection";
 import { FAQSection }               from "@/frontend/components/home/FAQSection";
 
 /** Thin editorial divider between sections */
@@ -37,8 +36,6 @@ export default function HomePage() {
       <FestivalRulesSection />
       <Divider />
       <ResaleMarketplaceSection />
-      <Divider />
-      <NewsletterSection />
       <Divider />
       <FAQSection />
     </>
