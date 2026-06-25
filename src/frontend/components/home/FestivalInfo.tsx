@@ -42,7 +42,7 @@ export function FestivalInfo() {
               transition={{ duration: 0.9 }}
               style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}
             >
-              <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+              <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
               <span style={{
                 fontFamily:    INTER,
                 fontSize:      "11px",
@@ -61,7 +61,7 @@ export function FestivalInfo() {
             >
               <LineReveal>Europe&apos;s premier</LineReveal>
               <LineReveal delay={0.09}>
-                <span style={{ color: "#B8923A" }}>
+                <span style={{ color: "#06B6D4" }}>
                   techno festival
                 </span>
               </LineReveal>
@@ -106,7 +106,7 @@ export function FestivalInfo() {
                   color:         "rgba(237,233,225,0.60)",
                   transition:    "color 0.4s ease",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
+                onMouseEnter={e => (e.currentTarget.style.color = "rgba(6,182,212,0.90)")}
                 onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.60)")}
               >
                 Official event page

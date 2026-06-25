@@ -34,7 +34,7 @@ export default async function TicketsPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050507] via-[#050507]/50 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-[#C9A84C] font-semibold mb-3">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-[#06B6D4] font-semibold mb-3">
             Available Now
           </div>
           <h1 className="font-[var(--font-playfair)] text-5xl sm:text-6xl font-black text-white mb-3">

@@ -21,12 +21,28 @@ export function AnimatedBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -1, contain: "layout style paint" }}>
 
-      {/* ── Base animated gradient mesh ─────────────────── */}
+      {/* ── Full-page background video — ambient, low opacity ── */}
+      {/* Browser caches the file so no extra download vs hero video */}
+      <video
+        autoPlay muted loop playsInline preload="auto" aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ objectPosition: "center 28%", opacity: 0.10 }}
+      >
+        <source src="/hero-bg.mp4" type="video/mp4" />
+      </video>
+
+      {/* ── Dark base on top of video (keeps all sections readable) */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "rgba(3,3,5,0.82)" }}
+      />
+
+      {/* ── Subtle gradient mesh on top ──────────────────── */}
       <div
         className="absolute inset-0 animate-mesh"
         style={{
           background:
-            "linear-gradient(135deg, #020203 0%, #06020E 20%, #020408 40%, #080208 60%, #030206 80%, #020203 100%)",
+            "linear-gradient(135deg, rgba(2,2,3,0.6) 0%, rgba(6,2,14,0.5) 20%, rgba(2,4,8,0.5) 40%, rgba(8,2,8,0.5) 60%, rgba(3,2,6,0.5) 80%, rgba(2,2,3,0.6) 100%)",
         }}
       />
 
@@ -48,7 +64,7 @@ export function AnimatedBackground() {
         style={{
           opacity: amberOp,
           background:
-            "radial-gradient(ellipse 70% 55% at 28% 60%, rgba(120,53,15,0.32) 0%, transparent 55%)",
+            "radial-gradient(ellipse 70% 55% at 28% 60%, rgba(6,182,212,0.18) 0%, transparent 55%)",
         }}
       />
 
@@ -58,7 +74,7 @@ export function AnimatedBackground() {
         style={{
           opacity: orangeOp,
           background:
-            "radial-gradient(ellipse 65% 50% at 65% 50%, rgba(124,45,18,0.28) 0%, transparent 55%)",
+            "radial-gradient(ellipse 65% 50% at 65% 50%, rgba(6,182,212,0.14) 0%, transparent 55%)",
         }}
       />
 
@@ -117,7 +133,7 @@ export function AnimatedBackground() {
           height: 550,
           top: "38%",
           left: "3%",
-          background: "rgba(180,83,9,1)",
+          background: "rgba(8,145,178,1)",
           filter: "blur(160px)",
           opacity: 0.08,
         }}
@@ -159,7 +175,7 @@ export function AnimatedBackground() {
           height: 400,
           top: "20%",
           left: "42%",
-          background: "rgba(180,120,9,1)",
+          background: "rgba(6,182,212,1)",
           filter: "blur(140px)",
           opacity: 0.05,
           animationDelay: "-12s",

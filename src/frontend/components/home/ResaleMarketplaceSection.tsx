@@ -46,7 +46,7 @@ export function ResaleMarketplaceSection() {
               transition={{ duration: 0.9 }}
               style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.75rem" }}
             >
-              <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+              <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
               <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
                 Verified Resale
               </span>
@@ -133,9 +133,9 @@ export function ResaleMarketplaceSection() {
             <Reveal key={step.index} delay={0.06 + i * 0.10} direction={i % 2 === 0 ? "left" : "right"}>
               <div className="group relative border-t border-white/[0.06] py-8 sm:py-10 hover:border-white/[0.10] transition-colors duration-500">
                 <div className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full transition-all duration-700"
-                     style={{ background: "rgba(184,146,58,0.15)" }} />
+                     style={{ background: "rgba(6,182,212,0.15)" }} />
                 <div className="grid grid-cols-[3.5rem_1fr] sm:grid-cols-[5rem_1fr] gap-6 sm:gap-10 items-start">
-                  <span style={{ fontFamily: INTER, fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(184,146,58,0.65)", paddingTop: "4px" }}>
+                  <span style={{ fontFamily: INTER, fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(6,182,212,0.65)", paddingTop: "4px" }}>
                     {step.index}
                   </span>
                   <div>

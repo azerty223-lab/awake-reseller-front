@@ -102,7 +102,7 @@ export function AccommodationSection() {
           className="mb-5"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
-            <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+            <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
             <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Camping & Resort
             </span>
@@ -156,7 +156,7 @@ export function AccommodationSection() {
                     fontSize:      "11px",
                     letterSpacing: "0.28em",
                     textTransform: "uppercase",
-                    color:         "rgba(184,146,58,0.65)",
+                    color:         "rgba(6,182,212,0.65)",
                   }}>
                     {tier.index}
                   </span>
@@ -236,7 +236,7 @@ export function AccommodationSection() {
                       fontSize:      "10px",
                       letterSpacing: "0.22em",
                       textTransform: "uppercase",
-                      color:         "rgba(184,146,58,0.50)",
+                      color:         "rgba(6,182,212,0.50)",
                     }}>
                       {tier.note}
                     </span>
@@ -252,7 +252,7 @@ export function AccommodationSection() {
                       color:         "rgba(237,233,225,0.40)",
                       transition:    "color 0.3s ease",
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.80)")}
+                    onMouseEnter={e => (e.currentTarget.style.color = "rgba(6,182,212,0.80)")}
                     onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.40)")}
                   >
                     View tickets
@@ -267,7 +267,7 @@ export function AccommodationSection() {
 
             {/* Hover gold accent */}
             <div className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full transition-all duration-700"
-                 style={{ background: "rgba(184,146,58,0.15)" }} />
+                 style={{ background: "rgba(6,182,212,0.15)" }} />
           </div>
         ))}
 

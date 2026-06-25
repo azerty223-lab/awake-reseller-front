@@ -43,7 +43,7 @@ export function TicketDeliverySection() {
           className="mb-5"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.75rem" }}>
-            <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+            <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
             <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Ticket Delivery
             </span>
@@ -101,8 +101,8 @@ export function TicketDeliverySection() {
                       width:        "11px",
                       height:       "11px",
                       borderRadius: "50%",
-                      background:   i === 0 ? "rgba(184,146,58,0.80)" : "rgba(237,233,225,0.18)",
-                      border:       `1px solid ${i === 0 ? "rgba(184,146,58,0.40)" : "rgba(237,233,225,0.12)"}`,
+                      background:   i === 0 ? "rgba(6,182,212,0.80)" : "rgba(237,233,225,0.18)",
+                      border:       `1px solid ${i === 0 ? "rgba(6,182,212,0.40)" : "rgba(237,233,225,0.12)"}`,
                       flexShrink:   0,
                     }} />
                   </div>
@@ -113,7 +113,7 @@ export function TicketDeliverySection() {
                     fontSize:      "11px",
                     letterSpacing: "0.28em",
                     textTransform: "uppercase",
-                    color:         "rgba(184,146,58,0.65)",
+                    color:         "rgba(6,182,212,0.65)",
                     display:       "block",
                     marginBottom:  "0.875rem",
                   }}>
@@ -145,7 +145,7 @@ export function TicketDeliverySection() {
                     fontSize:      "10px",
                     letterSpacing: "0.24em",
                     textTransform: "uppercase",
-                    color:         "rgba(184,146,58,0.55)",
+                    color:         "rgba(6,182,212,0.55)",
                     display:       "block",
                     borderTop:     "1px solid rgba(237,233,225,0.06)",
                     paddingTop:    "0.875rem",
@@ -172,7 +172,7 @@ export function TicketDeliverySection() {
             <Link
               href="/contact"
               style={{ color: "rgba(237,233,225,0.70)", textDecoration: "underline", textUnderlineOffset: "3px", textDecorationColor: "rgba(237,233,225,0.20)" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
+              onMouseEnter={e => (e.currentTarget.style.color = "rgba(6,182,212,0.90)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.70)")}
             >
               Contact us
@@ -190,7 +190,7 @@ export function TicketDeliverySection() {
               color:         "rgba(237,233,225,0.55)",
               transition:    "color 0.3s ease",
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
+            onMouseEnter={e => (e.currentTarget.style.color = "rgba(6,182,212,0.90)")}
             onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.55)")}
           >
             Browse tickets

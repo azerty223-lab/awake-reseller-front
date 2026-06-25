@@ -172,8 +172,8 @@ body {
    ============================================= */
 
 :root {
-  --gold: #C9A84C;
-  --gold-light: #E4BA65;
+  --gold: #06B6D4;
+  --gold-light: #22D3EE;
   --bg: #050507;
   --surface: rgba(255,255,255,0.04);
   --border: rgba(255,255,255,0.07);
@@ -210,7 +210,7 @@ body {
 }
 
 .gold-text {
-  background: linear-gradient(135deg, #C9A84C, #E4BA65);
+  background: linear-gradient(135deg, #06B6D4, #22D3EE);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

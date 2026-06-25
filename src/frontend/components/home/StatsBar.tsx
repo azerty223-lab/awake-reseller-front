@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { BadgeCheck, ShieldCheck, Zap, Headphones } from "lucide-react";
@@ -29,8 +29,8 @@ export function StatsBar() {
               key={i}
               className="flex items-center gap-3.5 px-5 sm:px-7 py-6 sm:py-8"
             >
-              <div className="w-9 h-9 rounded-xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center shrink-0">
-                <Icon className="w-4 h-4 text-[#C9A84C]" />
+              <div className="w-9 h-9 rounded-xl bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-[#06B6D4]" />
               </div>
               <div className="min-w-0">
                 <p

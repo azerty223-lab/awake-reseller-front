@@ -42,7 +42,7 @@ const PASSES = [
 
 /* ── Per-card color themes ────────────────────────────────────────────── */
 const THEMES = [
-  { stage: "#C9A84C", beams: ["#E4BA65", "#C9A84C", "#FFD878"], ambient: "#B87A20" }, // gold
+  { stage: "#06B6D4", beams: ["#22D3EE", "#06B6D4", "#67E8F9"], ambient: "#0E7490" }, // gold
   { stage: "#3C82DC", beams: ["#50A0FF", "#3C82DC", "#64C8FF"], ambient: "#1E5AB4" }, // blue
   { stage: "#9B40C8", beams: ["#C060F0", "#9B40C8", "#D480FF"], ambient: "#6E1EA0" }, // purple
 ];
@@ -213,7 +213,7 @@ export function FestivalAccessSection() {
           className="mb-5"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.75rem" }}>
-            <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+            <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
             <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Festival Access
             </span>
@@ -254,10 +254,10 @@ export function FestivalAccessSection() {
                       width: "100%", height: "100%",
                       position: "relative", overflow: "hidden",
                       borderRadius: "4px",
-                      border: `1px solid ${isActive ? "rgba(184,146,58,0.35)" : "rgba(237,233,225,0.06)"}`,
+                      border: `1px solid ${isActive ? "rgba(6,182,212,0.35)" : "rgba(237,233,225,0.06)"}`,
                       background: "#0b090d",
                       boxShadow: isActive
-                        ? "0 2px 0 0 rgba(184,146,58,0.16) inset, 0 48px 100px rgba(0,0,0,0.82), 0 6px 30px rgba(0,0,0,0.60)"
+                        ? "0 2px 0 0 rgba(6,182,212,0.16) inset, 0 48px 100px rgba(0,0,0,0.82), 0 6px 30px rgba(0,0,0,0.60)"
                         : "0 12px 48px rgba(0,0,0,0.55)",
                       padding: "2.5rem 2.25rem 2rem",
                       display: "flex", flexDirection: "column",
@@ -316,7 +316,7 @@ export function FestivalAccessSection() {
                         <ul style={{ listStyle: "none", padding: 0, margin: 0, marginBottom: "2rem" }}>
                           {pass.includes.map(f => (
                             <li key={f} style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", paddingBottom: "0.45rem", fontFamily: INTER, fontSize: "13px", color: isActive ? "rgba(237,233,225,0.52)" : "rgba(237,233,225,0.12)" }}>
-                              <span style={{ color: isActive ? `${THEMES[i].stage}99` : "rgba(184,146,58,0.12)", flexShrink: 0 }}>—</span>
+                              <span style={{ color: isActive ? `${THEMES[i].stage}99` : "rgba(6,182,212,0.12)", flexShrink: 0 }}>—</span>
                               {f}
                             </li>
                           ))}

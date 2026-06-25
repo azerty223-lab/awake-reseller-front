@@ -75,7 +75,7 @@ export function HowItWorks() {
           className="mb-5"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
-            <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+            <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
             <span style={{
               fontFamily:    INTER,
               fontSize:      "11px",
@@ -139,7 +139,7 @@ export function HowItWorks() {
                     fontWeight:    400,
                     letterSpacing: "0.28em",
                     textTransform: "uppercase",
-                    color:         "rgba(184,146,58,0.70)",
+                    color:         "rgba(6,182,212,0.70)",
                     display:       "block",
                   }}>
                     {step.number}
@@ -175,7 +175,7 @@ export function HowItWorks() {
               {/* Hover: gold accent wipes in from left */}
               <div
                 className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full transition-all duration-700"
-                style={{ background: "rgba(184,146,58,0.18)" }}
+                style={{ background: "rgba(6,182,212,0.18)" }}
               />
             </div>
           ))}

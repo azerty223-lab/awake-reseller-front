@@ -51,7 +51,7 @@ export function TrustSection() {
               transition={{ duration: 0.9 }}
               style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}
             >
-              <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+              <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
               <span style={{
                 fontFamily:    INTER,
                 fontSize:      "11px",
@@ -70,7 +70,7 @@ export function TrustSection() {
             >
               <LineReveal>Buy with</LineReveal>
               <LineReveal delay={0.09}>
-                <span style={{ color: "#B8923A" }}>confidence</span>
+                <span style={{ color: "#06B6D4" }}>confidence</span>
               </LineReveal>
             </h2>
 
@@ -109,7 +109,7 @@ export function TrustSection() {
                   color:         "rgba(237,233,225,0.55)",
                   transition:    "color 0.4s ease",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
+                onMouseEnter={e => (e.currentTarget.style.color = "rgba(6,182,212,0.90)")}
                 onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.55)")}
               >
                 Learn about us
@@ -133,7 +133,7 @@ export function TrustSection() {
                   {/* Gold hover accent */}
                   <div className="absolute left-0 top-0 h-px w-0 group-hover:w-full
                                   transition-all duration-700"
-                       style={{ background: "rgba(184,146,58,0.22)" }} />
+                       style={{ background: "rgba(6,182,212,0.22)" }} />
 
                   <div className="grid grid-cols-[4rem_1fr] sm:grid-cols-[5rem_1fr] gap-6 items-start">
 
@@ -144,7 +144,7 @@ export function TrustSection() {
                       fontWeight:    400,
                       letterSpacing: "0.28em",
                       textTransform: "uppercase",
-                      color:         "rgba(184,146,58,0.70)",
+                      color:         "rgba(6,182,212,0.70)",
                       display:       "block",
                       paddingTop:    "3px",
                     }}>
@@ -166,7 +166,7 @@ export function TrustSection() {
                           fontWeight:    400,
                           letterSpacing: "0.20em",
                           textTransform: "uppercase",
-                          color:         "rgba(184,146,58,0.65)",
+                          color:         "rgba(6,182,212,0.65)",
                         }}>
                           {f.detail}
                         </span>

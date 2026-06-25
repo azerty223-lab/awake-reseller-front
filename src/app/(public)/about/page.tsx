@@ -31,12 +31,12 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#050507]/80 via-transparent to-[#050507]/80" />
 
         {/* Gold radial glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-[#C9A84C]/[0.04] blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-[#06B6D4]/[0.04] blur-3xl pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 py-24 sm:py-32">
           {/* Label */}
           <div className="flex items-center gap-2.5 mb-6">
-            <Shield className="w-3.5 h-3.5 text-[#C9A84C]" />
+            <Shield className="w-3.5 h-3.5 text-[#06B6D4]" />
             <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-zinc-500">
               Independent Resale · Est. 2024
             </span>
@@ -45,7 +45,7 @@ export default function AboutPage() {
           {/* Heading */}
           <h1 className="font-[var(--font-playfair)] font-black text-5xl sm:text-6xl lg:text-7xl text-white leading-[1.05] mb-6">
             Awakenings{" "}
-            <span className="bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] bg-clip-text text-transparent">
               Tickets
             </span>
           </h1>
@@ -74,8 +74,8 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {/* Card 1 */}
             <div className="bg-white/[0.04] backdrop-blur-md border border-white/[0.07] rounded-2xl p-7 hover:bg-white/[0.07] hover:border-white/[0.12] hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-300">
-              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-5">
-                <Shield className="w-5 h-5 text-[#C9A84C]" />
+              <div className="w-10 h-10 rounded-xl bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-5">
+                <Shield className="w-5 h-5 text-[#06B6D4]" />
               </div>
               <h3 className="text-white font-semibold text-base mb-3">Independent &amp; Transparent</h3>
               <p className="text-zinc-500 text-sm leading-relaxed">
@@ -86,8 +86,8 @@ export default function AboutPage() {
 
             {/* Card 2 */}
             <div className="bg-white/[0.04] backdrop-blur-md border border-white/[0.07] rounded-2xl p-7 hover:bg-white/[0.07] hover:border-white/[0.12] hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-300">
-              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-5">
-                <CheckCircle className="w-5 h-5 text-[#C9A84C]" />
+              <div className="w-10 h-10 rounded-xl bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-5">
+                <CheckCircle className="w-5 h-5 text-[#06B6D4]" />
               </div>
               <h3 className="text-white font-semibold text-base mb-3">Verified &amp; Authentic</h3>
               <p className="text-zinc-500 text-sm leading-relaxed">
@@ -99,8 +99,8 @@ export default function AboutPage() {
 
             {/* Card 3 */}
             <div className="bg-white/[0.04] backdrop-blur-md border border-white/[0.07] rounded-2xl p-7 hover:bg-white/[0.07] hover:border-white/[0.12] hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-300 sm:col-span-2 lg:col-span-1">
-              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-5">
-                <ArrowLeftRight className="w-5 h-5 text-[#C9A84C]" />
+              <div className="w-10 h-10 rounded-xl bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-5">
+                <ArrowLeftRight className="w-5 h-5 text-[#06B6D4]" />
               </div>
               <h3 className="text-white font-semibold text-base mb-3">Official Transfer Process</h3>
               <p className="text-zinc-500 text-sm leading-relaxed">
@@ -135,8 +135,8 @@ export default function AboutPage() {
             {/* Terms of Service */}
             <div id="terms" className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-7 sm:p-9">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center shrink-0">
-                  <FileText className="w-4 h-4 text-[#C9A84C]" />
+                <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center shrink-0">
+                  <FileText className="w-4 h-4 text-[#06B6D4]" />
                 </div>
                 <h2 className="text-white font-semibold text-lg">Terms of Service</h2>
               </div>
@@ -171,8 +171,8 @@ export default function AboutPage() {
             {/* Refund Policy */}
             <div id="refunds" className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-7 sm:p-9">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center shrink-0">
-                  <RefreshCw className="w-4 h-4 text-[#C9A84C]" />
+                <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center shrink-0">
+                  <RefreshCw className="w-4 h-4 text-[#06B6D4]" />
                 </div>
                 <h2 className="text-white font-semibold text-lg">Refund Policy</h2>
               </div>
@@ -202,8 +202,8 @@ export default function AboutPage() {
             {/* Transfer Policy */}
             <div id="transfer" className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-7 sm:p-9">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center shrink-0">
-                  <ArrowLeftRight className="w-4 h-4 text-[#C9A84C]" />
+                <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center shrink-0">
+                  <ArrowLeftRight className="w-4 h-4 text-[#06B6D4]" />
                 </div>
                 <h2 className="text-white font-semibold text-lg">Transfer Policy</h2>
               </div>
@@ -225,7 +225,7 @@ export default function AboutPage() {
                       "Present your e-ticket at the festival entrance with matching ID.",
                     ].map((step, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <span className="shrink-0 w-5 h-5 rounded-full bg-[#C9A84C]/10 border border-[#C9A84C]/30 flex items-center justify-center text-[#C9A84C] text-[10px] font-bold mt-0.5">
+                        <span className="shrink-0 w-5 h-5 rounded-full bg-[#06B6D4]/10 border border-[#06B6D4]/30 flex items-center justify-center text-[#06B6D4] text-[10px] font-bold mt-0.5">
                           {i + 1}
                         </span>
                         <span>{step}</span>
@@ -247,8 +247,8 @@ export default function AboutPage() {
             {/* Privacy Policy */}
             <div id="privacy" className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-7 sm:p-9">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center shrink-0">
-                  <Lock className="w-4 h-4 text-[#C9A84C]" />
+                <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center shrink-0">
+                  <Lock className="w-4 h-4 text-[#06B6D4]" />
                 </div>
                 <h2 className="text-white font-semibold text-lg">Privacy Policy</h2>
               </div>
@@ -274,11 +274,11 @@ export default function AboutPage() {
         <div className="max-w-5xl mx-auto">
           <div className="relative overflow-hidden bg-white/[0.04] border border-white/[0.07] rounded-2xl p-10 sm:p-14 text-center">
             {/* Subtle gold glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-40 bg-[#C9A84C]/[0.07] blur-3xl pointer-events-none rounded-full" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-40 bg-[#06B6D4]/[0.07] blur-3xl pointer-events-none rounded-full" />
 
             <div className="relative z-10">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 mb-6">
-                <Mail className="w-5 h-5 text-[#C9A84C]" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#06B6D4]/10 border border-[#06B6D4]/20 mb-6">
+                <Mail className="w-5 h-5 text-[#06B6D4]" />
               </div>
 
               <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-black text-white mb-4">
@@ -291,7 +291,7 @@ export default function AboutPage() {
 
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] text-black font-bold rounded-xl px-7 py-3.5 text-sm hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] transition-all duration-300"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] text-black font-bold rounded-xl px-7 py-3.5 text-sm hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-300"
               >
                 Get in touch
               </Link>

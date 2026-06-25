@@ -125,8 +125,8 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
                   <ul className="space-y-2.5">
                     {ticket.includes.map((item, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <div className="w-4 h-4 rounded-full bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center shrink-0 mt-0.5">
-                          <Check className="w-2.5 h-2.5 text-[#C9A84C]/70" />
+                        <div className="w-4 h-4 rounded-full bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center shrink-0 mt-0.5">
+                          <Check className="w-2.5 h-2.5 text-[#06B6D4]/70" />
                         </div>
                         <span className="text-sm text-zinc-400">{item}</span>
                       </li>

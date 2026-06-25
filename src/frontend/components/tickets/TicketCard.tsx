@@ -20,7 +20,7 @@ const CATEGORY_STYLES: Partial<Record<TicketCategory, { label: string; cls: stri
   [TicketCategory.CAMPING]:         { label: "Camping",      cls: "bg-emerald-500/[0.12] text-emerald-300/80" },
   [TicketCategory.COMFORT_CAMPING]: { label: "Comfort Camp", cls: "bg-emerald-500/[0.12] text-emerald-300/80" },
   [TicketCategory.CAR_CAMPING]:     { label: "Car Camp",     cls: "bg-emerald-500/[0.12] text-emerald-300/80" },
-  [TicketCategory.PREMIUM]:         { label: "Premium",      cls: "bg-[#C9A84C]/[0.12]   text-[#D4B050]" },
+  [TicketCategory.PREMIUM]:         { label: "Premium",      cls: "bg-[#06B6D4]/[0.12]   text-[#D4B050]" },
   [TicketCategory.ACCOMMODATION]:   { label: "Stay",         cls: "bg-rose-500/[0.12]    text-rose-300/80" },
 };
 
@@ -77,14 +77,14 @@ export function TicketCard({ ticket }: TicketCardProps) {
       className={[
         "group relative flex flex-col bg-[#0F1013] border rounded-xl transition-colors duration-200",
         ticket.isFeatured
-          ? "border-[#C9A84C]/[0.18] hover:border-[#C9A84C]/[0.40]"
+          ? "border-[#06B6D4]/[0.18] hover:border-[#06B6D4]/[0.40]"
           : "border-white/[0.09] hover:border-white/[0.16]",
         !isAvail ? "opacity-50" : "",
       ].join(" ")}
     >
       {/* Featured: 1px top accent — signals elevation without decoration */}
       {ticket.isFeatured && (
-        <div className="absolute top-0 inset-x-0 h-px rounded-t-xl bg-gradient-to-r from-transparent via-[#C9A84C]/45 to-transparent pointer-events-none" />
+        <div className="absolute top-0 inset-x-0 h-px rounded-t-xl bg-gradient-to-r from-transparent via-[#06B6D4]/45 to-transparent pointer-events-none" />
       )}
 
       {/* ── Body ─────────────────────────────────── */}
@@ -164,7 +164,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
             added || inCart
               ? "bg-white/[0.06] text-zinc-500"
               : isAvail
-                ? "bg-[#C9A84C] text-[#0C0900] hover:bg-[#D4B855] active:scale-[0.97]"
+                ? "bg-[#06B6D4] text-[#0C0900] hover:bg-[#D4B855] active:scale-[0.97]"
                 : "text-zinc-700 cursor-not-allowed",
           ].join(" ")}
         >

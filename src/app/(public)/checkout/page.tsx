@@ -63,7 +63,7 @@ function validateExpiry(value: string): string | null {
 const INPUT = [
   "w-full px-4 py-3 rounded-lg text-sm text-zinc-100",
   "bg-[#111113] border border-white/[0.1] placeholder-zinc-700",
-  "focus:outline-none focus:border-[#C9A84C]/55 focus:ring-1 focus:ring-[#C9A84C]/[0.09]",
+  "focus:outline-none focus:border-[#06B6D4]/55 focus:ring-1 focus:ring-[#06B6D4]/[0.09]",
   "transition-all duration-150",
 ].join(" ");
 
@@ -303,7 +303,7 @@ export default function CheckoutPage() {
             <p className="text-zinc-500 text-sm mb-4">Your cart is empty.</p>
             <button
               onClick={() => router.push("/tickets")}
-              className="text-sm text-[#C9A84C] hover:underline transition-colors"
+              className="text-sm text-[#06B6D4] hover:underline transition-colors"
             >
               Browse tickets →
             </button>
@@ -421,7 +421,7 @@ export default function CheckoutPage() {
                     "flex items-center justify-center gap-2 py-3 rounded-lg border",
                     "text-sm font-medium transition-all duration-150",
                     paymentMethod === "card"
-                      ? "border-[#C9A84C]/45 bg-[#C9A84C]/[0.07] text-[#C9A84C]"
+                      ? "border-[#06B6D4]/45 bg-[#06B6D4]/[0.07] text-[#06B6D4]"
                       : "border-white/[0.1] text-zinc-500 hover:border-white/[0.18] hover:text-zinc-200",
                   ].join(" ")}
                 >
@@ -435,7 +435,7 @@ export default function CheckoutPage() {
                     "flex items-center justify-center gap-2 py-3 rounded-lg border",
                     "text-sm font-medium transition-all duration-150",
                     paymentMethod === "crypto"
-                      ? "border-[#C9A84C]/45 bg-[#C9A84C]/[0.07] text-[#C9A84C]"
+                      ? "border-[#06B6D4]/45 bg-[#06B6D4]/[0.07] text-[#06B6D4]"
                       : "border-white/[0.1] text-zinc-500 hover:border-white/[0.18] hover:text-zinc-200",
                   ].join(" ")}
                 >
@@ -583,8 +583,8 @@ export default function CheckoutPage() {
                   className={[
                     "w-full h-14 flex items-center justify-center gap-2.5 rounded-xl",
                     "text-base font-bold text-black transition-all duration-150",
-                    "bg-[#C9A84C] hover:bg-[#D4B855]",
-                    "shadow-[0_2px_16px_rgba(201,168,76,0.2)]",
+                    "bg-[#06B6D4] hover:bg-[#D4B855]",
+                    "shadow-[0_2px_16px_rgba(6,182,212,0.2)]",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
                     "active:scale-[0.99]",
                   ].join(" ")}

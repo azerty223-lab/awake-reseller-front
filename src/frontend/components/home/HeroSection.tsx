@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -100,7 +100,7 @@ export function HeroSection() {
             Awakenings
             <br />
             <span style={{
-              background: "linear-gradient(to right, #C9A84C 0%, #E4BA65 40%, #C9A84C 100%)",
+              background: "linear-gradient(to right, #06B6D4 0%, #22D3EE 40%, #06B6D4 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -159,14 +159,14 @@ export function HeroSection() {
               onClick={() => router.push("/tickets")}
               className="group inline-flex items-center gap-3 text-sm font-semibold text-black tracking-wide rounded-full px-8 py-4 transition-all duration-500"
               style={{
-                background: "linear-gradient(135deg, #C9A84C 0%, #E4BA65 100%)",
-                boxShadow: "0 0 0 0 rgba(201,168,76,0)",
+                background: "linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%)",
+                boxShadow: "0 0 0 0 rgba(6,182,212,0)",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 60px rgba(201,168,76,0.4), 0 8px 32px rgba(0,0,0,0.4)";
+                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 60px rgba(6,182,212,0.4), 0 8px 32px rgba(0,0,0,0.4)";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 0 0 rgba(201,168,76,0)";
+                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 0 0 rgba(6,182,212,0)";
               }}
             >
               Browse Tickets

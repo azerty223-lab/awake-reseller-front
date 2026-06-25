@@ -71,7 +71,7 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
                    hover:bg-white/[0.03] transition-colors duration-300 relative"
       >
         {/* Left accent â€” appears on hover */}
-        <div className="absolute left-0 top-0 bottom-0 w-px bg-[#B8923A]/0 group-hover:bg-[#B8923A]/35
+        <div className="absolute left-0 top-0 bottom-0 w-px bg-[#06B6D4]/0 group-hover:bg-[#06B6D4]/35
                         transition-colors duration-500" />
 
         <span className={`${COL.index} text-sm font-bold text-zinc-700 group-hover:text-zinc-500
@@ -122,7 +122,7 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
               "transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed select-none",
               added || inCart
                 ? "bg-white/[0.05] text-zinc-500"
-                : "bg-[#B8923A]/90 text-[#0C0900] hover:bg-[#C9A84C] active:scale-[0.97]",
+                : "bg-[#06B6D4]/90 text-[#0C0900] hover:bg-[#06B6D4] active:scale-[0.97]",
             ].join(" ")}
           >
             {added
@@ -170,7 +170,7 @@ export function FeaturedTickets() {
           {/* "Available now" and "All tickets" on the same row */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+              <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
               <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
                 Available now
               </span>
@@ -187,7 +187,7 @@ export function FeaturedTickets() {
                 color:         "rgba(237,233,225,0.55)",
                 transition:    "color 0.4s ease",
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
+              onMouseEnter={e => (e.currentTarget.style.color = "rgba(6,182,212,0.90)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.55)")}
             >
               All tickets

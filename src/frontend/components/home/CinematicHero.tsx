@@ -28,7 +28,7 @@ function useCountdown(target: Date) {
 
 /* ── Design tokens ──────────────────────────────────────────────────── */
 const W = "#EDE9E1";                              // warm white
-const G = "#B8923A";                              // gold
+const G = "#06B6D4";                              // gold
 const I = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 /* ── Reusable entrance variants ─────────────────────────────────────── */
@@ -114,7 +114,7 @@ export function CinematicHero() {
 
           {/* Eyebrow */}
           <motion.div {...up(0.15)} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "clamp(1.25rem, 3vw, 2.5rem)" }}>
-            <div style={{ width: "20px", height: "1px", background: `rgba(184,146,58,0.55)`, flexShrink: 0 }} />
+            <div style={{ width: "20px", height: "1px", background: `rgba(6,182,212,0.55)`, flexShrink: 0 }} />
             <span style={{ fontFamily: I, fontSize: "11px", fontWeight: 600, letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(237,233,225,0.55)" }}>
               Official Verified Resale
             </span>
@@ -221,8 +221,8 @@ export function CinematicHero() {
               }}
               onMouseEnter={e => {
                 const b = e.currentTarget as HTMLButtonElement;
-                b.style.borderColor = "rgba(184,146,58,0.80)";
-                b.style.background  = "rgba(184,146,58,0.08)";
+                b.style.borderColor = "rgba(6,182,212,0.80)";
+                b.style.background  = "rgba(6,182,212,0.08)";
               }}
               onMouseLeave={e => {
                 const b = e.currentTarget as HTMLButtonElement;

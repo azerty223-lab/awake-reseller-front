@@ -45,7 +45,7 @@ export function Navbar({ onCartOpen }: NavbarProps) {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-0 group">
-              <span className="bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] bg-clip-text text-transparent font-black text-xl tracking-widest">
+              <span className="bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] bg-clip-text text-transparent font-black text-xl tracking-widest">
                 AW
               </span>
               <span className="text-white font-bold text-xl tracking-widest">
@@ -61,9 +61,9 @@ export function Navbar({ onCartOpen }: NavbarProps) {
                   href={link.href}
                   className={cn(
                     "relative text-sm font-medium tracking-wide transition-colors duration-200",
-                    "after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:bg-[#C9A84C] after:transition-transform after:duration-300",
+                    "after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:bg-[#06B6D4] after:transition-transform after:duration-300",
                     pathname === link.href
-                      ? "text-[#C9A84C] after:scale-x-100"
+                      ? "text-[#06B6D4] after:scale-x-100"
                       : "text-zinc-400 hover:text-white after:scale-x-0 hover:after:scale-x-100"
                   )}
                 >
@@ -85,7 +85,7 @@ export function Navbar({ onCartOpen }: NavbarProps) {
                   Cart
                 </span>
                 {itemCount > 0 && (
-                  <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] text-black text-[10px] font-bold shadow-[0_0_12px_rgba(201,168,76,0.4)]">
+                  <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] text-black text-[10px] font-bold shadow-[0_0_12px_rgba(6,182,212,0.4)]">
                     {itemCount > 9 ? "9+" : itemCount}
                   </span>
                 )}
@@ -127,7 +127,7 @@ export function Navbar({ onCartOpen }: NavbarProps) {
                   className={cn(
                     "px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200",
                     pathname === link.href
-                      ? "bg-[#C9A84C]/10 text-[#C9A84C]"
+                      ? "bg-[#06B6D4]/10 text-[#06B6D4]"
                       : "text-zinc-400 hover:text-white hover:bg-white/[0.07]"
                   )}
                 >

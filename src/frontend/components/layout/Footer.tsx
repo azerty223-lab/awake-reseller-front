@@ -9,7 +9,7 @@ export function Footer() {
         className="absolute top-0 left-0 right-0 h-px"
         style={{
           background:
-            "linear-gradient(to right, transparent, rgba(201,168,76,0.3), transparent)",
+            "linear-gradient(to right, transparent, rgba(6,182,212,0.3), transparent)",
         }}
       />
 
@@ -19,10 +19,10 @@ export function Footer() {
           {/* Col 1 — Brand */}
           <div>
             <Link href="/" className="inline-flex items-center gap-3 mb-5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#E4BA65] flex items-center justify-center shadow-[0_0_20px_rgba(201,168,76,0.25)] group-hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] transition-all duration-300">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#06B6D4] to-[#22D3EE] flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.25)] group-hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-300">
                 <Ticket className="w-4 h-4 text-black" />
               </div>
-              <span className="bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] bg-clip-text text-transparent font-black text-xl tracking-[0.18em]">
+              <span className="bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] bg-clip-text text-transparent font-black text-xl tracking-[0.18em]">
                 AW TICKETS
               </span>
             </Link>
@@ -35,21 +35,21 @@ export function Footer() {
             <div className="flex items-center gap-2 mt-7">
               <a
                 href="#"
-                className="w-9 h-9 rounded-lg border border-white/[0.07] flex items-center justify-center text-zinc-500 hover:text-[#C9A84C] hover:border-[#C9A84C]/40 hover:bg-[#C9A84C]/5 transition-all duration-300"
+                className="w-9 h-9 rounded-lg border border-white/[0.07] flex items-center justify-center text-zinc-500 hover:text-[#06B6D4] hover:border-[#06B6D4]/40 hover:bg-[#06B6D4]/5 transition-all duration-300"
                 aria-label="Website"
               >
                 <Globe className="w-4 h-4" />
               </a>
               <a
                 href="#"
-                className="w-9 h-9 rounded-lg border border-white/[0.07] flex items-center justify-center text-zinc-500 hover:text-[#C9A84C] hover:border-[#C9A84C]/40 hover:bg-[#C9A84C]/5 transition-all duration-300"
+                className="w-9 h-9 rounded-lg border border-white/[0.07] flex items-center justify-center text-zinc-500 hover:text-[#06B6D4] hover:border-[#06B6D4]/40 hover:bg-[#06B6D4]/5 transition-all duration-300"
                 aria-label="Share"
               >
                 <Share2 className="w-4 h-4" />
               </a>
               <a
                 href="#"
-                className="w-9 h-9 rounded-lg border border-white/[0.07] flex items-center justify-center text-zinc-500 hover:text-[#C9A84C] hover:border-[#C9A84C]/40 hover:bg-[#C9A84C]/5 transition-all duration-300"
+                className="w-9 h-9 rounded-lg border border-white/[0.07] flex items-center justify-center text-zinc-500 hover:text-[#06B6D4] hover:border-[#06B6D4]/40 hover:bg-[#06B6D4]/5 transition-all duration-300"
                 aria-label="External link"
               >
                 <ExternalLink className="w-4 h-4" />
@@ -72,9 +72,9 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-zinc-400 hover:text-[#C9A84C] text-sm transition-colors duration-200 inline-flex items-center gap-1.5 group"
+                    className="text-zinc-400 hover:text-[#06B6D4] text-sm transition-colors duration-200 inline-flex items-center gap-1.5 group"
                   >
-                    <span className="w-0 group-hover:w-3 h-px bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] transition-all duration-300 overflow-hidden" />
+                    <span className="w-0 group-hover:w-3 h-px bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] transition-all duration-300 overflow-hidden" />
                     {link.label}
                   </Link>
                 </li>
@@ -88,17 +88,17 @@ export function Footer() {
               Event Info
             </p>
 
-            <p className="bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] bg-clip-text text-transparent font-bold text-base mb-4 leading-snug">
+            <p className="bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] bg-clip-text text-transparent font-bold text-base mb-4 leading-snug">
               Awakenings Festival 2026
             </p>
 
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5 text-zinc-400 text-sm">
-                <Calendar className="w-4 h-4 text-[#C9A84C] mt-0.5 shrink-0" />
+                <Calendar className="w-4 h-4 text-[#06B6D4] mt-0.5 shrink-0" />
                 <span>July 10–12, 2026</span>
               </li>
               <li className="flex items-start gap-2.5 text-zinc-400 text-sm">
-                <MapPin className="w-4 h-4 text-[#C9A84C] mt-0.5 shrink-0" />
+                <MapPin className="w-4 h-4 text-[#06B6D4] mt-0.5 shrink-0" />
                 <span>Hilvarenbeek, Netherlands</span>
               </li>
             </ul>
@@ -107,7 +107,7 @@ export function Footer() {
               href="https://www.awakenings.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 mt-6 text-xs text-zinc-500 hover:text-[#C9A84C] border border-white/[0.07] hover:border-[#C9A84C]/40 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-[#C9A84C]/5"
+              className="inline-flex items-center gap-1.5 mt-6 text-xs text-zinc-500 hover:text-[#06B6D4] border border-white/[0.07] hover:border-[#06B6D4]/40 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-[#06B6D4]/5"
             >
               <Globe className="w-3 h-3" />
               Official Festival Site
@@ -134,13 +134,13 @@ export function Footer() {
           style={{
             borderTop: "1px solid",
             borderImage:
-              "linear-gradient(to right, transparent, rgba(201,168,76,0.15), transparent) 1",
+              "linear-gradient(to right, transparent, rgba(6,182,212,0.15), transparent) 1",
           }}
         >
           <p className="text-zinc-600 text-xs">
             &copy; 2026 AW Tickets. All rights reserved.
           </p>
-          <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[#C9A84C]/60">
+          <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[#06B6D4]/60">
            AW Ticket Resale
           </p>
         </div>

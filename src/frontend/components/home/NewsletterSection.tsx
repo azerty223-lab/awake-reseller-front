@@ -40,7 +40,7 @@ function InboxPreview() {
             gap:          "12px",
             padding:      "11px 16px",
             borderBottom: i < 2 ? "1px solid rgba(237,233,225,0.05)" : "none",
-            background:   i === 0 ? "rgba(184,146,58,0.04)" : "transparent",
+            background:   i === 0 ? "rgba(6,182,212,0.04)" : "transparent",
             opacity:      1 - i * 0.22,
           }}
         >
@@ -48,11 +48,11 @@ function InboxPreview() {
             width:        i === 0 ? "6px" : "5px",
             height:       i === 0 ? "6px" : "5px",
             borderRadius: "50%",
-            background:   i === 0 ? "rgba(184,146,58,0.80)" : "rgba(237,233,225,0.20)",
+            background:   i === 0 ? "rgba(6,182,212,0.80)" : "rgba(237,233,225,0.20)",
             flexShrink:   0,
           }} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <span style={{ fontFamily: INTER, fontSize: "9px", fontWeight: 600, letterSpacing: "0.20em", textTransform: "uppercase", color: "rgba(184,146,58,0.55)", display: "block", marginBottom: "2px" }}>
+            <span style={{ fontFamily: INTER, fontSize: "9px", fontWeight: 600, letterSpacing: "0.20em", textTransform: "uppercase", color: "rgba(6,182,212,0.55)", display: "block", marginBottom: "2px" }}>
               {n.tag}
             </span>
             <span style={{ fontFamily: INTER, fontSize: "12px", fontWeight: 400, color: "rgba(237,233,225,0.70)", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -102,7 +102,7 @@ export function NewsletterSection() {
           className="mb-5"
           style={{ display: "flex", alignItems: "center", gap: "12px" }}
         >
-          <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+          <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
           <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
             Stay informed
           </span>
@@ -150,7 +150,7 @@ export function NewsletterSection() {
                       outline:       "none",
                       transition:    "border-color 0.4s ease",
                     }}
-                    onFocus={e => ((e.target as HTMLInputElement).style.borderBottomColor = "rgba(184,146,58,0.55)")}
+                    onFocus={e => ((e.target as HTMLInputElement).style.borderBottomColor = "rgba(6,182,212,0.55)")}
                     onBlur={e  => ((e.target as HTMLInputElement).style.borderBottomColor = "rgba(237,233,225,0.15)")}
                   />
                 </div>
@@ -175,7 +175,7 @@ export function NewsletterSection() {
                       color:         status === "loading" ? "rgba(237,233,225,0.40)" : "rgba(237,233,225,0.80)",
                       transition:    "color 0.4s ease",
                     }}
-                    onMouseEnter={e => { if (status !== "loading") (e.currentTarget as HTMLButtonElement).style.color = "rgba(184,146,58,0.80)"; }}
+                    onMouseEnter={e => { if (status !== "loading") (e.currentTarget as HTMLButtonElement).style.color = "rgba(6,182,212,0.80)"; }}
                     onMouseLeave={e => { if (status !== "loading") (e.currentTarget as HTMLButtonElement).style.color = "rgba(237,233,225,0.80)"; }}
                   >
                     {status === "loading" ? "Subscribing" : "Subscribe"}

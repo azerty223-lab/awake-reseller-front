@@ -67,18 +67,18 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <div style={{
                 width: 32, height: 32, borderRadius: 8,
-                background: "rgba(201,168,76,0.08)",
-                border: "1px solid rgba(201,168,76,0.18)",
+                background: "rgba(6,182,212,0.08)",
+                border: "1px solid rgba(6,182,212,0.18)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                <ShoppingCart size={16} color="#C9A84C" />
+                <ShoppingCart size={16} color="#06B6D4" />
               </div>
               <Dialog.Title style={{ color: "#fff", fontWeight: 700, fontSize: 17, margin: 0 }}>
                 Your Cart
               </Dialog.Title>
               {itemCount > 0 && (
                 <span style={{
-                  background: "linear-gradient(135deg, #C9A84C, #E4BA65)",
+                  background: "linear-gradient(135deg, #06B6D4, #22D3EE)",
                   color: "#000",
                   fontSize: 11,
                   fontWeight: 800,
@@ -126,7 +126,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                   <Link href="/tickets" style={{
                     display: "inline-flex", alignItems: "center", gap: 6,
                     padding: "10px 20px", borderRadius: 12, fontSize: 13, fontWeight: 700,
-                    background: "linear-gradient(135deg, #C9A84C, #E4BA65)", color: "#000",
+                    background: "linear-gradient(135deg, #06B6D4, #22D3EE)", color: "#000",
                     textDecoration: "none",
                   }}>
                     Browse Tickets <ArrowRight size={14} />
@@ -163,7 +163,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                         )}
                         <p style={{
                           fontWeight: 700, fontSize: 15,
-                          background: "linear-gradient(135deg, #C9A84C, #E4BA65)",
+                          background: "linear-gradient(135deg, #06B6D4, #22D3EE)",
                           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
                         }}>
                           {formatPrice(item.resalePrice * item.quantity)}
@@ -245,7 +245,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                   </p>
                   <p style={{
                     fontSize: 22, fontWeight: 700,
-                    background: "linear-gradient(135deg, #C9A84C, #E4BA65)",
+                    background: "linear-gradient(135deg, #06B6D4, #22D3EE)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
                   }}>
                     {formatPrice(total)}
@@ -263,7 +263,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                 <Link href="/checkout" style={{
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                   padding: "15px", borderRadius: 12, fontWeight: 700, fontSize: 15,
-                  background: "linear-gradient(135deg, #C9A84C, #E4BA65)", color: "#000",
+                  background: "linear-gradient(135deg, #06B6D4, #22D3EE)", color: "#000",
                   textDecoration: "none",
                 }}>
                   Proceed to Checkout <ArrowRight size={16} />

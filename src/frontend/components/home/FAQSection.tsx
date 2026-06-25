@@ -52,7 +52,7 @@ export function FAQSection() {
           className="mb-5"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
-            <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+            <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
             <span style={{
               fontFamily:    INTER,
               fontSize:      "11px",
@@ -100,7 +100,7 @@ export function FAQSection() {
                       letterSpacing: "0.28em",
                       textTransform: "uppercase",
                       color:         isOpen
-                        ? "rgba(184,146,58,0.75)"
+                        ? "rgba(6,182,212,0.75)"
                         : "rgba(237,233,225,0.40)",
                       transition:    "color 0.4s ease",
                       flexShrink:    0,
@@ -136,7 +136,7 @@ export function FAQSection() {
                       fontSize:    "1rem",
                       fontWeight:  200,
                       color:       isOpen
-                        ? "rgba(184,146,58,0.80)"
+                        ? "rgba(6,182,212,0.80)"
                         : "rgba(237,233,225,0.45)",
                       transition:  "color 0.4s ease, transform 0.4s ease",
                       transform:   isOpen ? "rotate(45deg)" : "rotate(0deg)",
@@ -199,12 +199,12 @@ export function FAQSection() {
               href="/contact"
               className="group inline-flex items-center gap-1.5"
               style={{
-                color:      "#B8923A",
+                color:      "#06B6D4",
                 fontWeight: 400,
                 transition: "color 0.3s ease",
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#C9A84C")}
-              onMouseLeave={e => (e.currentTarget.style.color = "#B8923A")}
+              onMouseEnter={e => (e.currentTarget.style.color = "#06B6D4")}
+              onMouseLeave={e => (e.currentTarget.style.color = "#06B6D4")}
             >
               Get in touch
               <ArrowRight

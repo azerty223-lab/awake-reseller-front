@@ -54,7 +54,7 @@ export function FestivalRulesSection() {
           className="mb-5"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
-            <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+            <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
             <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
               Important
             </span>
@@ -77,7 +77,7 @@ export function FestivalRulesSection() {
                 style={{ padding: "clamp(1.75rem, 3.5vw, 2.5rem)" }}
               >
                 {/* Left accent on hover */}
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-[#B8923A]/0 group-hover:bg-[#B8923A]/30 transition-colors duration-500" />
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-[#06B6D4]/0 group-hover:bg-[#06B6D4]/30 transition-colors duration-500" />
 
                 {/* Index + title row */}
                 <div style={{ display: "flex", alignItems: "baseline", gap: "1rem", marginBottom: "0.875rem" }}>
@@ -86,7 +86,7 @@ export function FestivalRulesSection() {
                     fontSize:      "10px",
                     letterSpacing: "0.30em",
                     textTransform: "uppercase",
-                    color:         "rgba(184,146,58,0.55)",
+                    color:         "rgba(6,182,212,0.55)",
                     flexShrink:    0,
                   }}>
                     {rule.index}

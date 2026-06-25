@@ -368,14 +368,14 @@ interface Beam {
 }
 
 const CANVAS_BEAMS: Beam[] = [
-  { angle: -52, speed: 0.12, amp:  9, phase: 0.0, r: 201, g: 168, b:  76 },
-  { angle: -34, speed: 0.19, amp: 14, phase: 1.1, r: 228, g: 186, b: 101 },
+  { angle: -52, speed: 0.12, amp:  9, phase: 0.0, r: 6,   g: 182, b: 212 },
+  { angle: -34, speed: 0.19, amp: 14, phase: 1.1, r: 34,  g: 211, b: 238 },
   { angle: -16, speed: 0.27, amp:  8, phase: 2.3, r: 200, g: 215, b: 255 },
   { angle:  -4, speed: 0.35, amp:  5, phase: 3.4, r: 255, g: 245, b: 220 },
   { angle:   4, speed: 0.33, amp:  5, phase: 4.5, r: 255, g: 245, b: 220 },
   { angle:  16, speed: 0.27, amp:  8, phase: 5.6, r: 200, g: 215, b: 255 },
-  { angle:  34, speed: 0.19, amp: 14, phase: 6.7, r: 228, g: 186, b: 101 },
-  { angle:  52, speed: 0.12, amp:  9, phase: 7.8, r: 201, g: 168, b:  76 },
+  { angle:  34, speed: 0.19, amp: 14, phase: 6.7, r: 34,  g: 211, b: 238 },
+  { angle:  52, speed: 0.12, amp:  9, phase: 7.8, r: 6,   g: 182, b: 212 },
 ];
 
 function useStageCanvas(
@@ -415,8 +415,8 @@ function useStageCanvas(
 
       // Stage glow — warm amber halo
       const glow = ctx!.createRadialGradient(sx, sy, 0, sx, sy, W * 0.45);
-      glow.addColorStop(0,   "rgba(201,168,76,0.14)");
-      glow.addColorStop(0.4, "rgba(201,168,76,0.05)");
+      glow.addColorStop(0,   "rgba(6,182,212,0.14)");
+      glow.addColorStop(0.4, "rgba(6,182,212,0.05)");
       glow.addColorStop(1,   "rgba(0,0,0,0)");
       ctx!.fillStyle = glow;
       ctx!.fillRect(0, 0, W, H);
@@ -460,8 +460,8 @@ function useStageCanvas(
       // Haze band at stage horizon
       const hAlpha = 0.06 + 0.03 * Math.sin(t * 0.37);
       const haze = ctx!.createLinearGradient(0, sy - H * 0.20, 0, sy + H * 0.06);
-      haze.addColorStop(0,   "rgba(201,168,76,0)");
-      haze.addColorStop(0.5, `rgba(201,168,76,${hAlpha})`);
+      haze.addColorStop(0,   "rgba(6,182,212,0)");
+      haze.addColorStop(0.5, `rgba(6,182,212,${hAlpha})`);
       haze.addColorStop(1,   "rgba(3,3,5,0)");
       ctx!.fillStyle = haze;
       ctx!.fillRect(0, sy - H * 0.20, W, H * 0.26);
@@ -505,26 +505,26 @@ function DayCard({
         "flex-1 relative text-left px-6 sm:px-8 py-6 sm:py-7 rounded-2xl border-2",
         "transition-all duration-300 overflow-hidden group",
         isActive
-          ? "border-[#C9A84C] bg-[#C9A84C]/[0.08]"
+          ? "border-[#06B6D4] bg-[#06B6D4]/[0.08]"
           : "border-white/[0.09] bg-white/[0.02] hover:border-white/[0.18] hover:bg-white/[0.04]",
       ].join(" ")}
     >
       {/* Active: subtle gold top rule */}
       {isActive && (
-        <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#C9A84C]/60 to-transparent" />
+        <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#06B6D4]/60 to-transparent" />
       )}
 
       {/* Status label */}
       <div className="flex items-center justify-between mb-3">
         <span className={[
           "text-[10px] font-semibold uppercase tracking-[0.22em]",
-          isActive ? "text-[#C9A84C]" : "text-zinc-700",
+          isActive ? "text-[#06B6D4]" : "text-zinc-700",
         ].join(" ")}>
           {isActive ? "Selected" : "Select"}
         </span>
         {isActive && (
           <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] animate-pulse" />
           </span>
         )}
       </div>
@@ -553,7 +553,7 @@ function DayCard({
         <span className={[
           "text-[11px] font-medium px-2.5 py-1 rounded-full border",
           isActive
-            ? "bg-[#C9A84C]/[0.12] border-[#C9A84C]/[0.25] text-[#C9A84C]/90"
+            ? "bg-[#06B6D4]/[0.12] border-[#06B6D4]/[0.25] text-[#06B6D4]/90"
             : "bg-white/[0.04] border-white/[0.07] text-zinc-600",
         ].join(" ")}>
           {areaCount} stages
@@ -588,7 +588,7 @@ function AreaCard({ area }: { area: Area }) {
               {area.label}
             </p>
             {area.note ? (
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#C9A84C]/70">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#06B6D4]/70">
                 {area.note}
               </p>
             ) : (
@@ -628,13 +628,13 @@ function AreaCard({ area }: { area: Area }) {
               key={i}
               className={[
                 "flex items-center gap-3 px-5 py-3 transition-colors duration-150",
-                isClosing  ? "bg-[#C9A84C]/[0.05] hover:bg-[#C9A84C]/[0.08]" : "hover:bg-white/[0.03]",
+                isClosing  ? "bg-[#06B6D4]/[0.05] hover:bg-[#06B6D4]/[0.08]" : "hover:bg-white/[0.03]",
               ].join(" ")}
             >
               {/* Time — start time only, keeps columns compact */}
               <span className={[
                 "shrink-0 w-11 text-[11px] tabular-nums font-mono leading-none",
-                isAfterMidnight ? "text-[#C9A84C]/50" : "text-zinc-600",
+                isAfterMidnight ? "text-[#06B6D4]/50" : "text-zinc-600",
               ].join(" ")}>
                 {slot.time.split(" – ")[0]}
               </span>
@@ -720,7 +720,7 @@ export function LineupSection() {
             className="absolute inset-0 z-0"
             style={{
               background: [
-                "radial-gradient(ellipse at 50% 90%, rgba(201,168,76,0.14) 0%, transparent 50%)",
+                "radial-gradient(ellipse at 50% 90%, rgba(6,182,212,0.14) 0%, transparent 50%)",
                 "radial-gradient(ellipse at 25% 35%, rgba(90,60,160,0.06) 0%, transparent 45%)",
                 "radial-gradient(ellipse at 75% 35%, rgba(60,100,200,0.06) 0%, transparent 45%)",
                 "#030305",
@@ -891,7 +891,7 @@ export function LineupSection() {
                     "flex-shrink-0 px-4 py-2.5 rounded-xl text-xs font-semibold",
                     "border transition-all duration-150 whitespace-nowrap",
                     activeArea === area.id
-                      ? "bg-[#C9A84C]/[0.12] border-[#C9A84C]/40 text-[#C9A84C]"
+                      ? "bg-[#06B6D4]/[0.12] border-[#06B6D4]/40 text-[#06B6D4]"
                       : "bg-white/[0.03] border-white/[0.07] text-zinc-500 hover:text-zinc-200 hover:border-white/[0.14]",
                   ].join(" ")}
                 >
@@ -913,7 +913,7 @@ export function LineupSection() {
                 <div className="flex items-center gap-3 mb-5">
                   <h4 className="text-lg font-bold text-white tracking-tight">{mobileArea.label}</h4>
                   {mobileArea.note && (
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#C9A84C]/70 bg-[#C9A84C]/[0.1] border border-[#C9A84C]/[0.2] rounded-full px-2.5 py-1">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#06B6D4]/70 bg-[#06B6D4]/[0.1] border border-[#06B6D4]/[0.2] rounded-full px-2.5 py-1">
                       {mobileArea.note}
                     </span>
                   )}
@@ -934,7 +934,7 @@ export function LineupSection() {
                         key={i}
                         className={[
                           "flex items-center gap-4 px-5 py-4",
-                          isLast ? "bg-[#C9A84C]/[0.06]" : "bg-[#0D0D10]",
+                          isLast ? "bg-[#06B6D4]/[0.06]" : "bg-[#0D0D10]",
                         ].join(" ")}
                       >
                         <span className="shrink-0 w-12 text-xs text-zinc-600 tabular-nums font-mono">

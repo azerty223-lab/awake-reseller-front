@@ -18,7 +18,7 @@ const contactSchema = z.object({
 type ContactForm = z.infer<typeof contactSchema>;
 
 const inputClass =
-  "w-full px-4 py-3.5 bg-white/[0.04] border border-white/[0.07] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-[#C9A84C]/50 focus:bg-white/[0.06] focus-visible:outline-none transition-all";
+  "w-full px-4 py-3.5 bg-white/[0.04] border border-white/[0.07] rounded-xl text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-[#06B6D4]/50 focus:bg-white/[0.06] focus-visible:outline-none transition-all";
 
 const labelClass = "block text-[10px] uppercase tracking-[0.2em] font-semibold text-zinc-500 mb-2";
 
@@ -79,8 +79,8 @@ export default function ContactPage() {
         <div className="grid sm:grid-cols-2 gap-4 mb-8">
           {/* Email card */}
           <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center shrink-0">
-              <Mail className="w-4 h-4 text-[#C9A84C]" />
+            <div className="w-10 h-10 rounded-full bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center shrink-0">
+              <Mail className="w-4 h-4 text-[#06B6D4]" />
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-zinc-500 mb-0.5">Email</p>
@@ -90,8 +90,8 @@ export default function ContactPage() {
 
           {/* Response time card */}
           <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center shrink-0">
-              <Clock className="w-4 h-4 text-[#C9A84C]" />
+            <div className="w-10 h-10 rounded-full bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4 text-[#06B6D4]" />
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-zinc-500 mb-0.5">Response Time</p>
@@ -186,7 +186,7 @@ export default function ContactPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 bg-gradient-to-r from-[#C9A84C] to-[#E4BA65] text-black font-bold rounded-xl text-sm flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300"
+              className="w-full py-4 bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] text-black font-bold rounded-xl text-sm flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300"
             >
               {isSubmitting ? (
                 <>
