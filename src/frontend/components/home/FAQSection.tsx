@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
+import { LineReveal } from "@/frontend/components/ui/LineReveal";
 
 const faqs = [
   {
@@ -33,94 +33,187 @@ const faqs = [
   },
 ];
 
+const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
+
 export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-4 bg-transparent relative overflow-hidden">
-      <SectionBackground src="/bg-faq.jpg" objectPosition="center 55%" overlay="rgba(8,8,8,0.86)" />
-      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6">
+    <section id="faq" className="relative py-24 sm:py-36 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
+
+      <div className="max-w-3xl mx-auto px-6 sm:px-12">
+
         {/* Header */}
         <motion.div
-          className="text-center mb-14"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.9 }}
+          className="mb-16 sm:mb-20"
         >
-          <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-zinc-500">
-            FAQs
-          </span>
-          <h2 className="mt-3 font-[var(--font-playfair)] text-4xl sm:text-5xl font-black text-white">
-            Common Questions
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+            <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+            <span style={{
+              fontFamily:    INTER,
+              fontSize:      "11px",
+              fontWeight:    400,
+              letterSpacing: "0.28em",
+              textTransform: "uppercase",
+              color:         "rgba(237,233,225,0.50)",
+            }}>
+              FAQs
+            </span>
+          </div>
+          <h2
+            className="font-[var(--font-playfair)] font-black text-white"
+            style={{ fontSize: "clamp(2.25rem, 5vw, 3.75rem)", letterSpacing: "-0.03em", lineHeight: 0.92 }}
+          >
+            <LineReveal>Common</LineReveal>
+            <LineReveal delay={0.09}>questions</LineReveal>
           </h2>
         </motion.div>
 
-        {/* FAQ Items */}
+        {/* Editorial accordion — no cards, just horizontal rules */}
         <motion.div
-          className="space-y-3"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.15 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
         >
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="border border-white/[0.06] rounded-2xl overflow-hidden bg-white/[0.02] hover:border-white/[0.1] transition-colors"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex justify-between items-center px-6 py-5"
-              >
-                <span className="text-white font-medium text-left text-sm sm:text-base">
-                  {faq.q}
-                </span>
-                <ChevronDown
-                  className="text-[#C9A84C] w-5 h-5 flex-shrink-0 ml-4 transition-transform duration-300"
-                  style={{ transform: openIndex === index ? "rotate(180deg)" : "rotate(0deg)" }}
-                />
-              </button>
-
-              <AnimatePresence initial={false}>
-                {openIndex === index && (
-                  <motion.div
-                    key="content"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
+          {faqs.map((faq, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <div key={i} className="border-t border-white/[0.06] last-of-type:border-b">
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  className="group w-full flex items-start gap-6 sm:gap-8 py-7 text-left
+                             transition-colors duration-300"
+                >
+                  {/* Index */}
+                  <span
+                    style={{
+                      fontFamily:    INTER,
+                      fontSize:      "11px",
+                      fontWeight:    400,
+                      letterSpacing: "0.28em",
+                      textTransform: "uppercase",
+                      color:         isOpen
+                        ? "rgba(184,146,58,0.75)"
+                        : "rgba(237,233,225,0.40)",
+                      transition:    "color 0.4s ease",
+                      flexShrink:    0,
+                      paddingTop:    "4px",
+                      minWidth:      "2.5rem",
+                    }}
                   >
-                    <div className="px-6 pb-5">
-                      <p className="text-zinc-500 text-sm leading-relaxed">{faq.a}</p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  {/* Question */}
+                  <span
+                    style={{
+                      fontFamily:  INTER,
+                      fontSize:    "clamp(0.9375rem, 2vw, 1.125rem)",
+                      fontWeight:  400,
+                      lineHeight:  1.5,
+                      color:       isOpen
+                        ? "rgba(237,233,225,0.95)"
+                        : "rgba(237,233,225,0.70)",
+                      transition:  "color 0.4s ease",
+                      flex:        1,
+                    }}
+                  >
+                    {faq.q}
+                  </span>
+
+                  {/* Plus / minus indicator */}
+                  <span
+                    style={{
+                      flexShrink:  0,
+                      fontFamily:  INTER,
+                      fontSize:    "1rem",
+                      fontWeight:  200,
+                      color:       isOpen
+                        ? "rgba(184,146,58,0.80)"
+                        : "rgba(237,233,225,0.45)",
+                      transition:  "color 0.4s ease, transform 0.4s ease",
+                      transform:   isOpen ? "rotate(45deg)" : "rotate(0deg)",
+                      display:     "block",
+                      lineHeight:  1,
+                      paddingTop:  "3px",
+                    }}
+                  >
+                    +
+                  </span>
+                </button>
+
+                {/* Answer */}
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="answer"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <p
+                        style={{
+                          fontFamily:   INTER,
+                          fontSize:     "0.9375rem",
+                          lineHeight:   1.85,
+                          color:        "rgba(161,161,170,0.75)",
+                          paddingLeft:  "calc(2.5rem + 1.5rem)",
+                          paddingRight: "2rem",
+                          paddingBottom: "1.75rem",
+                        }}
+                      >
+                        {faq.a}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </motion.div>
 
-        {/* Bottom CTA */}
+        {/* Footer CTA */}
         <motion.div
-          className="text-center mt-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          style={{ marginTop: "3rem" }}
         >
-          <p className="text-zinc-500 text-sm">
+          <p style={{
+            fontFamily: INTER,
+            fontSize:   "0.875rem",
+            color:      "rgba(113,113,122,0.7)",
+          }}>
             Still have questions?{" "}
             <Link
               href="/contact"
-              className="inline-flex items-center gap-1 text-[#C9A84C] hover:text-[#E4BA65] transition-colors font-medium"
+              className="group inline-flex items-center gap-1.5"
+              style={{
+                color:      "#B8923A",
+                fontWeight: 400,
+                transition: "color 0.3s ease",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#C9A84C")}
+              onMouseLeave={e => (e.currentTarget.style.color = "#B8923A")}
             >
               Get in touch
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight
+                className="group-hover:translate-x-0.5 transition-transform duration-300"
+                style={{ width: "13px", height: "13px" }}
+              />
             </Link>
           </p>
         </motion.div>
+
       </div>
     </section>
   );

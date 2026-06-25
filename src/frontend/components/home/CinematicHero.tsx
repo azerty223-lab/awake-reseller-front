@@ -130,11 +130,11 @@ export function CinematicHero() {
             }} />
             <span style={{
               fontFamily:    INTER,
-              fontSize:      "7px",
+              fontSize:      "11px",
               fontWeight:    400,
               textTransform: "uppercase",
-              letterSpacing: "0.52em",
-              color:         "rgba(237,233,225,0.22)",
+              letterSpacing: "0.28em",
+              color:         "rgba(237,233,225,0.50)",
             }}>
               Official Verified Resale
             </span>
@@ -186,21 +186,21 @@ export function CinematicHero() {
             }}>
               <span style={{
                 fontFamily:    INTER,
-                fontSize:      "7px",
+                fontSize:      "12px",
                 fontWeight:    400,
-                letterSpacing: "0.38em",
+                letterSpacing: "0.20em",
                 textTransform: "uppercase",
-                color:         "rgba(237,233,225,0.20)",
+                color:         "rgba(237,233,225,0.55)",
               }}>
                 10&thinsp;—&thinsp;12 July&ensp;·&ensp;2026
               </span>
               <span style={{
                 fontFamily:    INTER,
-                fontSize:      "7px",
+                fontSize:      "12px",
                 fontWeight:    400,
-                letterSpacing: "0.32em",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                color:         "rgba(237,233,225,0.14)",
+                color:         "rgba(237,233,225,0.40)",
               }}>
                 Amsterdam&ensp;·&ensp;Gashouder&thinsp;+&thinsp;Hembrug
               </span>
@@ -235,18 +235,18 @@ export function CinematicHero() {
                     paddingLeft:   i === 0 ? 0 : "clamp(1.25rem, 2.8vw, 2.25rem)",
                     paddingRight:  i === 3 ? 0 : "clamp(1.25rem, 2.8vw, 2.25rem)",
                   }}>
-                    {/* Number — hairline weight, opacity tick on change */}
+                    {/* Number — Playfair 700 for impact, fade tick on change */}
                     <motion.span
                       key={val}
-                      initial={{ opacity: 0.25 }}
-                      animate={{ opacity: 1    }}
-                      transition={{ duration: 0.45, ease: "easeOut" }}
+                      initial={{ opacity: 0.3 }}
+                      animate={{ opacity: 1   }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
                       style={{
-                        fontFamily:         INTER,
-                        fontWeight:         100,
-                        fontSize:           "clamp(2.75rem, 6.5vw, 5.75rem)",
+                        fontFamily:         SERIF,
+                        fontWeight:         700,
+                        fontSize:           "clamp(3rem, 7vw, 6rem)",
                         lineHeight:         1,
-                        letterSpacing:      "0.01em",
+                        letterSpacing:      "-0.02em",
                         color:              WARM_WHITE,
                         fontVariantNumeric: "tabular-nums",
                         display:            "block",
@@ -258,10 +258,10 @@ export function CinematicHero() {
                     <span style={{
                       fontFamily:    INTER,
                       fontWeight:    400,
-                      fontSize:      "6.5px",
-                      letterSpacing: "0.28em",
+                      fontSize:      "11px",
+                      letterSpacing: "0.22em",
                       textTransform: "uppercase",
-                      color:         `rgba(184,146,58,0.40)`,
+                      color:         `rgba(184,146,58,0.70)`,
                       marginTop:     "8px",
                     }}>
                       {label}
@@ -272,8 +272,8 @@ export function CinematicHero() {
                   {i < 3 && (
                     <div style={{
                       width:      "1px",
-                      height:     "clamp(2.75rem, 6.5vw, 5.75rem)",
-                      background: "rgba(237,233,225,0.06)",
+                      height:     "clamp(3rem, 7vw, 6rem)",
+                      background: "rgba(237,233,225,0.10)",
                       flexShrink: 0,
                     }} />
                   )}
@@ -281,27 +281,26 @@ export function CinematicHero() {
               ))}
             </div>
 
-            {/* CTA — no button, no border, no box.
-                The link IS the typography. */}
+            {/* CTA */}
             <button
               onClick={() => router.push("/tickets")}
-              className="group flex items-center gap-2.5"
+              className="group flex items-center gap-3"
               style={{
                 background:  "none",
                 border:      "none",
-                padding:     "0 0 calc(6.5px + 8px) 0", // aligns baseline with countdown labels
+                padding:     "0 0 calc(11px + 8px) 0",
                 cursor:      "pointer",
-                opacity:     0.38,
-                transition:  "opacity 0.5s ease",
+                opacity:     0.75,
+                transition:  "opacity 0.4s ease",
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.80"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.38"; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.75"; }}
             >
               <span style={{
                 fontFamily:    INTER,
-                fontWeight:    300,
-                fontSize:      "9px",
-                letterSpacing: "0.34em",
+                fontWeight:    500,
+                fontSize:      "13px",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
                 color:         WARM_WHITE,
               }}>
@@ -309,7 +308,7 @@ export function CinematicHero() {
               </span>
               <ArrowRight
                 className="group-hover:translate-x-1 transition-transform duration-500"
-                style={{ width: "10px", height: "10px", color: WARM_WHITE }}
+                style={{ width: "13px", height: "13px", color: WARM_WHITE }}
               />
             </button>
 

@@ -1,21 +1,32 @@
-﻿import { CinematicHero }  from "@/frontend/components/home/CinematicHero";
-import { FeaturedTickets } from "@/frontend/components/home/FeaturedTickets";
-import { HowItWorks }      from "@/frontend/components/home/HowItWorks";
-import { FestivalInfo }    from "@/frontend/components/home/FestivalInfo";
-import { LineupSection }   from "@/frontend/components/home/LineupSection";
-import { TrustSection }    from "@/frontend/components/home/TrustSection";
-import { NewsletterSection } from "@/frontend/components/home/NewsletterSection";
-import { FAQSection }      from "@/frontend/components/home/FAQSection";
+import { CinematicHero }             from "@/frontend/components/home/CinematicHero";
+import { FeaturedTickets }           from "@/frontend/components/home/FeaturedTickets";
+import { FestivalAccessSection }     from "@/frontend/components/home/FestivalAccessSection";
+import { AccommodationSection }      from "@/frontend/components/home/AccommodationSection";
+import { LineupSection }             from "@/frontend/components/home/LineupSection";
+import { TicketDeliverySection }     from "@/frontend/components/home/TicketDeliverySection";
+import { FestivalRulesSection }      from "@/frontend/components/home/FestivalRulesSection";
+import { ResaleMarketplaceSection }  from "@/frontend/components/home/ResaleMarketplaceSection";
+import { NewsletterSection }         from "@/frontend/components/home/NewsletterSection";
+import { FAQSection }                from "@/frontend/components/home/FAQSection";
 
 export default function HomePage() {
   return (
     <>
+      {/* Hero — untouched */}
       <CinematicHero />
+
+      {/* Commercial core — ticket listings */}
       <FeaturedTickets />
-      <HowItWorks />
-      <FestivalInfo />
+
+      {/* Editorial information architecture */}
+      <FestivalAccessSection />
+      <AccommodationSection />
       <LineupSection />
-      <TrustSection />
+      <TicketDeliverySection />
+      <FestivalRulesSection />
+      <ResaleMarketplaceSection />
+
+      {/* Utility */}
       <NewsletterSection />
       <FAQSection />
     </>

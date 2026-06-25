@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useReducedMotion, motion, AnimatePresence } from "framer-motion";
-import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -691,9 +690,8 @@ export function LineupSection() {
 
   return (
     <section className="relative bg-[#030305] overflow-hidden">
-      <SectionBackground src="/bg-lineup.jpg" objectPosition="center 25%" overlay="rgba(3,3,5,0.90)" />
 
-      {/* ── Hero: video + canvas background ─────────────────────── */}
+{/* ── Hero: video + canvas background ─────────────────────── */}
       <div className="relative h-[70vh] min-h-[480px] max-h-[680px]">
 
         {/* Layer 0: Canvas — always rendered, video-independent fallback */}
@@ -789,7 +787,7 @@ export function LineupSection() {
       </div>
 
       {/* ── Schedule ─────────────────────────────────────────────── */}
-      <div className="pt-4 pb-4 px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 pt-4 pb-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
 
           {/* ── Day selector ────────────────────────────────────────
@@ -817,7 +815,7 @@ export function LineupSection() {
           </motion.div>
 
           {/* ── Active day context bar ──────────────────────────────── */}
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             <motion.div
               key={activeDay + "-meta"}
               initial={{ opacity: 0 }}
@@ -846,13 +844,13 @@ export function LineupSection() {
 
           {/* ── DESKTOP: area grid ──────────────────────────────────── */}
           <div className="hidden md:block">
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
               <motion.div
                 key={activeDay}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.25 }}
               >
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {LINEUP[activeDay].map(area => (

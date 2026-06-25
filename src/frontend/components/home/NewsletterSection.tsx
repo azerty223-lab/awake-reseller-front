@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
+import { LineReveal } from "@/frontend/components/ui/LineReveal";
+
+const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 export function NewsletterSection() {
-  const [email, setEmail] = useState("");
+  const [email,  setEmail]  = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -15,9 +17,9 @@ export function NewsletterSection() {
     setStatus("loading");
     try {
       const res = await fetch("/api/newsletter", {
-        method: "POST",
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body:    JSON.stringify({ email }),
       });
       setStatus(res.ok ? "success" : "error");
       if (res.ok) setEmail("");
@@ -27,75 +29,157 @@ export function NewsletterSection() {
   };
 
   return (
-    <section className="relative py-4 overflow-hidden">
-      <SectionBackground src="/bg-newsletter.jpg" objectPosition="center 45%" overlay="rgba(8,8,8,0.88)" />
-      {/* Restrained horizontal rule top */}
-      <div className="absolute top-0 left-6 right-6 sm:left-12 lg:left-20 sm:right-12 lg:right-20 h-px bg-white/[0.06]" />
+    <section className="relative py-24 sm:py-36 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-28 items-center">
 
-          {/* Left: copy */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <p className="text-[10px] uppercase tracking-[0.25em] text-zinc-600 mb-6 font-medium">
-              Stay informed
-            </p>
-            <h2
-              className="font-[var(--font-playfair)] font-black text-white leading-[0.95] mb-6"
-              style={{ fontSize: "clamp(2rem, 4vw, 3rem)", letterSpacing: "-0.02em" }}
+          {/* ── Left: atmospheric copy ───────────────────────── */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.9 }}
+              style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}
             >
-              Early access.<br />No noise.
-            </h2>
-            <p className="text-zinc-500 text-sm leading-[1.8]">
-              New ticket listings, price changes, and sale alerts — straight to your inbox.
-              Join 2,400+ people already subscribed.
-            </p>
-          </motion.div>
+              <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+              <span style={{
+                fontFamily:    INTER,
+                fontSize:      "11px",
+                fontWeight:    400,
+                letterSpacing: "0.28em",
+                textTransform: "uppercase",
+                color:         "rgba(237,233,225,0.50)",
+              }}>
+                Stay informed
+              </span>
+            </motion.div>
 
-          {/* Right: form */}
+            <h2
+              className="font-[var(--font-playfair)] font-black text-white leading-[0.90] mb-8"
+              style={{ fontSize: "clamp(2.5rem, 5.5vw, 4.25rem)", letterSpacing: "-0.03em" }}
+            >
+              <LineReveal>Early access.</LineReveal>
+              <LineReveal delay={0.09}>
+                <span style={{ color: "rgba(237,233,225,0.62)" }}>No noise.</span>
+              </LineReveal>
+            </h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.9, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                fontFamily: INTER,
+                fontSize:   "clamp(0.875rem, 1.5vw, 1rem)",
+                lineHeight: 1.85,
+                color:      "rgba(161,161,170,1)",
+              }}
+            >
+              New ticket listings, price changes, and sale alerts — straight
+              to your inbox. Join 2,400+ people already subscribed.
+            </motion.p>
+          </div>
+
+          {/* ── Right: form ──────────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1 }}
+            transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
             {status === "success" ? (
-              <div className="py-6">
-                <p className="text-zinc-400 text-sm">You&apos;re subscribed. Watch your inbox.</p>
+              <div style={{ paddingTop: "1.5rem", paddingBottom: "1.5rem" }}>
+                <p style={{
+                  fontFamily:    INTER,
+                  fontSize:      "0.875rem",
+                  color:         "rgba(237,233,225,0.55)",
+                  letterSpacing: "0.02em",
+                }}>
+                  You&apos;re subscribed. Watch your inbox.
+                </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="relative">
+              <form onSubmit={handleSubmit}>
+                <div style={{ position: "relative", marginBottom: "1.5rem" }}>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setStatus("idle"); }}
                     placeholder="your@email.com"
                     required
-                    className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-zinc-700 text-sm outline-none focus:border-[#C9A84C]/60 transition-colors duration-300"
-                    style={{ letterSpacing: "0.01em" }}
+                    style={{
+                      width:           "100%",
+                      background:      "transparent",
+                      border:          "none",
+                      borderBottom:    "1px solid rgba(237,233,225,0.15)",
+                      padding:         "1rem 0",
+                      fontFamily:      INTER,
+                      fontSize:        "0.9375rem",
+                      fontWeight:      300,
+                      letterSpacing:   "0.02em",
+                      color:           "rgba(237,233,225,0.80)",
+                      outline:         "none",
+                      transition:      "border-color 0.4s ease",
+                    }}
+                    onFocus={e  => ((e.target as HTMLInputElement).style.borderBottomColor = "rgba(184,146,58,0.55)")}
+                    onBlur={e   => ((e.target as HTMLInputElement).style.borderBottomColor = "rgba(237,233,225,0.15)")}
                   />
                 </div>
-                <div className="flex items-center justify-between pt-2">
-                  <p className="text-zinc-700 text-xs">
-                    Unsubscribe anytime. No spam.
-                  </p>
+
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{
+                    fontFamily:    INTER,
+                    fontSize:      "11px",
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color:         "rgba(237,233,225,0.40)",
+                  }}>
+                    Unsubscribe anytime
+                  </span>
+
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="group flex items-center gap-2 text-xs uppercase tracking-[0.15em] font-semibold text-[#C9A84C] hover:text-[#E4BA65] transition-colors duration-200 disabled:opacity-50"
+                    className="group flex items-center gap-2"
+                    style={{
+                      background:    "none",
+                      border:        "none",
+                      padding:       0,
+                      cursor:        "pointer",
+                      fontFamily:    INTER,
+                      fontSize:      "12px",
+                      fontWeight:    500,
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      color:         status === "loading"
+                        ? "rgba(237,233,225,0.40)"
+                        : "rgba(237,233,225,0.80)",
+                      transition:    "color 0.4s ease",
+                    }}
+                    onMouseEnter={e => { if (status !== "loading") (e.currentTarget as HTMLButtonElement).style.color = "rgba(184,146,58,0.80)"; }}
+                    onMouseLeave={e => { if (status !== "loading") (e.currentTarget as HTMLButtonElement).style.color = "rgba(237,233,225,0.60)"; }}
                   >
                     {status === "loading" ? "Subscribing" : "Subscribe"}
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRight
+                      className="group-hover:translate-x-0.5 transition-transform duration-300"
+                      style={{ width: "10px", height: "10px" }}
+                    />
                   </button>
                 </div>
+
                 {status === "error" && (
-                  <p className="text-red-400/70 text-xs">Something went wrong. Try again.</p>
+                  <p style={{
+                    fontFamily:  INTER,
+                    fontSize:    "0.75rem",
+                    color:       "rgba(248,113,113,0.65)",
+                    marginTop:   "0.75rem",
+                  }}>
+                    Something went wrong. Try again.
+                  </p>
                 )}
               </form>
             )}

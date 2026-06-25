@@ -261,3 +261,28 @@ body {
 /* Section reveal animation base */
 .reveal-section { opacity: 0; }
 
+/* ── Marquee ── */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+/* ── Premium draw-line — horizontal rule that reveals left-to-right ── */
+@keyframes draw-line {
+  from { transform: scaleX(0); transform-origin: left center; }
+  to   { transform: scaleX(1); transform-origin: left center; }
+}
+.draw-line {
+  animation: draw-line 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Ticker digit — slot-machine style number change ── */
+@keyframes tick-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0%);   opacity: 1; }
+}
+

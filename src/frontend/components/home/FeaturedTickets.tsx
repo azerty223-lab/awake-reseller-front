@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart, Check, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { EchoHeading } from "@/frontend/components/ui/EchoHeading";
+import { LineReveal } from "@/frontend/components/ui/LineReveal";
 import type { Ticket as PrismaTicket } from "@prisma/client";
 import { useCartStore } from "@/frontend/store/cart";
 import { formatPrice } from "@/backend/lib/utils";
-import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
 
 const CATEGORY_LABEL: Record<string, string> = {
   WEEKEND:         "Weekend",
@@ -21,7 +20,6 @@ const CATEGORY_LABEL: Record<string, string> = {
   ACCOMMODATION:   "Stay",
 };
 
-// Shared between header and rows — prevents structural misalignment when button states change width
 const COL = {
   index:    "w-10 shrink-0",
   category: "hidden sm:block shrink-0 w-[88px]",
@@ -29,6 +27,8 @@ const COL = {
   price:    "shrink-0 w-[88px] text-right",
   action:   "shrink-0 w-[72px] flex justify-end",
 } as const;
+
+const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
   const addItem = useCartStore((s) => s.addItem);
@@ -60,24 +60,28 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.38, delay: index * 0.05, ease: "easeOut" }}
+      initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0.5 }}
+      whileInView={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
+      viewport={{ once: true, margin: "0px 0px -40px 0px" }}
+      transition={{ duration: 0.85, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
     >
       <Link
         href={`/tickets/${ticket.slug}`}
-        // hover:bg-white/[0.04] — 4% is minimum perceptible surface shift on #050507 at standard calibration
-        className="group flex items-center gap-4 py-4 border-b border-white/[0.06] hover:bg-white/[0.04] transition-colors duration-150"
+        className="group flex items-center gap-4 py-4 border-b border-white/[0.06]
+                   hover:bg-white/[0.03] transition-colors duration-300 relative"
       >
-        {/* Index — fixed text-sm: two clamp curves on adjacent columns create misalignment at all but one viewport width */}
-        <span className={`${COL.index} text-sm font-bold text-zinc-700 group-hover:text-zinc-500 transition-colors duration-150 tabular-nums select-none`}>
+        {/* Left accent — appears on hover */}
+        <div className="absolute left-0 top-0 bottom-0 w-px bg-[#B8923A]/0 group-hover:bg-[#B8923A]/35
+                        transition-colors duration-500" />
+
+        <span className={`${COL.index} text-sm font-bold text-zinc-700 group-hover:text-zinc-500
+                          transition-colors duration-200 tabular-nums select-none pl-2`}>
           {String(index + 1).padStart(2, "0")}
         </span>
 
-        {/* Name + day */}
         <div className="flex-1 min-w-0">
-          <p className="text-[0.9375rem] font-medium text-zinc-200 truncate group-hover:text-white transition-colors duration-150">
+          <p className="text-[0.9375rem] font-medium text-zinc-200 truncate group-hover:text-white
+                        transition-colors duration-200">
             {ticket.name}
           </p>
           {ticket.dayLabel && (
@@ -85,12 +89,10 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
           )}
         </div>
 
-        {/* Category */}
         <span className={`${COL.category} text-[11px] text-zinc-600 font-medium`}>
           {CATEGORY_LABEL[ticket.category] ?? ticket.category}
         </span>
 
-        {/* Stock */}
         <div className={COL.stock}>
           {isAvail ? (
             <>
@@ -104,26 +106,23 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
           )}
         </div>
 
-        {/* Price */}
         <div className={COL.price}>
-          <span className="text-[0.9375rem] font-semibold text-white tabular-nums" style={{ letterSpacing: "-0.015em" }}>
+          <span className="text-[0.9375rem] font-semibold text-white tabular-nums"
+                style={{ letterSpacing: "-0.015em" }}>
             {formatPrice(ticket.resalePrice, ticket.currency)}
           </span>
         </div>
 
-        {/* Add button
-            opacity-40 (not 25): disabled ≠ invisible — 25% removes the element from
-            the user's awareness entirely, preventing them from understanding the state */}
         <div className={COL.action}>
           <button
             onClick={handleAdd}
             disabled={!isAvail}
             className={[
-              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold",
-              "transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed select-none",
+              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-semibold",
+              "transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed select-none",
               added || inCart
                 ? "bg-white/[0.05] text-zinc-500"
-                : "bg-[#C9A84C] text-[#0C0900] hover:bg-[#D4B855] active:scale-[0.97]",
+                : "bg-[#B8923A]/90 text-[#0C0900] hover:bg-[#C9A84C] active:scale-[0.97]",
             ].join(" ")}
           >
             {added
@@ -134,9 +133,6 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
             }
           </button>
         </div>
-        {/* No ArrowRight: the row is a link — cursor + hover bg communicate affordance.
-            An end arrow creates false visual weight at the rightmost position,
-            drawing the eye away from price (the last meaningful datum). */}
       </Link>
     </motion.div>
   );
@@ -157,85 +153,128 @@ export function FeaturedTickets() {
   }, []);
 
   return (
-    <section className="relative py-4 overflow-hidden">
-      <SectionBackground src="/bg-tickets.jpg" objectPosition="center 40%" overlay="rgba(8,8,8,0.88)" />
-      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
+    <section className="relative py-24 sm:py-32 overflow-hidden">
+
+      {/* Top rule */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
+
+      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.48 }}
-          className="flex items-end justify-between mb-12"
+          transition={{ duration: 0.9 }}
+          className="flex items-end justify-between mb-14"
         >
           <div>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-600 mb-3 font-medium">
-              Available now
-            </p>
-            <EchoHeading
-              as="h2"
-              className="font-[var(--font-playfair)] font-black text-white leading-tight"
-              style={{ fontSize: "clamp(1.875rem, 4.5vw, 3rem)", letterSpacing: "-0.02em" }}
+            <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1rem, 2.5vw, 1.75rem)" }}>
+              <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+              <span style={{
+                fontFamily:    INTER,
+                fontSize:      "11px",
+                fontWeight:    400,
+                letterSpacing: "0.28em",
+                textTransform: "uppercase",
+                color:         "rgba(237,233,225,0.50)",
+              }}>
+                Available now
+              </span>
+            </div>
+            <h2
+              className="font-[var(--font-playfair)] font-black text-white"
+              style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.025em", lineHeight: 0.92 }}
             >
-              Top Picks
-            </EchoHeading>
+              <LineReveal>Top Picks</LineReveal>
+            </h2>
           </div>
+
           <Link
             href="/tickets"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-zinc-600 hover:text-[#C9A84C] transition-colors group uppercase tracking-[0.1em] font-medium"
+            className="hidden sm:flex items-center gap-2 group"
+            style={{
+              fontFamily:    INTER,
+              fontSize:      "12px",
+              fontWeight:    400,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              color:         "rgba(237,233,225,0.55)",
+              transition:    "color 0.4s ease",
+              paddingBottom: "2px",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.55)")}
           >
             All tickets
-            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-300" />
           </Link>
         </motion.div>
 
-        {/* Column headers — widths must precisely mirror COL constants */}
-        <div className="flex items-center gap-4 pb-2.5 border-b border-white/[0.06]">
+        {/* Column headers */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="flex items-center gap-4 pb-3 border-b border-white/[0.06]"
+        >
           <span className={COL.index} />
-          <span className="flex-1 text-[11px] uppercase tracking-[0.12em] text-zinc-600">Ticket</span>
-          <span className={`${COL.category} text-[11px] uppercase tracking-[0.12em] text-zinc-600`}>Type</span>
-          <span className="w-[96px] hidden md:block text-[11px] uppercase tracking-[0.12em] text-zinc-600">Stock</span>
-          <span className={`${COL.price} text-[11px] uppercase tracking-[0.12em] text-zinc-600`}>Price</span>
+          <span className="flex-1 text-[10px] uppercase tracking-[0.20em] text-zinc-700"
+                style={{ fontFamily: INTER }}>Ticket</span>
+          <span className={`${COL.category} text-[10px] uppercase tracking-[0.20em] text-zinc-700`}
+                style={{ fontFamily: INTER }}>Type</span>
+          <span className="w-[96px] hidden md:block text-[10px] uppercase tracking-[0.20em] text-zinc-700"
+                style={{ fontFamily: INTER }}>Stock</span>
+          <span className={`${COL.price} text-[10px] uppercase tracking-[0.20em] text-zinc-700`}
+                style={{ fontFamily: INTER }}>Price</span>
           <span className={COL.action} />
-        </div>
+        </motion.div>
 
         {/* Rows */}
         {loading ? (
           <div>
             {[0, 1, 2, 3].map((i) => (
               <div key={i} className="flex items-center gap-4 py-4 border-b border-white/[0.04]">
-                <div className={`${COL.index} h-3 bg-white/[0.04] rounded animate-pulse`} />
+                <div className={`${COL.index} h-3 bg-white/[0.03] rounded animate-pulse`} />
                 <div className="flex-1 space-y-1.5">
-                  <div className="h-3 w-3/5 bg-white/[0.05] rounded animate-pulse" />
-                  <div className="h-2.5 w-2/5 bg-white/[0.03] rounded animate-pulse" />
+                  <div className="h-3 w-3/5 bg-white/[0.04] rounded animate-pulse" />
+                  <div className="h-2.5 w-2/5 bg-white/[0.02] rounded animate-pulse" />
                 </div>
-                <div className="hidden sm:block w-[88px] h-3 bg-white/[0.04] rounded animate-pulse" />
-                <div className="hidden md:block w-[96px] h-3 bg-white/[0.04] rounded animate-pulse" />
-                <div className="w-[88px] h-3 bg-white/[0.05] rounded animate-pulse" />
+                <div className="hidden sm:block w-[88px] h-3 bg-white/[0.03] rounded animate-pulse" />
+                <div className="hidden md:block w-[96px] h-3 bg-white/[0.03] rounded animate-pulse" />
+                <div className="w-[88px] h-3 bg-white/[0.04] rounded animate-pulse" />
               </div>
             ))}
           </div>
         ) : tickets.length === 0 ? (
-          <p className="text-zinc-700 py-12 text-sm">No featured tickets right now.</p>
+          <p style={{ fontFamily: INTER, color: "rgba(113,113,122,0.7)", fontSize: "0.875rem", paddingTop: "3rem", paddingBottom: "3rem" }}>
+            No featured tickets right now.
+          </p>
         ) : (
           <div>
             {tickets.map((t, i) => <TicketRow key={t.id} ticket={t} index={i} />)}
           </div>
         )}
 
-        {/* Mobile footer link */}
         {!loading && tickets.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.38, delay: 0.18 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="flex pt-6 sm:hidden"
           >
             <Link
               href="/tickets"
-              className="flex items-center gap-1.5 text-xs text-zinc-600 hover:text-[#C9A84C] transition-colors uppercase tracking-[0.1em] font-medium"
+              className="flex items-center gap-2"
+              style={{
+                fontFamily:    INTER,
+                fontSize:      "12px",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color:         "rgba(237,233,225,0.55)",
+              }}
             >
               Browse all tickets
               <ArrowRight className="w-3 h-3" />

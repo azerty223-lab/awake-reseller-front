@@ -1,102 +1,188 @@
 "use client";
 
+import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, Lock, MailCheck } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
-import { SectionBackground } from "@/frontend/components/ui/SectionBackground";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const STEPS = [
   {
     number: "01",
-    Icon: Search,
-    title: "Find your pass",
-    body: "Browse verified resale tickets across every area and day. Real-time availability, fully transparent prices — no hidden fees, no guesswork.",
+    title:  "Find your pass",
+    body:   "Browse verified resale tickets across every area and day. Real-time availability, fully transparent prices — no hidden fees, no guesswork.",
   },
   {
     number: "02",
-    Icon: Lock,
-    title: "Pay securely",
-    body: "Complete checkout with Stripe or crypto. Your data is encrypted end-to-end. Order confirmation lands in your inbox in seconds.",
+    title:  "Pay securely",
+    body:   "Complete checkout with Stripe or crypto. Your data is encrypted end-to-end. Order confirmation lands in your inbox in seconds.",
   },
   {
     number: "03",
-    Icon: MailCheck,
-    title: "Receive your ticket",
-    body: "We handle the official Awakenings name-change process. Your personalised e-ticket arrives within 3–5 business days, ready to scan at the gate.",
+    title:  "Receive your ticket",
+    body:   "We handle the official Awakenings name-change process. Your personalised e-ticket arrives within 3–5 business days, ready to scan at the gate.",
   },
 ];
 
+const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
+
 export function HowItWorks() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // GSAP ScrollTrigger: ghost numbers scrub from invisible to subtle as each
+  // row enters the viewport, then fade back out as it exits — creates depth
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    if (!sectionRef.current) return;
+
+    const nums = sectionRef.current.querySelectorAll<HTMLElement>(".step-ghost");
+    const ctx  = gsap.context(() => {
+      nums.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 28 },
+          {
+            opacity: 0.055,
+            y:       0,
+            ease:    "none",
+            scrollTrigger: {
+              trigger: el.closest(".step-row")!,
+              start:   "top 85%",
+              end:     "top 20%",
+              scrub:   0.9,
+            },
+          }
+        );
+      });
+    }, sectionRef.current);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative py-4 overflow-hidden">
-      <SectionBackground src="/bg-howitworks.jpg" objectPosition="center 35%" overlay="rgba(8,8,8,0.87)" />
+    <section ref={sectionRef} className="relative py-24 sm:py-36 overflow-hidden">
+
       {/* Top rule */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
-        {/* Header */}
+        {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-20"
+          transition={{ duration: 0.9 }}
+          className="mb-20 sm:mb-28"
         >
-          <p className="text-[10px] uppercase tracking-[0.25em] text-zinc-600 mb-4 font-medium">
-            The process
-          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+            <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
+            <span style={{
+              fontFamily:    INTER,
+              fontSize:      "11px",
+              fontWeight:    400,
+              letterSpacing: "0.28em",
+              textTransform: "uppercase",
+              color:         "rgba(237,233,225,0.50)",
+            }}>
+              The process
+            </span>
+          </div>
+
           <h2
-            className="font-[var(--font-playfair)] font-black text-white leading-tight"
-            style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)", letterSpacing: "-0.02em" }}
+            className="font-[var(--font-playfair)] font-black text-white"
+            style={{ fontSize: "clamp(2.25rem, 5vw, 3.75rem)", letterSpacing: "-0.025em", lineHeight: 0.92 }}
           >
-            <LineReveal>Your ticket, three steps</LineReveal>
+            <LineReveal>Your ticket,</LineReveal>
+            <LineReveal delay={0.09}>three steps</LineReveal>
           </h2>
         </motion.div>
 
-        {/* Steps — 3 columns desktop, stacked mobile */}
-        <div className="grid md:grid-cols-3 gap-10 md:gap-0 md:divide-x md:divide-white/[0.06]">
+        {/* Editorial step rows */}
+        <div>
           {STEPS.map((step, i) => (
-            <motion.div
+            <div
               key={i}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.55, delay: i * 0.1 }}
-              className="relative md:px-10 first:pl-0 last:pr-0"
+              className="step-row group relative border-t border-white/[0.06] py-12 sm:py-16
+                         hover:border-white/[0.10] transition-colors duration-700"
             >
-              {/* Faded editorial number */}
+
+              {/* Ghost number — GSAP scrub controls opacity */}
               <span
-                className="block font-[var(--font-playfair)] font-black select-none leading-none mb-4"
+                className="step-ghost absolute right-0 top-1/2 -translate-y-1/2 font-[var(--font-playfair)] font-black
+                           pointer-events-none select-none"
                 style={{
-                  fontSize: "4.5rem",
-                  letterSpacing: "-0.04em",
-                  background:
-                    "linear-gradient(180deg, rgba(201,168,76,0.35) 0%, rgba(201,168,76,0.04) 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  fontSize:      "clamp(7rem, 20vw, 16rem)",
+                  lineHeight:    1,
+                  letterSpacing: "-0.06em",
+                  color:         "#EDE9E1",
+                  opacity:       0,
                 }}
                 aria-hidden="true"
               >
                 {step.number}
               </span>
 
-              {/* Icon */}
-              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-5">
-                <step.Icon className="w-4.5 h-4.5 text-[#C9A84C]" style={{ width: "1.125rem", height: "1.125rem" }} />
+              {/* Content grid: index — title + body */}
+              <div className="relative grid sm:grid-cols-[5rem_1fr] md:grid-cols-[8rem_1fr] gap-6 sm:gap-10 lg:gap-16 items-start">
+
+                {/* Step index */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.05 }}
+                  className="pt-1"
+                >
+                  <span style={{
+                    fontFamily:    INTER,
+                    fontSize:      "11px",
+                    fontWeight:    400,
+                    letterSpacing: "0.28em",
+                    textTransform: "uppercase",
+                    color:         "rgba(184,146,58,0.70)",
+                    display:       "block",
+                  }}>
+                    {step.number}
+                  </span>
+                </motion.div>
+
+                {/* Title + body */}
+                <div>
+                  <h3
+                    className="font-[var(--font-playfair)] font-black text-white mb-5"
+                    style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.5rem)", letterSpacing: "-0.025em", lineHeight: 0.95 }}
+                  >
+                    <LineReveal delay={0.1 + i * 0.04}>{step.title}</LineReveal>
+                  </h3>
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.9, delay: 0.22 + i * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                    style={{
+                      fontFamily:  INTER,
+                      fontSize:    "clamp(0.875rem, 1.5vw, 1rem)",
+                      lineHeight:  1.85,
+                      color:       "rgba(161,161,170,1)",
+                      maxWidth:    "38rem",
+                    }}
+                  >
+                    {step.body}
+                  </motion.p>
+                </div>
               </div>
 
-              {/* Copy */}
-              <h3
-                className="text-white font-bold mb-3"
-                style={{ fontSize: "1.0625rem", letterSpacing: "-0.01em" }}
-              >
-                {step.title}
-              </h3>
-              <p className="text-zinc-500 text-sm leading-relaxed">{step.body}</p>
-            </motion.div>
+              {/* Hover: gold accent wipes in from left */}
+              <div
+                className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full transition-all duration-700"
+                style={{ background: "rgba(184,146,58,0.18)" }}
+              />
+            </div>
           ))}
+
+          {/* Closing rule */}
+          <div className="border-t border-white/[0.06]" />
         </div>
 
       </div>
