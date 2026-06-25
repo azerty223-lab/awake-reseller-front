@@ -13,7 +13,7 @@ const faqs = [
   },
   {
     q: "How does the name personalization work?",
-    a: "Awakenings Festival personalizes tickets to a specific attendee. After your purchase, we initiate the official name change process through Awakenings' transfer system. You'll receive your personalized e-ticket at your email address, typically within 3–5 business days of purchase.",
+    a: "After your purchase, we handle the name change on your behalf. You will first receive a confirmation of your ticket purchase. Your personalised e-ticket will then be sent on July 8th, in line with the official Awakenings dispatch schedule.",
   },
   {
     q: "How are tickets delivered?",
@@ -25,7 +25,7 @@ const faqs = [
   },
   {
     q: "When will I receive my ticket?",
-    a: "The name transfer process typically takes 3–5 business days after payment is confirmed. You'll receive email updates at each stage. In most cases, tickets are delivered well before the festival. For urgent requests or last-minute purchases, contact us immediately.",
+    a: "E-tickets are dispatched on July 8th, two days before the festival opens — following the official Awakenings send-out schedule. After payment, you will immediately receive a confirmation of your purchase. Your personalised e-ticket follows on July 8th.",
   },
   {
     q: "How do I contact support?",
