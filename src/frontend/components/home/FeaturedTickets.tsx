@@ -166,42 +166,42 @@ export function FeaturedTickets() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="flex items-end justify-between mb-14"
+          className="mb-20"
         >
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
+          {/* "Available now" and "All tickets" on the same row */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
               <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
                 Available now
               </span>
             </div>
-            <h2
-              className="font-[var(--font-playfair)] font-black text-white"
-              style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.025em", lineHeight: 0.92 }}
+            <Link
+              href="/tickets"
+              className="hidden sm:flex items-center gap-2 group"
+              style={{
+                fontFamily:    INTER,
+                fontSize:      "12px",
+                fontWeight:    400,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color:         "rgba(237,233,225,0.55)",
+                transition:    "color 0.4s ease",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.55)")}
             >
-              <LineReveal>Top Picks</LineReveal>
-            </h2>
+              All tickets
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-300" />
+            </Link>
           </div>
 
-          <Link
-            href="/tickets"
-            className="hidden sm:flex items-center gap-2 group"
-            style={{
-              fontFamily:    INTER,
-              fontSize:      "12px",
-              fontWeight:    400,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color:         "rgba(237,233,225,0.55)",
-              transition:    "color 0.4s ease",
-              paddingBottom: "2px",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
-            onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.55)")}
+          <h2
+            className="font-[var(--font-playfair)] font-black text-white"
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.025em", lineHeight: 0.92 }}
           >
-            All tickets
-            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-300" />
-          </Link>
+            <LineReveal>Top Picks</LineReveal>
+          </h2>
         </motion.div>
 
         {/* Column headers */}

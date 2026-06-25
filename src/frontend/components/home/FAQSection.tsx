@@ -50,7 +50,7 @@ export function FAQSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-6"
+          className="mb-20"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
