@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
 import { Reveal } from "@/frontend/components/ui/Reveal";
 
@@ -16,16 +16,11 @@ const STATS = [
 const VERIFICATION = [
   {
     index: "01",
-    title: "Source Verification",
-    body:  "Every ticket listed is cross-referenced against the official Awakenings ticket registry before appearing on the platform.",
+    title: "Name Transfer",
+    body:  "After your purchase, we personally handle the official name-change process through Awakenings' transfer system — your ticket arrives personalised and ready for entry.",
   },
   {
     index: "02",
-    title: "Official Name Transfer",
-    body:  "We use Awakenings' own transfer infrastructure — the same process used by the festival's official partners — to personalize your ticket.",
-  },
-  {
-    index: "03",
     title: "Fraud Protection",
     body:  "Duplicate detection and real-time validation prevent counterfeit tickets from ever reaching buyers. Every sale is backed by our guarantee.",
   },
@@ -78,29 +73,6 @@ export function ResaleMarketplaceSection() {
               ticket is personalized, valid, and ready for entry.
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.35 }}
-              style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}
-            >
-              <div style={{
-                width:          "32px",
-                height:         "32px",
-                borderRadius:   "50%",
-                border:         "1px solid rgba(184,146,58,0.30)",
-                display:        "flex",
-                alignItems:     "center",
-                justifyContent: "center",
-                flexShrink:     0,
-              }}>
-                <ShieldCheck style={{ width: "15px", height: "15px", color: "rgba(184,146,58,0.65)" }} />
-              </div>
-              <span style={{ fontFamily: INTER, fontSize: "13px", color: "rgba(237,233,225,0.60)", letterSpacing: "0.01em" }}>
-                Official Awakenings ticket transfer partner
-              </span>
-            </motion.div>
           </div>
 
           {/* Right: stats grid */}
