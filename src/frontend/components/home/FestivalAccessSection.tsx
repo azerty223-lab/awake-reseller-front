@@ -3,84 +3,81 @@
 import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
 
 const PASSES = [
   {
     id:          "weekend",
     label:       "Weekend Pass",
+    index:       "01",
     title:       "3-Day Access",
-    dates:       "July 10–12",
+    dates:       "July 10 — 12",
     description: "The complete Awakenings experience. Three days across all six stages — from the Friday evening opening through Sunday's closing ceremony.",
     includes:    ["All 6+ stages", "Friday evening entry", "Saturday & Sunday full day", "Camping add-on available"],
     note:        "Recommended",
-    accent:      true,
   },
   {
     id:          "saturday",
     label:       "Saturday",
+    index:       "02",
     title:       "Day Access",
     dates:       "July 11",
     description: "The peak day. Maximum capacity with headline acts running across every stage simultaneously.",
     includes:    ["All active stages", "13:00 – 01:00", "Day wristband included"],
     note:        null,
-    accent:      false,
   },
   {
     id:          "sunday",
     label:       "Sunday",
+    index:       "03",
     title:       "Day Access",
     dates:       "July 12",
     description: "The closing day. Charlotte de Witte, Richie Hawtin, and the ceremonial final hours of the festival.",
     includes:    ["All active stages", "13:00 – 23:00", "Day wristband included"],
     note:        "Closing ceremony",
-    accent:      false,
   },
 ];
 
 const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 const SERIF = "var(--font-playfair)";
 
-// Position-based 3D transform for each card slot
-function getTransform(pos: number) {
-  if (pos === 0)  return { x: 0,    rotateY: 0,   scale: 1,    opacity: 1,    zIndex: 20 };
-  if (pos === -1) return { x: -252, rotateY: 16,  scale: 0.81, opacity: 0.44, zIndex: 10 };
-  if (pos === 1)  return { x: 252,  rotateY: -16, scale: 0.81, opacity: 0.44, zIndex: 10 };
-  return           { x: pos < 0 ? -700 : 700, rotateY: 0, scale: 0.5, opacity: 0, zIndex: 0 };
+function getSlotStyle(pos: number) {
+  if (pos === 0)  return { x: 0,    rotateY: 0,   scale: 1,    opacity: 1,    zIndex: 30, blur: 0 };
+  if (pos === -1) return { x: -310, rotateY: 22,  scale: 0.76, opacity: 0.28, zIndex: 10, blur: 2 };
+  if (pos === 1)  return { x: 310,  rotateY: -22, scale: 0.76, opacity: 0.28, zIndex: 10, blur: 2 };
+  return           { x: pos < 0 ? -800 : 800, rotateY: 0, scale: 0.5, opacity: 0, zIndex: 0, blur: 0 };
 }
 
 export function FestivalAccessSection() {
   const [active, setActive] = useState(0);
+  const [dir, setDir]       = useState<1 | -1>(1);
   const total = PASSES.length;
 
-  const prev = useCallback(() => setActive(a => Math.max(0, a - 1)), []);
-  const next = useCallback(() => setActive(a => Math.min(total - 1, a + 1)), [total]);
+  const go = useCallback((next: number) => {
+    setDir(next > active ? 1 : -1);
+    setActive(next);
+  }, [active]);
 
-  // Keyboard navigation
+  const prev = useCallback(() => { if (active > 0) go(active - 1); }, [active, go]);
+  const next = useCallback(() => { if (active < total - 1) go(active + 1); }, [active, total, go]);
+
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
+    const h = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft")  prev();
       if (e.key === "ArrowRight") next();
     };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
   }, [prev, next]);
 
-  // Touch / pointer swipe
-  let pointerStartX = 0;
-  const onPointerDown = (e: React.PointerEvent) => { pointerStartX = e.clientX; };
-  const onPointerUp   = (e: React.PointerEvent) => {
-    const delta = e.clientX - pointerStartX;
-    if (delta < -50) next();
-    if (delta >  50) prev();
-  };
+  let swipeStartX = 0;
 
   return (
     <section className="relative py-5 overflow-hidden">
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
-        {/* Header */}
+        {/* Section header */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -103,93 +100,135 @@ export function FestivalAccessSection() {
           </h2>
         </motion.div>
 
-        {/* ── 3D Carousel ─────────────────────────────────────────── */}
+        {/* ── Carousel ──────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.9, delay: 0.15 }}
+          transition={{ duration: 1.0, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Perspective wrapper — must NOT have overflow:hidden */}
-          <div style={{ perspective: "1100px", perspectiveOrigin: "50% 40%" }}>
-            {/* Clipping wrapper */}
+          {/* Stage */}
+          <div style={{ perspective: "900px", perspectiveOrigin: "50% 38%" }}>
             <div
-              style={{ position: "relative", height: "clamp(460px, 58vh, 520px)", overflow: "hidden" }}
-              onPointerDown={onPointerDown}
-              onPointerUp={onPointerUp}
+              style={{ position: "relative", height: "clamp(480px, 60vh, 540px)", overflow: "hidden" }}
+              onPointerDown={e => { swipeStartX = e.clientX; }}
+              onPointerUp={e => {
+                const d = e.clientX - swipeStartX;
+                if (d < -52) next();
+                if (d >  52) prev();
+              }}
             >
               {PASSES.map((pass, i) => {
-                const position = i - active;
-                const t = getTransform(position);
-                const isActive = position === 0;
+                const pos = i - active;
+                const s = getSlotStyle(pos);
+                const isActive = pos === 0;
 
                 return (
                   <motion.div
                     key={pass.id}
-                    animate={{ x: t.x, rotateY: t.rotateY, scale: t.scale, opacity: t.opacity, zIndex: t.zIndex }}
-                    transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], zIndex: { duration: 0 } }}
-                    onClick={() => { if (!isActive) position < 0 ? prev() : next(); }}
+                    animate={{
+                      x:       s.x,
+                      rotateY: s.rotateY,
+                      scale:   s.scale,
+                      opacity: s.opacity,
+                      zIndex:  s.zIndex,
+                      filter:  `blur(${s.blur}px)`,
+                    }}
+                    transition={{
+                      duration:                    0.72,
+                      ease:                        [0.16, 1, 0.3, 1],
+                      zIndex:                      { duration: 0 },
+                      filter:                      { duration: 0.4 },
+                    }}
+                    onClick={() => !isActive && (pos < 0 ? prev() : next())}
                     style={{
                       position:   "absolute",
                       top:        0,
                       left:       "50%",
-                      marginLeft: "-170px",
-                      width:      "340px",
+                      width:      "390px",
+                      marginLeft: "-195px",
                       height:     "100%",
                       cursor:     isActive ? "default" : "pointer",
                     }}
                   >
-                    {/* Card */}
+                    {/* ── Card ── */}
                     <div style={{
-                      width:        "100%",
-                      height:       "100%",
-                      background:   isActive
-                        ? "linear-gradient(160deg, rgba(16,13,9,1) 0%, rgba(9,9,12,1) 100%)"
-                        : "rgba(9,9,11,0.65)",
-                      border:       `1px solid ${isActive ? "rgba(184,146,58,0.32)" : "rgba(237,233,225,0.07)"}`,
-                      borderRadius: "3px",
-                      padding:      "2.25rem 2rem 2rem",
-                      display:      "flex",
-                      flexDirection: "column",
-                      boxShadow:    isActive
-                        ? "0 36px 90px rgba(0,0,0,0.72), 0 0 50px rgba(184,146,58,0.07)"
-                        : "0 8px 40px rgba(0,0,0,0.50)",
-                      position:     "relative",
-                      overflow:     "hidden",
-                      userSelect:   "none",
+                      width:           "100%",
+                      height:          "100%",
+                      position:        "relative",
+                      overflow:        "hidden",
+                      borderRadius:    "4px",
+                      border:          isActive
+                        ? "1px solid rgba(184,146,58,0.38)"
+                        : "1px solid rgba(237,233,225,0.06)",
+                      background:      isActive
+                        ? "linear-gradient(150deg, rgba(19,15,9,1) 0%, rgba(10,9,14,1) 100%)"
+                        : "rgba(8,8,11,0.70)",
+                      boxShadow:       isActive
+                        ? [
+                            "0 2px 0 0 rgba(184,146,58,0.18) inset",     // top inner glow
+                            "0 48px 100px rgba(0,0,0,0.80)",
+                            "0 8px 32px rgba(184,146,58,0.06)",
+                          ].join(", ")
+                        : "0 12px 48px rgba(0,0,0,0.55)",
+                      padding:         "2.5rem 2.25rem 2rem",
+                      display:         "flex",
+                      flexDirection:   "column",
+                      userSelect:      "none",
                     }}>
 
-                      {/* Gold gradient top line */}
+                      {/* Top gradient line */}
                       <div style={{
                         position:   "absolute",
                         top: 0, left: 0, right: 0,
                         height:     "1px",
                         background: isActive
-                          ? "linear-gradient(90deg, transparent 0%, rgba(184,146,58,0.70) 40%, rgba(184,146,58,0.70) 60%, transparent 100%)"
-                          : "rgba(237,233,225,0.06)",
+                          ? "linear-gradient(90deg, transparent, rgba(184,146,58,0.80) 35%, rgba(184,146,58,0.80) 65%, transparent)"
+                          : "rgba(237,233,225,0.05)",
                       }} />
 
-                      {/* Ambient radial glow — active only */}
+                      {/* Ambient top glow */}
                       {isActive && (
                         <div style={{
-                          position:       "absolute",
-                          top:            "-40%", left: "-10%",
-                          width:          "120%", height: "65%",
-                          background:     "radial-gradient(ellipse at 50% 0%, rgba(184,146,58,0.07), transparent 65%)",
-                          pointerEvents:  "none",
+                          position:   "absolute",
+                          top: "-60%", left: "-20%",
+                          width:      "140%",
+                          height:     "80%",
+                          background: "radial-gradient(ellipse at 50% 0%, rgba(184,146,58,0.09) 0%, transparent 60%)",
+                          pointerEvents: "none",
                         }} />
                       )}
+
+                      {/* Ghost index number — architectural texture */}
+                      <span
+                        aria-hidden="true"
+                        style={{
+                          position:      "absolute",
+                          bottom:        "-0.1em",
+                          right:         "-0.05em",
+                          fontFamily:    SERIF,
+                          fontWeight:    900,
+                          fontSize:      "clamp(6rem, 16vw, 10rem)",
+                          lineHeight:    1,
+                          letterSpacing: "-0.06em",
+                          color:         isActive ? "rgba(184,146,58,0.06)" : "rgba(237,233,225,0.03)",
+                          pointerEvents: "none",
+                          userSelect:    "none",
+                        }}
+                      >
+                        {pass.index}
+                      </span>
 
                       {/* Label */}
                       <span style={{
                         fontFamily:    INTER,
                         fontSize:      "9px",
                         fontWeight:    400,
-                        letterSpacing: "0.34em",
+                        letterSpacing: "0.36em",
                         textTransform: "uppercase",
-                        color:         pass.accent && isActive ? "rgba(184,146,58,0.65)" : "rgba(237,233,225,0.28)",
+                        color:         isActive ? "rgba(184,146,58,0.65)" : "rgba(237,233,225,0.22)",
                         display:       "block",
-                        marginBottom:  "0.625rem",
+                        marginBottom:  "0.75rem",
                       }}>
                         {pass.label}
                       </span>
@@ -198,37 +237,37 @@ export function FestivalAccessSection() {
                       <h3 style={{
                         fontFamily:    SERIF,
                         fontWeight:    900,
-                        fontSize:      "clamp(1.875rem, 5vw, 2.5rem)",
-                        letterSpacing: "-0.03em",
-                        lineHeight:    0.95,
-                        color:         isActive ? "rgba(237,233,225,0.96)" : "rgba(237,233,225,0.42)",
-                        marginBottom:  "0.375rem",
+                        fontSize:      "clamp(2rem, 5.5vw, 2.75rem)",
+                        letterSpacing: "-0.04em",
+                        lineHeight:    0.92,
+                        color:         isActive ? "rgba(237,233,225,0.96)" : "rgba(237,233,225,0.35)",
+                        marginBottom:  "0.5rem",
                       }}>
                         {pass.title}
                       </h3>
 
-                      {/* Date */}
+                      {/* Dates */}
                       <span style={{
                         fontFamily:    INTER,
-                        fontSize:      "10px",
-                        letterSpacing: "0.22em",
+                        fontSize:      "11px",
+                        letterSpacing: "0.20em",
                         textTransform: "uppercase",
-                        color:         "rgba(237,233,225,0.28)",
+                        color:         isActive ? "rgba(184,146,58,0.55)" : "rgba(237,233,225,0.18)",
                         display:       "block",
-                        marginBottom:  "1.5rem",
+                        marginBottom:  "1.75rem",
                       }}>
                         {pass.dates}
                       </span>
 
                       {/* Divider */}
-                      <div style={{ width: "100%", height: "1px", background: "rgba(237,233,225,0.06)", marginBottom: "1.5rem" }} />
+                      <div style={{ width: "100%", height: "1px", background: "rgba(237,233,225,0.07)", marginBottom: "1.5rem" }} />
 
                       {/* Description */}
                       <p style={{
                         fontFamily:   INTER,
                         fontSize:     "0.875rem",
-                        lineHeight:   1.75,
-                        color:        isActive ? "rgba(161,161,170,0.90)" : "rgba(161,161,170,0.35)",
+                        lineHeight:   1.8,
+                        color:        isActive ? "rgba(161,161,170,0.88)" : "rgba(161,161,170,0.28)",
                         marginBottom: "1.5rem",
                         flex:         1,
                       }}>
@@ -236,19 +275,19 @@ export function FestivalAccessSection() {
                       </p>
 
                       {/* Features */}
-                      <ul style={{ listStyle: "none", padding: 0, margin: 0, marginBottom: "1.75rem" }}>
-                        {pass.includes.map(feat => (
-                          <li key={feat} style={{
+                      <ul style={{ listStyle: "none", padding: 0, margin: 0, marginBottom: "2rem" }}>
+                        {pass.includes.map(f => (
+                          <li key={f} style={{
                             display:       "flex",
                             alignItems:    "baseline",
                             gap:           "0.75rem",
-                            paddingBottom: "0.4rem",
+                            paddingBottom: "0.45rem",
                             fontFamily:    INTER,
-                            fontSize:      "12px",
-                            color:         isActive ? "rgba(237,233,225,0.52)" : "rgba(237,233,225,0.18)",
+                            fontSize:      "13px",
+                            color:         isActive ? "rgba(237,233,225,0.52)" : "rgba(237,233,225,0.14)",
                           }}>
-                            <span style={{ color: isActive ? "rgba(184,146,58,0.50)" : "rgba(184,146,58,0.18)", flexShrink: 0 }}>—</span>
-                            {feat}
+                            <span style={{ color: isActive ? "rgba(184,146,58,0.55)" : "rgba(184,146,58,0.14)", flexShrink: 0 }}>—</span>
+                            {f}
                           </li>
                         ))}
                       </ul>
@@ -256,20 +295,18 @@ export function FestivalAccessSection() {
                       {/* Footer */}
                       {isActive && (
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                          {pass.note && (
-                            <span style={{ fontFamily: INTER, fontSize: "9px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(184,146,58,0.48)" }}>
-                              {pass.note}
-                            </span>
-                          )}
+                          <span style={{ fontFamily: INTER, fontSize: "9px", letterSpacing: "0.26em", textTransform: "uppercase", color: "rgba(184,146,58,0.45)" }}>
+                            {pass.note ?? ""}
+                          </span>
                           <Link
                             href="/tickets"
-                            className="group/lnk inline-flex items-center gap-2 ml-auto"
-                            style={{ fontFamily: INTER, fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(237,233,225,0.40)", transition: "color 0.3s ease" }}
-                            onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.85)")}
-                            onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.40)")}
+                            className="group/b inline-flex items-center gap-2"
+                            style={{ fontFamily: INTER, fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(237,233,225,0.42)", transition: "color 0.3s ease" }}
+                            onMouseEnter={e => (e.currentTarget.style.color = "rgba(184,146,58,0.90)")}
+                            onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.42)")}
                           >
-                            Browse
-                            <ArrowRight className="group-hover/lnk:translate-x-0.5 transition-transform duration-300" style={{ width: "10px", height: "10px" }} />
+                            Browse tickets
+                            <ArrowRight className="group-hover/b:translate-x-0.5 transition-transform duration-300" style={{ width: "10px", height: "10px" }} />
                           </Link>
                         </div>
                       )}
@@ -280,81 +317,100 @@ export function FestivalAccessSection() {
             </div>
           </div>
 
-          {/* ── Navigation ──────────────────────────────────── */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1.25rem", marginTop: "1.75rem" }}>
+          {/* ── Navigation bar ──────────────────────────── */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "2rem", paddingLeft: "0.25rem", paddingRight: "0.25rem" }}>
 
-            {/* Prev */}
-            <motion.button
-              onClick={prev}
-              disabled={active === 0}
-              whileHover={active > 0 ? { scale: 1.08 } : {}}
-              whileTap={active > 0 ? { scale: 0.94 } : {}}
-              style={{
-                width:           "42px", height: "42px",
-                borderRadius:    "50%",
-                border:          "1px solid rgba(237,233,225,0.14)",
-                background:      "rgba(237,233,225,0.03)",
-                display:         "flex", alignItems: "center", justifyContent: "center",
-                cursor:          active === 0 ? "not-allowed" : "pointer",
-                opacity:         active === 0 ? 0.28 : 1,
-                color:           "rgba(237,233,225,0.65)",
-                transition:      "border-color 0.3s ease, color 0.3s ease",
-                flexShrink:      0,
-              }}
-              onMouseEnter={e => { if (active > 0) { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(184,146,58,0.55)"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(184,146,58,0.90)"; } }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(237,233,225,0.14)"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(237,233,225,0.65)"; }}
+            {/* Pass name label */}
+            <motion.span
+              key={active}
+              initial={{ opacity: 0, x: dir * -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              style={{ fontFamily: INTER, fontSize: "0.875rem", fontWeight: 500, color: "rgba(237,233,225,0.55)", letterSpacing: "0.04em", minWidth: "120px" }}
             >
-              <ChevronLeft style={{ width: "16px", height: "16px" }} />
-            </motion.button>
+              {PASSES[active].label}
+            </motion.span>
 
-            {/* Indicator dots */}
-            {PASSES.map((_, i) => (
-              <motion.button
-                key={i}
-                onClick={() => setActive(i)}
-                animate={{ width: i === active ? "28px" : "6px", background: i === active ? "rgba(184,146,58,0.82)" : "rgba(237,233,225,0.22)" }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                style={{ height: "6px", borderRadius: "3px", border: "none", cursor: "pointer", padding: 0, flexShrink: 0 }}
+            {/* Arrows + counter */}
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              {/* Prev */}
+              <button
+                onClick={prev}
+                disabled={active === 0}
+                style={{
+                  width: "36px", height: "36px",
+                  borderRadius: "50%",
+                  border: "1px solid rgba(237,233,225,0.14)",
+                  background: "transparent",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: active === 0 ? "not-allowed" : "pointer",
+                  opacity: active === 0 ? 0.22 : 0.80,
+                  color: "rgba(237,233,225,0.80)",
+                  transition: "all 0.3s ease",
+                  fontSize: "16px",
+                  lineHeight: 1,
+                }}
+                onMouseEnter={e => { if (active > 0) { Object.assign((e.currentTarget as HTMLButtonElement).style, { borderColor: "rgba(184,146,58,0.55)", color: "rgba(184,146,58,1)", opacity: "1" }); } }}
+                onMouseLeave={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { borderColor: "rgba(237,233,225,0.14)", color: "rgba(237,233,225,0.80)", opacity: active === 0 ? "0.22" : "0.80" }); }}
+              >
+                ←
+              </button>
+
+              {/* Index counter */}
+              <span style={{ fontFamily: INTER, fontSize: "11px", letterSpacing: "0.18em", color: "rgba(237,233,225,0.30)", minWidth: "3.5rem", textAlign: "center" }}>
+                <motion.span
+                  key={active}
+                  initial={{ opacity: 0, y: dir * -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35 }}
+                  style={{ color: "rgba(237,233,225,0.75)", fontWeight: 500 }}
+                >
+                  {PASSES[active].index}
+                </motion.span>
+                {" / "}
+                {String(total).padStart(2, "0")}
+              </span>
+
+              {/* Next */}
+              <button
+                onClick={next}
+                disabled={active === total - 1}
+                style={{
+                  width: "36px", height: "36px",
+                  borderRadius: "50%",
+                  border: "1px solid rgba(237,233,225,0.14)",
+                  background: "transparent",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: active === total - 1 ? "not-allowed" : "pointer",
+                  opacity: active === total - 1 ? 0.22 : 0.80,
+                  color: "rgba(237,233,225,0.80)",
+                  transition: "all 0.3s ease",
+                  fontSize: "16px",
+                  lineHeight: 1,
+                }}
+                onMouseEnter={e => { if (active < total - 1) { Object.assign((e.currentTarget as HTMLButtonElement).style, { borderColor: "rgba(184,146,58,0.55)", color: "rgba(184,146,58,1)", opacity: "1" }); } }}
+                onMouseLeave={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { borderColor: "rgba(237,233,225,0.14)", color: "rgba(237,233,225,0.80)", opacity: active === total - 1 ? "0.22" : "0.80" }); }}
+              >
+                →
+              </button>
+            </div>
+
+            {/* Progress bar */}
+            <div style={{ width: "120px", height: "1px", background: "rgba(237,233,225,0.10)", position: "relative", overflow: "hidden" }}>
+              <motion.div
+                animate={{ width: `${((active + 1) / total) * 100}%` }}
+                transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                style={{ height: "100%", background: "rgba(184,146,58,0.65)", position: "absolute", left: 0, top: 0 }}
               />
-            ))}
-
-            {/* Next */}
-            <motion.button
-              onClick={next}
-              disabled={active === total - 1}
-              whileHover={active < total - 1 ? { scale: 1.08 } : {}}
-              whileTap={active < total - 1 ? { scale: 0.94 } : {}}
-              style={{
-                width:           "42px", height: "42px",
-                borderRadius:    "50%",
-                border:          "1px solid rgba(237,233,225,0.14)",
-                background:      "rgba(237,233,225,0.03)",
-                display:         "flex", alignItems: "center", justifyContent: "center",
-                cursor:          active === total - 1 ? "not-allowed" : "pointer",
-                opacity:         active === total - 1 ? 0.28 : 1,
-                color:           "rgba(237,233,225,0.65)",
-                transition:      "border-color 0.3s ease, color 0.3s ease",
-                flexShrink:      0,
-              }}
-              onMouseEnter={e => { if (active < total - 1) { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(184,146,58,0.55)"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(184,146,58,0.90)"; } }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(237,233,225,0.14)"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(237,233,225,0.65)"; }}
-            >
-              <ChevronRight style={{ width: "16px", height: "16px" }} />
-            </motion.button>
+            </div>
 
           </div>
         </motion.div>
 
         {/* Footnote */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          style={{ fontFamily: INTER, fontSize: "12px", color: "rgba(237,233,225,0.22)", marginTop: "1.5rem", letterSpacing: "0.02em", textAlign: "center" }}
-        >
+        <p style={{ fontFamily: INTER, fontSize: "11px", color: "rgba(237,233,225,0.20)", marginTop: "1.5rem", letterSpacing: "0.02em", textAlign: "center" }}>
           Camping tickets sold separately and must be paired with a festival pass.
-        </motion.p>
+        </p>
 
       </div>
     </section>
