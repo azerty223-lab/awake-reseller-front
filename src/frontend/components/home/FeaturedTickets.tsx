@@ -166,7 +166,7 @@ export function FeaturedTickets() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-20"
+          className="mb-5"
         >
           {/* "Available now" and "All tickets" on the same row */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>

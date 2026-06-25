@@ -13,7 +13,7 @@ const faqs = [
   },
   {
     q: "How does the name personalization work?",
-    a: "Awakenings Festival personalizes tickets to a specific attendee. After your purchase, we initiate the official name change process through Awakenings' transfer system. You'll receive your personalized e-ticket at your email address, typically within 3â€“5 business days of purchase.",
+    a: "Awakenings Festival personalizes tickets to a specific attendee. After your purchase, we initiate the official name change process through Awakenings' transfer system. You'll receive your personalized e-ticket at your email address, typically within 3–5 business days of purchase.",
   },
   {
     q: "How are tickets delivered?",
@@ -21,11 +21,11 @@ const faqs = [
   },
   {
     q: "What is your refund policy?",
-    a: "Due to the nature of festival tickets and the transfer process, all sales are final once the name change has been initiated. If the event is officially cancelled by the organizer, we will provide a full refund. For other circumstances, please contact us â€” we handle each case individually.",
+    a: "Due to the nature of festival tickets and the transfer process, all sales are final once the name change has been initiated. If the event is officially cancelled by the organizer, we will provide a full refund. For other circumstances, please contact us — we handle each case individually.",
   },
   {
     q: "When will I receive my ticket?",
-    a: "The name transfer process typically takes 3â€“5 business days after payment is confirmed. You'll receive email updates at each stage. In most cases, tickets are delivered well before the festival. For urgent requests or last-minute purchases, contact us immediately.",
+    a: "The name transfer process typically takes 3–5 business days after payment is confirmed. You'll receive email updates at each stage. In most cases, tickets are delivered well before the festival. For urgent requests or last-minute purchases, contact us immediately.",
   },
   {
     q: "How do I contact support?",
@@ -50,7 +50,7 @@ export function FAQSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-20"
+          className="mb-5"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
@@ -74,7 +74,7 @@ export function FAQSection() {
           </h2>
         </motion.div>
 
-        {/* Editorial accordion â€” no cards, just horizontal rules */}
+        {/* Editorial accordion — no cards, just horizontal rules */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

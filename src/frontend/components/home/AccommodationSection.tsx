@@ -20,7 +20,7 @@ const TIERS = [
       { label: "Site type",    value: "Personal tent space" },
       { label: "Facilities",  value: "Shared showers + WC" },
       { label: "Access",      value: "Festival + camping wristband" },
-      { label: "Duration",    value: "Thursday check-in â€” Monday checkout" },
+      { label: "Duration",    value: "Thursday check-in — Monday checkout" },
     ],
     note: "Bring your own tent",
   },
@@ -35,7 +35,7 @@ const TIERS = [
       { label: "Tent type",   value: "Pre-pitched bell tent" },
       { label: "Included",    value: "Beds, bedding, electricity" },
       { label: "Facilities",  value: "Upgraded shower block" },
-      { label: "Duration",    value: "Friday check-in â€” Monday checkout" },
+      { label: "Duration",    value: "Friday check-in — Monday checkout" },
     ],
     note: "Most popular upgrade",
   },
@@ -50,7 +50,7 @@ const TIERS = [
       { label: "Unit type",   value: "Private glamping pod" },
       { label: "Facilities",  value: "Private shower + WC, A/C" },
       { label: "Included",    value: "Concierge, welcome package" },
-      { label: "Duration",    value: "Friday check-in â€” Monday checkout" },
+      { label: "Duration",    value: "Friday check-in — Monday checkout" },
     ],
     note: "Limited availability",
   },
@@ -100,7 +100,7 @@ export function AccommodationSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-20"
+          className="mb-5"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
@@ -125,7 +125,7 @@ export function AccommodationSection() {
             key={tier.id}
             className="acc-row group relative border-t border-white/[0.06] py-12 sm:py-16"
           >
-            {/* Ghost number â€” GSAP scroll-scrubbed */}
+            {/* Ghost number — GSAP scroll-scrubbed */}
             <span
               className="acc-ghost absolute right-0 top-1/2 -translate-y-1/2 font-[var(--font-playfair)] font-black pointer-events-none select-none"
               style={{

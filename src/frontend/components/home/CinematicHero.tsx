@@ -63,9 +63,10 @@ export function CinematicHero() {
       style={{ height: "100vh", background: "#080808" }}
     >
 
-      {/* Video */}
+      {/* Video — poster shows immediately on all devices while video loads */}
       <video
-        autoPlay muted loop playsInline aria-hidden="true"
+        autoPlay muted loop playsInline preload="auto" aria-hidden="true"
+        poster="/festival-hero.png"
         className="absolute inset-0 w-full h-full object-cover"
         style={{ objectPosition: "center 28%", zIndex: 0 }}
       >

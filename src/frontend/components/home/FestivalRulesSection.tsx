@@ -52,7 +52,7 @@ export function FestivalRulesSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="mb-20"
+          className="mb-5"
         >
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "0.75rem" }}>
             <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
@@ -69,7 +69,7 @@ export function FestivalRulesSection() {
           </h2>
         </motion.div>
 
-        {/* Rules â€” two-column grid of editorial rows */}
+        {/* Rules — two-column grid of editorial rows */}
         <div className="grid grid-cols-1 lg:grid-cols-2" style={{ gap: "1px", background: "rgba(237,233,225,0.05)" }}>
           {RULES.map((rule, i) => (
             <Reveal key={rule.index} delay={0.04 + i * 0.05} direction="left" className="bg-[#050507] h-full">
