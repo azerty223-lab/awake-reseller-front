@@ -295,7 +295,7 @@ export function FestivalAccessSection() {
                         </span>
 
                         {/* Title */}
-                        <h3 style={{ fontFamily: SERIF, fontWeight: 900, fontSize: "clamp(2rem, 5.5vw, 2.75rem)", letterSpacing: "-0.04em", lineHeight: 0.92, color: isActive ? "rgba(237,233,225,0.96)" : "rgba(237,233,225,0.32)", marginBottom: "0.5rem" }}>
+                        <h3 style={{ fontFamily: INTER, fontWeight: 800, fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)", letterSpacing: "0.08em", lineHeight: 1, textTransform: "uppercase", color: isActive ? "rgba(237,233,225,0.96)" : "rgba(237,233,225,0.32)", marginBottom: "0.625rem" }}>
                           {pass.title}
                         </h3>
 
