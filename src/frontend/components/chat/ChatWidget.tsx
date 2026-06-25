@@ -347,7 +347,7 @@ export function ChatWidget() {
                 </button>
               </div>
               <p style={{ fontFamily: I, fontSize: "10px", color: "rgba(161,161,170,0.30)", textAlign: "center", marginTop: "0.5rem", marginBottom: 0 }}>
-                Powered by Claude AI · awtickets@outlook.com
+                awtickets@outlook.com
               </p>
             </div>
           </motion.div>

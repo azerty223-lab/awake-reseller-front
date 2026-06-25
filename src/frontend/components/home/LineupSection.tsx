@@ -498,20 +498,39 @@ function DayCard({
   const areaCount = LINEUP[day].length;
 
   return (
-    <button
+    <motion.button
       onClick={onClick}
       aria-pressed={isActive}
+      whileHover={!isActive ? { scale: 1.018, y: -4 } : { scale: 1.006 }}
+      whileTap={{ scale: 0.975 }}
+      transition={{ type: "spring", stiffness: 380, damping: 28 }}
       className={[
         "flex-1 relative text-left px-6 sm:px-8 py-6 sm:py-7 rounded-2xl border-2",
-        "transition-all duration-300 overflow-hidden group",
+        "overflow-hidden group",
         isActive
           ? "border-[#06B6D4] bg-[#06B6D4]/[0.08]"
-          : "border-white/[0.09] bg-white/[0.02] hover:border-white/[0.18] hover:bg-white/[0.04]",
+          : "border-white/[0.09] bg-white/[0.02] hover:border-white/[0.18] hover:bg-white/[0.04] transition-colors duration-300",
       ].join(" ")}
     >
-      {/* Active: subtle gold top rule */}
+      {/* Active: shimmer sweep (fires once on mount = once on selection) */}
       {isActive && (
-        <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#06B6D4]/60 to-transparent" />
+        <motion.div
+          initial={{ x: "-100%", opacity: 0 }}
+          animate={{ x: "200%", opacity: [0, 0.28, 0] }}
+          transition={{ duration: 1.1, delay: 0.05, ease: "easeInOut" }}
+          className="absolute inset-0 w-full pointer-events-none"
+          style={{ background: "linear-gradient(108deg, transparent 30%, rgba(6,182,212,0.18) 50%, transparent 70%)" }}
+        />
+      )}
+      {/* Active: top rule */}
+      {isActive && (
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#06B6D4]/60 to-transparent"
+          style={{ transformOrigin: "left" }}
+        />
       )}
 
       {/* Status label */}
@@ -567,7 +586,7 @@ function DayCard({
           {meta.timeRange}
         </span>
       </div>
-    </button>
+    </motion.button>
   );
 }
 
@@ -580,7 +599,7 @@ function isAfterMidnight(time: string) {
   return ["00:", "01:", "02:", "03:", "04:", "05:"].some(h => time.startsWith(h));
 }
 
-function StageSection({ area }: { area: Area }) {
+function StageSection({ area, index = 0 }: { area: Area; index?: number }) {
   const last     = area.slots.length - 1;
   const nearLast = last > 1 ? last - 1 : -1;
   const startT   = area.slots[0]?.time.split(" – ")[0] ?? "";
@@ -588,7 +607,12 @@ function StageSection({ area }: { area: Area }) {
   const isNight  = !!area.note; // "Camping After" etc.
 
   return (
-    <div className="mb-6">
+    <motion.div
+      className="mb-6"
+      initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{ duration: 0.5, delay: 0.06 + index * 0.045, ease: [0.16, 1, 0.3, 1] }}
+    >
 
       {/* ── Stage header ──────────────────────────────────────────── */}
       <div className="flex items-center gap-3 pb-3 mb-1 border-b border-white/[0.07]">
@@ -671,9 +695,48 @@ function StageSection({ area }: { area: Area }) {
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }
+
+// ── Shared animation variants ─────────────────────────────────────────────────
+
+const PAGE_VARIANTS = {
+  enter: (d: number) => ({
+    x: d * 72,
+    opacity: 0,
+    filter: "blur(10px)",
+    scale: 0.97,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    filter: "blur(0px)",
+    scale: 1,
+    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const },
+  },
+  exit: (d: number) => ({
+    x: -d * 56,
+    opacity: 0,
+    filter: "blur(8px)",
+    scale: 0.97,
+    transition: { duration: 0.26, ease: [0.4, 0, 1, 0.6] as const },
+  }),
+};
+
+const META_VARIANTS = {
+  enter: (d: number) => ({ opacity: 0, x: d * 32 }),
+  center: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.42, ease: [0.16, 1, 0.3, 1] as const },
+  },
+  exit: (d: number) => ({
+    opacity: 0,
+    x: -d * 22,
+    transition: { duration: 0.2, ease: [0.4, 0, 1, 0.6] as const },
+  }),
+};
 
 // ── Main section ──────────────────────────────────────────────────────────────
 
@@ -681,6 +744,7 @@ export function LineupSection() {
   const [activeDay,  setActiveDay]  = useState<DayKey>("Friday");
   const [activeArea, setActiveArea] = useState<string>("V");
   const [ytPlaying,  setYtPlaying]  = useState(false);
+  const [dir,        setDir]        = useState<1 | -1>(1);
 
   const shouldReduce  = useReducedMotion();
   const canvasRef     = useRef<HTMLCanvasElement>(null);
@@ -696,9 +760,11 @@ export function LineupSection() {
   const areas = LINEUP[activeDay];
 
   const handleDayChange = useCallback((day: DayKey) => {
+    const order: DayKey[] = ["Friday", "Saturday", "Sunday"];
+    setDir(order.indexOf(day) > order.indexOf(activeDay) ? 1 : -1);
     setActiveDay(day);
     setActiveArea(LINEUP[day][0].id);
-  }, []);
+  }, [activeDay]);
 
   const mobileArea = areas.find(a => a.id === activeArea) ?? areas[0];
 
@@ -840,13 +906,14 @@ export function LineupSection() {
           </motion.div>
 
           {/* ── Active day context bar ──────────────────────────────── */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait" custom={dir}>
             <motion.div
               key={activeDay + "-meta"}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              custom={dir}
+              variants={META_VARIANTS}
+              initial="enter"
+              animate="center"
+              exit="exit"
               className="flex items-baseline justify-between gap-4 mb-10 pb-6 border-b border-white/[0.06]"
             >
               <div>
@@ -869,18 +936,19 @@ export function LineupSection() {
 
           {/* ── DESKTOP: 2-column stage agenda ─────────────────────── */}
           {/* StageSection replaces AreaCard — no boxed cards, schedule lanes */}
-          <div className="hidden md:block">
-            <AnimatePresence>
+          <div className="hidden md:block overflow-hidden">
+            <AnimatePresence mode="wait" custom={dir}>
               <motion.div
                 key={activeDay}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.25 }}
+                custom={dir}
+                variants={PAGE_VARIANTS}
+                initial="enter"
+                animate="center"
+                exit="exit"
               >
                 <div className="grid grid-cols-2 gap-x-10 gap-y-0">
-                  {LINEUP[activeDay].map(area => (
-                    <StageSection key={area.id + activeDay} area={area} />
+                  {LINEUP[activeDay].map((area, i) => (
+                    <StageSection key={area.id + activeDay} area={area} index={i} />
                   ))}
                 </div>
               </motion.div>
@@ -916,13 +984,14 @@ export function LineupSection() {
             </div>
 
             {/* Selected area content */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" custom={dir}>
               <motion.div
                 key={activeDay + activeArea}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.2 }}
+                custom={dir}
+                variants={PAGE_VARIANTS}
+                initial="enter"
+                animate="center"
+                exit="exit"
               >
                 {/* Area header */}
                 <div className="flex items-center gap-3 mb-5">
