@@ -27,7 +27,6 @@ export function FestivalInfo() {
     <section className="relative py-5 overflow-hidden">
 
       {/* Top rule */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 

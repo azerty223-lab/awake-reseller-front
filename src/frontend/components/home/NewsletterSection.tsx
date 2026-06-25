@@ -121,7 +121,6 @@ export function NewsletterSection() {
 
   return (
     <section className="relative py-5 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-28 items-center">
@@ -148,7 +147,7 @@ export function NewsletterSection() {
             {/* Headline */}
             <h2
               className="font-[var(--font-playfair)] font-black text-white leading-[0.90] mb-8"
-              style={{ fontSize: "clamp(2.5rem, 5.5vw, 4.25rem)", letterSpacing: "-0.03em" }}
+              style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.03em" }}
             >
               <LineReveal>Early access.</LineReveal>
               <LineReveal delay={0.09}>

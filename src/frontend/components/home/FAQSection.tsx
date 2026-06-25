@@ -40,7 +40,6 @@ export function FAQSection() {
 
   return (
     <section id="faq" className="relative pt-5 pb-24 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-3xl mx-auto px-6 sm:px-12">
 
@@ -67,7 +66,7 @@ export function FAQSection() {
           </div>
           <h2
             className="font-[var(--font-playfair)] font-black text-white"
-            style={{ fontSize: "clamp(2.25rem, 5vw, 3.75rem)", letterSpacing: "-0.03em", lineHeight: 0.92 }}
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.03em", lineHeight: 0.92 }}
           >
             <LineReveal>Common</LineReveal>
             <LineReveal delay={0.09}>questions</LineReveal>

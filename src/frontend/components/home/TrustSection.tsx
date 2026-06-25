@@ -38,7 +38,6 @@ const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 export function TrustSection() {
   return (
     <section className="relative py-5 overflow-hidden bg-transparent">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
         <div className="grid lg:grid-cols-[1fr_1.4fr] gap-16 lg:gap-24 items-start">
