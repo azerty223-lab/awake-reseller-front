@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 
@@ -130,7 +130,7 @@ export function CinematicHero() {
                 display:       "block",
                 fontFamily:    I,
                 fontWeight:    800,
-                fontSize:      "clamp(3.25rem, 9.5vw, 8.5rem)",
+                fontSize:      "clamp(2.25rem, 6vw, 5.25rem)",
                 lineHeight:    0.92,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
@@ -139,35 +139,6 @@ export function CinematicHero() {
                 Awakenings
               </span>
             </motion.h1>
-          </div>
-
-          {/* Subtitle row */}
-          <div style={{ overflow: "hidden", marginBottom: "clamp(1.5rem, 3.5vw, 3rem)" }}>
-            <motion.div {...reveal(0.48)} style={{ display: "flex", alignItems: "baseline", gap: "clamp(1rem, 2.5vw, 2rem)", flexWrap: "wrap" }}>
-              <span style={{
-                fontFamily:    I,
-                fontWeight:    700,
-                fontSize:      "clamp(1rem, 2.4vw, 2.1rem)",
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color:         G,
-                lineHeight:    1,
-              }}>
-                Festival
-              </span>
-              <span style={{ width: "1px", height: "clamp(1rem, 2vw, 1.5rem)", background: "rgba(237,233,225,0.18)", flexShrink: 0, alignSelf: "center" }} />
-              <span style={{
-                fontFamily:    I,
-                fontWeight:    500,
-                fontSize:      "clamp(1rem, 2.4vw, 2.1rem)",
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color:         "rgba(237,233,225,0.55)",
-                lineHeight:    1,
-              }}>
-                2026
-              </span>
-            </motion.div>
           </div>
 
           {/* Meta strip */}
@@ -195,59 +166,41 @@ export function CinematicHero() {
               gap:            "2rem",
             }}
           >
-            {/* Countdown */}
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 0 }}>
-              {units.map(({ val, label }, i) => (
-                <Fragment key={label}>
-                  <div style={{
-                    display:       "flex",
-                    flexDirection: "column",
-                    alignItems:    "flex-start",
-                    paddingLeft:   i === 0 ? 0 : "clamp(1.1rem, 2.5vw, 2rem)",
-                    paddingRight:  i === 3 ? 0 : "clamp(1.1rem, 2.5vw, 2rem)",
+            {/* Countdown — inline editorial format: 15D  01H  13M  03S */}
+            <div style={{ display: "flex", alignItems: "baseline", gap: "clamp(1.5rem, 3.5vw, 3rem)" }}>
+              {units.map(({ val, label }) => (
+                <motion.span
+                  key={label}
+                  style={{ display: "inline-flex", alignItems: "baseline", gap: "3px" }}
+                >
+                  <motion.span
+                    key={val}
+                    initial={{ opacity: 0.25, y: -3 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    style={{
+                      fontFamily:         I,
+                      fontWeight:         600,
+                      fontSize:           "clamp(1.625rem, 3.5vw, 2.875rem)",
+                      lineHeight:         1,
+                      letterSpacing:      "0.02em",
+                      color:              W,
+                      fontVariantNumeric: "tabular-nums",
+                    }}
+                  >
+                    {String(val).padStart(2, "0")}
+                  </motion.span>
+                  <span style={{
+                    fontFamily:    I,
+                    fontWeight:    400,
+                    fontSize:      "clamp(0.75rem, 1.4vw, 1.05rem)",
+                    letterSpacing: "0.04em",
+                    color:         G,
+                    lineHeight:    1,
                   }}>
-                    {/* Animated digit */}
-                    <motion.span
-                      key={val}
-                      initial={{ opacity: 0.2, y: -4 }}
-                      animate={{ opacity: 1,   y: 0  }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      style={{
-                        fontFamily:         I,
-                        fontWeight:         700,
-                        fontSize:           "clamp(2.5rem, 6vw, 5rem)",
-                        lineHeight:         1,
-                        letterSpacing:      "0.06em",
-                        color:              W,
-                        fontVariantNumeric: "tabular-nums",
-                        display:            "block",
-                      }}
-                    >
-                      {String(val).padStart(2, "0")}
-                    </motion.span>
-                    {/* Label */}
-                    <span style={{
-                      fontFamily:    I,
-                      fontWeight:    500,
-                      fontSize:      "9px",
-                      letterSpacing: "0.32em",
-                      textTransform: "uppercase",
-                      color:         `rgba(184,146,58,0.70)`,
-                      marginTop:     "8px",
-                      display:       "block",
-                    }}>
-                      {label}
-                    </span>
-                  </div>
-                  {i < 3 && (
-                    <div style={{
-                      width:      "1px",
-                      height:     "clamp(2.5rem, 6vw, 5rem)",
-                      background: "rgba(237,233,225,0.12)",
-                      flexShrink: 0,
-                    }} />
-                  )}
-                </Fragment>
+                    {label.charAt(0)}
+                  </span>
+                </motion.span>
               ))}
             </div>
 
