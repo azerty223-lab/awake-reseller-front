@@ -253,12 +253,21 @@ export function FestivalAccessSection() {
                     <div style={{
                       width: "100%", height: "100%",
                       position: "relative", overflow: "hidden",
-                      borderRadius: "4px",
-                      border: `1px solid ${isActive ? "rgba(6,182,212,0.35)" : "rgba(237,233,225,0.06)"}`,
-                      background: "#0b090d",
+                      borderRadius: "20px",
+                      border: isActive
+                        ? "1.5px solid rgba(6,182,212,0.55)"
+                        : "1px solid rgba(237,233,225,0.09)",
+                      background: isActive
+                        ? "linear-gradient(160deg, rgba(6,182,212,0.05) 0%, #0b090d 35%)"
+                        : "#0b090d",
                       boxShadow: isActive
-                        ? "0 2px 0 0 rgba(6,182,212,0.16) inset, 0 48px 100px rgba(0,0,0,0.82), 0 6px 30px rgba(0,0,0,0.60)"
-                        : "0 12px 48px rgba(0,0,0,0.55)",
+                        ? [
+                            "0 0 0 1px rgba(6,182,212,0.12)",
+                            "0 0 40px rgba(6,182,212,0.10)",
+                            "0 48px 100px rgba(0,0,0,0.85)",
+                            "0 8px 32px rgba(0,0,0,0.60)",
+                          ].join(", ")
+                        : "0 8px 40px rgba(0,0,0,0.50)",
                       padding: "2.5rem 2.25rem 2rem",
                       display: "flex", flexDirection: "column",
                       userSelect: "none",
