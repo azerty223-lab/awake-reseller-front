@@ -7,85 +7,93 @@ import { LineReveal } from "@/frontend/components/ui/LineReveal";
 
 const INTER = "var(--font-inter, Inter, system-ui, sans-serif)";
 
-/** Minimal radar / signal illustration — editorial, on-brand for a broadcast/inbox theme */
-function SignalIllustration() {
+const NOTIFICATIONS = [
+  { tag: "New listing",  subject: "Weekend Pass — 3-Day Access",  time: "just now" },
+  { tag: "Price alert",  subject: "Sunday Access — updated price", time: "2h ago"   },
+  { tag: "Early access", subject: "Comfort Camping available",     time: "1d ago"   },
+];
+
+function InboxPreview() {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.92 }}
-      whileInView={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-      style={{ marginBottom: "2rem" }}
+      transition={{ duration: 1.0, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
       aria-hidden="true"
+      style={{
+        marginBottom:  "2rem",
+        border:        "1px solid rgba(237,233,225,0.08)",
+        borderRadius:  "2px",
+        overflow:      "hidden",
+      }}
     >
-      <svg
-        width="72"
-        height="72"
-        viewBox="0 0 72 72"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Outer ring */}
-        <circle cx="36" cy="36" r="34" stroke="rgba(184,146,58,0.14)" strokeWidth="0.5" />
-
-        {/* Middle ring */}
-        <motion.circle
-          cx="36" cy="36" r="22"
-          stroke="rgba(184,146,58,0.28)"
-          strokeWidth="0.5"
-          initial={{ pathLength: 0 }}
-          whileInView={{ pathLength: 1 }}
+      {NOTIFICATIONS.map((n, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, x: -8 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.6, delay: 0.2, ease: "easeOut" }}
-        />
+          transition={{ duration: 0.7, delay: 0.2 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            display:       "flex",
+            alignItems:    "center",
+            gap:           "12px",
+            padding:       "11px 16px",
+            borderBottom:  i < 2 ? "1px solid rgba(237,233,225,0.05)" : "none",
+            background:    i === 0 ? "rgba(184,146,58,0.04)" : "transparent",
+            opacity:       1 - i * 0.22,
+          }}
+        >
+          {/* Status dot */}
+          <div style={{
+            width:        i === 0 ? "6px" : "5px",
+            height:       i === 0 ? "6px" : "5px",
+            borderRadius: "50%",
+            background:   i === 0 ? "rgba(184,146,58,0.80)" : "rgba(237,233,225,0.20)",
+            flexShrink:   0,
+          }} />
 
-        {/* Inner ring */}
-        <circle cx="36" cy="36" r="10" stroke="rgba(237,233,225,0.18)" strokeWidth="0.5" />
+          {/* Tag + subject */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <span style={{
+              fontFamily:    INTER,
+              fontSize:      "9px",
+              fontWeight:    600,
+              letterSpacing: "0.20em",
+              textTransform: "uppercase",
+              color:         "rgba(184,146,58,0.55)",
+              display:       "block",
+              marginBottom:  "2px",
+            }}>
+              {n.tag}
+            </span>
+            <span style={{
+              fontFamily:    INTER,
+              fontSize:      "12px",
+              fontWeight:    400,
+              color:         "rgba(237,233,225,0.70)",
+              display:       "block",
+              overflow:      "hidden",
+              textOverflow:  "ellipsis",
+              whiteSpace:    "nowrap",
+            }}>
+              {n.subject}
+            </span>
+          </div>
 
-        {/* Cross-hair lines */}
-        <line x1="2"  y1="36" x2="70" y2="36" stroke="rgba(237,233,225,0.06)" strokeWidth="0.5" />
-        <line x1="36" y1="2"  x2="36" y2="70" stroke="rgba(237,233,225,0.06)" strokeWidth="0.5" />
-
-        {/* Compass tick marks */}
-        <line x1="36" y1="2"  x2="36" y2="8"  stroke="rgba(184,146,58,0.55)" strokeWidth="1" />
-        <line x1="36" y1="64" x2="36" y2="70" stroke="rgba(184,146,58,0.55)" strokeWidth="1" />
-        <line x1="2"  y1="36" x2="8"  y2="36" stroke="rgba(184,146,58,0.55)" strokeWidth="1" />
-        <line x1="64" y1="36" x2="70" y2="36" stroke="rgba(184,146,58,0.55)" strokeWidth="1" />
-
-        {/* Diagonal ticks */}
-        <line x1="11" y1="11" x2="15" y2="15" stroke="rgba(237,233,225,0.12)" strokeWidth="0.5" />
-        <line x1="57" y1="57" x2="61" y2="61" stroke="rgba(237,233,225,0.12)" strokeWidth="0.5" />
-        <line x1="57" y1="11" x2="61" y2="15" stroke="rgba(237,233,225,0.12)" strokeWidth="0.5" />
-        <line x1="11" y1="57" x2="15" y2="61" stroke="rgba(237,233,225,0.12)" strokeWidth="0.5" />
-
-        {/* Center dot — gold */}
-        <circle cx="36" cy="36" r="2.5" fill="rgba(184,146,58,0.75)" />
-        <circle cx="36" cy="36" r="1"   fill="rgba(237,233,225,0.90)" />
-
-        {/* Signal arc — top-right quadrant, pulsing */}
-        <motion.path
-          d="M 46 26 A 14 14 0 0 1 46 46"
-          stroke="rgba(184,146,58,0.45)"
-          strokeWidth="1"
-          fill="none"
-          strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          whileInView={{ pathLength: 1, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        />
-        <motion.path
-          d="M 52 20 A 22 22 0 0 1 52 52"
-          stroke="rgba(184,146,58,0.22)"
-          strokeWidth="0.75"
-          fill="none"
-          strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          whileInView={{ pathLength: 1, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.1, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-        />
-      </svg>
+          {/* Time */}
+          <span style={{
+            fontFamily:    INTER,
+            fontSize:      "10px",
+            color:         "rgba(237,233,225,0.22)",
+            flexShrink:    0,
+            letterSpacing: "0.04em",
+          }}>
+            {n.time}
+          </span>
+        </motion.div>
+      ))}
     </motion.div>
   );
 }
@@ -120,16 +128,13 @@ export function NewsletterSection() {
 
           {/* Left: copy */}
           <div>
-            {/* Illustration */}
-            <SignalIllustration />
-
             {/* Eyebrow */}
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9 }}
-              style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.75rem" }}
+              style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "1.25rem" }}
             >
               <span style={{ width: "16px", height: "1px", background: "rgba(184,146,58,0.45)", flexShrink: 0 }} />
               <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
@@ -137,6 +142,10 @@ export function NewsletterSection() {
               </span>
             </motion.div>
 
+            {/* Inbox preview — sits under the label */}
+            <InboxPreview />
+
+            {/* Headline */}
             <h2
               className="font-[var(--font-playfair)] font-black text-white leading-[0.90] mb-8"
               style={{ fontSize: "clamp(2.5rem, 5.5vw, 4.25rem)", letterSpacing: "-0.03em" }}
@@ -152,12 +161,7 @@ export function NewsletterSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              style={{
-                fontFamily: INTER,
-                fontSize:   "clamp(0.875rem, 1.5vw, 1rem)",
-                lineHeight: 1.85,
-                color:      "rgba(161,161,170,1)",
-              }}
+              style={{ fontFamily: INTER, fontSize: "clamp(0.875rem, 1.5vw, 1rem)", lineHeight: 1.85, color: "rgba(161,161,170,1)" }}
             >
               New ticket listings, price changes, and sale alerts — straight
               to your inbox. Join 2,400+ people already subscribed.
@@ -209,7 +213,6 @@ export function NewsletterSection() {
                   <span style={{ fontFamily: INTER, fontSize: "11px", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(237,233,225,0.40)" }}>
                     Unsubscribe anytime
                   </span>
-
                   <button
                     type="submit"
                     disabled={status === "loading"}
@@ -231,10 +234,7 @@ export function NewsletterSection() {
                     onMouseLeave={e => { if (status !== "loading") (e.currentTarget as HTMLButtonElement).style.color = "rgba(237,233,225,0.80)"; }}
                   >
                     {status === "loading" ? "Subscribing" : "Subscribe"}
-                    <ArrowRight
-                      className="group-hover:translate-x-0.5 transition-transform duration-300"
-                      style={{ width: "10px", height: "10px" }}
-                    />
+                    <ArrowRight className="group-hover:translate-x-0.5 transition-transform duration-300" style={{ width: "10px", height: "10px" }} />
                   </button>
                 </div>
 
