@@ -636,7 +636,7 @@ function StageSection({ area, index = 0 }: { area: Area; index?: number }) {
         )}
 
         {/* Set count + time range — pushed right */}
-        <span className="ml-auto text-[10px] font-mono tabular-nums text-zinc-700 shrink-0">
+        <span className="ml-auto text-[10px] font-mono tabular-nums text-zinc-500 shrink-0">
           {area.slots.length} sets&nbsp;·&nbsp;{startT}–{endT}
         </span>
       </div>
@@ -662,7 +662,7 @@ function StageSection({ area, index = 0 }: { area: Area; index?: number }) {
               {/* Start time */}
               <span className={[
                 "shrink-0 w-10 text-[11px] tabular-nums font-mono leading-none",
-                isLate ? "text-[#06B6D4]/45" : "text-zinc-700",
+                isLate ? "text-[#06B6D4]/75" : "text-zinc-400",
               ].join(" ")}>
                 {sT}
               </span>
@@ -688,7 +688,7 @@ function StageSection({ area, index = 0 }: { area: Area; index?: number }) {
               )}
 
               {/* End time */}
-              <span className="shrink-0 text-[10px] tabular-nums font-mono text-zinc-800 leading-none">
+              <span className="shrink-0 text-[10px] tabular-nums font-mono text-zinc-500 leading-none">
                 {eT}
               </span>
             </div>
@@ -1027,7 +1027,7 @@ export function LineupSection() {
                       >
                         <span className={[
                           "shrink-0 w-11 text-[11px] tabular-nums font-mono",
-                          isLate ? "text-[#06B6D4]/45" : "text-zinc-700",
+                          isLate ? "text-[#06B6D4]/75" : "text-zinc-400",
                         ].join(" ")}>
                           {sT}
                         </span>
@@ -1040,7 +1040,7 @@ export function LineupSection() {
                           {slot.artist}
                         </span>
                         {isLast && <span className="shrink-0 w-1 h-1 rounded-full bg-[#06B6D4]/60" aria-hidden="true" />}
-                        <span className="shrink-0 text-[10px] tabular-nums font-mono text-zinc-800">
+                        <span className="shrink-0 text-[10px] tabular-nums font-mono text-zinc-500">
                           {eT}
                         </span>
                       </div>
