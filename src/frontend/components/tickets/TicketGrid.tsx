@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, X, ArrowUpDown, ChevronDown } from "lucide-react";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { Search, X, ArrowUpDown, ChevronDown, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { TicketCard } from "./TicketCard";
 import { TicketCategory, type Ticket } from "@/frontend/types/tickets";
@@ -45,6 +45,19 @@ export function TicketGrid({ tickets }: TicketGridProps) {
   const [category, setCategory] = useState("ALL");
   const [sort, setSort]         = useState("price-asc");
   const [query, setQuery]       = useState("");
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef                 = useRef<HTMLDivElement>(null);
+
+  // Close sort dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const visible = useMemo(
     () => tickets.filter((t) => t.isVisible),
@@ -173,22 +186,35 @@ export function TicketGrid({ tickets }: TicketGridProps) {
 
           <div className="w-px h-4 bg-white/[0.07] shrink-0" />
 
-          {/* Sort — no border, reads as a low-profile text control */}
-          <div className="relative flex items-center gap-1 group cursor-pointer shrink-0">
-            <ArrowUpDown className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 pointer-events-none" />
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="appearance-none bg-transparent text-xs text-zinc-500 group-hover:text-zinc-300 pr-3.5 py-1 focus:outline-none cursor-pointer transition-colors"
-              style={{ colorScheme: "dark" }}
+          {/* Sort — custom dropdown, no native OS chrome */}
+          <div className="relative shrink-0" ref={sortRef}>
+            <button
+              onClick={() => setSortOpen(v => !v)}
+              className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-200 transition-colors py-1 select-none"
             >
-              {SORT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-zinc-900 text-zinc-200">
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-700 pointer-events-none" />
+              <ArrowUpDown className="w-3 h-3 shrink-0" />
+              <span>{activeSortLabel}</span>
+              <ChevronDown className={`w-3 h-3 shrink-0 transition-transform duration-150 ${sortOpen ? "rotate-180" : ""}`} />
+            </button>
+            {sortOpen && (
+              <div className="absolute right-0 top-full mt-1.5 z-30 min-w-[176px] rounded-xl border border-white/[0.10] py-1 shadow-2xl"
+                style={{ background: "#0C0D10" }}>
+                {SORT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => { setSort(opt.value); setSortOpen(false); }}
+                    className={[
+                      "w-full text-left px-3.5 py-2 text-xs transition-colors duration-100",
+                      sort === opt.value
+                        ? "text-[#06B6D4] bg-[#06B6D4]/[0.06]"
+                        : "text-zinc-400 hover:text-white hover:bg-white/[0.04]",
+                    ].join(" ")}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex-1" />
@@ -207,6 +233,20 @@ export function TicketGrid({ tickets }: TicketGridProps) {
             </button>
           )}
         </div>
+      </div>
+
+      {/* ── Trust strip ──────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mb-7 px-0.5">
+        <span className="flex items-center gap-1.5 text-[11px] text-zinc-500">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#00A0B6] shrink-0" strokeWidth={1.75} />
+          Tickets purchased directly from Awakenings.nl
+        </span>
+        <span className="hidden sm:block w-px h-3 bg-white/[0.07]" />
+        <span className="text-[11px] text-zinc-500">Official name transfer included</span>
+        <span className="hidden sm:block w-px h-3 bg-white/[0.07]" />
+        <span className="text-[11px] text-zinc-500">Delivered July 8, 2026</span>
+        <span className="hidden sm:block w-px h-3 bg-white/[0.07]" />
+        <span className="text-[11px] text-zinc-500">Secure checkout via Stripe</span>
       </div>
 
       {/* ── Grid / Empty state ───────────────────────────────────── */}

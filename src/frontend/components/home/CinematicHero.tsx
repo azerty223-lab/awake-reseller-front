@@ -154,6 +154,33 @@ export function CinematicHero() {
             </div>
           </motion.div>
 
+          {/* ── Trust chips ───────────────────────────────────────── */}
+          <motion.div
+            {...fade(0.72, 0.9)}
+            style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "clamp(1.25rem, 2.5vw, 2rem)" }}
+          >
+            {[
+              "Purchased from Awakenings.nl",
+              "Official name transfer",
+              "Tickets delivered July 8",
+              "Stripe secure checkout",
+            ].map(chip => (
+              <span
+                key={chip}
+                style={{
+                  fontFamily: I, fontSize: "10px", fontWeight: 600,
+                  letterSpacing: "0.10em", textTransform: "uppercase",
+                  color: "rgba(237,233,225,0.50)",
+                  border: "1px solid rgba(237,233,225,0.10)",
+                  padding: "5px 10px", borderRadius: "4px",
+                  background: "rgba(237,233,225,0.03)",
+                }}
+              >
+                {chip}
+              </span>
+            ))}
+          </motion.div>
+
           {/* ── Action strip: countdown + CTA ─────────────────────── */}
           <motion.div
             {...up(0.82)}

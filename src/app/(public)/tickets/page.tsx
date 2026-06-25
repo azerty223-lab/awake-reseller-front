@@ -34,19 +34,33 @@ export default async function TicketsPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050507] via-[#050507]/50 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-[#06B6D4] font-semibold mb-3">
-            Available Now
+          <div className="text-[10px] uppercase tracking-[0.2em] text-[#00A0B6] font-bold mb-3">
+            Private Verified Resale
           </div>
-          <h1 className="font-[var(--font-playfair)] text-5xl sm:text-6xl font-black text-white mb-3">
+          <h1 className="font-[var(--font-playfair)] text-5xl sm:text-6xl font-black text-white mb-4">
             Ticket Marketplace
           </h1>
-          <p className="text-zinc-500 text-sm max-w-lg">
-            Verified resale tickets for Awakenings Festival 2026 — July 10–12 at Hilvarenbeek.
+          {/* Seller legitimacy statement — most important trust signal on this page */}
+          <p className="text-zinc-400 text-sm max-w-md leading-relaxed mb-5">
+            All tickets purchased directly from the official Awakenings website.
+            Private resale — name transfers handled through the official Awakenings process.
           </p>
-          <div className="flex items-center gap-4 mt-4 text-zinc-600 text-xs">
-            <span className="flex items-center gap-1.5">📅 July 10–12, 2026</span>
-            <span>·</span>
-            <span className="flex items-center gap-1.5">📍 Hilvarenbeek</span>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {[
+              { icon: "✓", text: "From Awakenings.nl" },
+              { icon: "✓", text: "Official transfer" },
+              { icon: "✓", text: "July 10–12 · Hilvarenbeek" },
+              { icon: "✓", text: "Stripe checkout" },
+            ].map(({ icon, text }) => (
+              <span
+                key={text}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold"
+                style={{ background: "rgba(0,160,182,0.08)", border: "1px solid rgba(0,160,182,0.20)", color: "rgba(0,160,182,0.85)" }}
+              >
+                <span style={{ color: "#00A0B6" }}>{icon}</span>
+                {text}
+              </span>
+            ))}
           </div>
         </div>
       </div>

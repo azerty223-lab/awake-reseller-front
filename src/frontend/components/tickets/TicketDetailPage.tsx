@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, Check, ShoppingCart, Shield,
-  Truck, Edit3, Tag, Clock, Minus, Plus,
+  Truck, Edit3, Tag, Clock, Minus, Plus, BadgeCheck,
 } from "lucide-react";
 import { Badge } from "@/frontend/components/ui/Badge";
 import { Button } from "@/frontend/components/ui/Button";
@@ -66,7 +66,7 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-10 px-4">
+    <div className="min-h-screen bg-[#030305] py-10 px-4">
       <div className="max-w-5xl mx-auto">
 
         <Link
@@ -272,18 +272,19 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
                 Or checkout now
               </Link>
 
-              {/* Trust signals — zinc-500: must be readable.
-                  At zinc-700, these signals are effectively invisible.
-                  An unreadable trust signal provides zero confidence reduction.
-                  The cost of misplaced anxiety at checkout is cart abandonment. */}
-              <div className="mt-5 pt-4 border-t border-white/[0.05] space-y-2">
+              {/* Trust signals */}
+              <div className="mt-5 pt-4 border-t border-white/[0.05] space-y-2.5">
                 <div className="flex items-center gap-2.5 text-zinc-500">
-                  <Shield className="w-3.5 h-3.5 shrink-0" />
-                  <span className="text-xs">Secure payment via Stripe</span>
+                  <BadgeCheck className="w-3.5 h-3.5 shrink-0 text-[#00A0B6]" strokeWidth={1.75} />
+                  <span className="text-xs">Purchased directly from Awakenings.nl</span>
                 </div>
                 <div className="flex items-center gap-2.5 text-zinc-500">
                   <Clock className="w-3.5 h-3.5 shrink-0" />
-                  <span className="text-xs">Name transfer within 3–5 business days</span>
+                  <span className="text-xs">E-ticket delivered <strong className="text-zinc-300 font-semibold">July 8, 2026</strong></span>
+                </div>
+                <div className="flex items-center gap-2.5 text-zinc-500">
+                  <Shield className="w-3.5 h-3.5 shrink-0" />
+                  <span className="text-xs">Secure payment via Stripe</span>
                 </div>
               </div>
             </div>

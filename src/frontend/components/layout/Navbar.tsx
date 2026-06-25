@@ -44,13 +44,27 @@ export function Navbar({ onCartOpen }: NavbarProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-0 group">
-              <span className="bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] bg-clip-text text-transparent font-black text-xl tracking-widest">
-                AW
-              </span>
-              <span className="text-white font-bold text-xl tracking-widest">
-                TICKETS
-              </span>
+            <Link href="/" className="flex items-center gap-3 group shrink-0">
+              <img
+                src="/brand/awtickets-mark.svg"
+                alt=""
+                aria-hidden="true"
+                style={{ height: "34px", width: "auto" }}
+              />
+              <div className="leading-none">
+                <span
+                  className="block font-black text-white/90"
+                  style={{ fontSize: "14px", letterSpacing: "0.18em" }}
+                >
+                  AW TICKETS
+                </span>
+                <span
+                  className="block font-bold"
+                  style={{ fontSize: "8px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#00A0B6", marginTop: "3px" }}
+                >
+                  Verified Festival Resale
+                </span>
+              </div>
             </Link>
 
             {/* Desktop Nav */}

@@ -1,0 +1,12 @@
+<svg width="240" height="180" viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">AW Tickets mark</title>
+  <desc id="desc">Centered AW monogram inside a ticket shape.</desc>
+  <g transform="translate(25 25)">
+    <path d="M11 24C11 16.268 17.268 10 25 10H166C173.732 10 180 16.268 180 24V116C180 123.732 173.732 130 166 130H25C17.268 130 11 123.732 11 116V94C22.598 94 32 84.598 32 73C32 61.402 22.598 52 11 52V24Z" fill="#202124"/>
+    <path d="M137 10V130" stroke="#F4EFE6" stroke-width="3" stroke-dasharray="7 8"/>
+    <g transform="translate(-18 0)">
+      <path d="M43 104L70.5 33H88.5L116 104H97.5L91.5 87.5H67.5L61.5 104H43ZM72.1 73.8H86.9L79.5 53.1L72.1 73.8Z" fill="#F4EFE6"/>
+      <path d="M91 33H107.5L117 76.5L130 33H145L158 76.5L167.5 33H184L166 104H150.5L137.5 60.5L124.5 104H109L91 33Z" fill="#F4EFE6"/>
+    </g>
+  </g>
+</svg>

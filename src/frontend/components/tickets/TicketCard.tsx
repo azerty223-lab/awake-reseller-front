@@ -108,7 +108,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
       {/* ── Body ─────────────────────────────────────────────── */}
       <div className="flex flex-col flex-1 px-5 pt-5 pb-4">
 
-        {/* Row: category badge + personalization status */}
+        {/* Row: category badge + social proof / personalization status */}
         <div className="flex items-center justify-between mb-4">
           <span
             className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full leading-none ${cat.cls}`}
@@ -121,7 +121,15 @@ export function TicketCard({ ticket }: TicketCardProps) {
             />
             {cat.label}
           </span>
-          {ticket.personalizationStatus === PersonalizationStatus.COMPLETED && isAvail && (
+          {/* Social proof: sold count signals demand without being pushy */}
+          {ticket.sold >= 2 ? (
+            <span
+              className="flex items-center gap-1 shrink-0 select-none"
+              style={{ fontFamily: I, fontSize: "10px", fontWeight: 600, letterSpacing: "0.04em", color: "rgba(161,161,170,0.50)" }}
+            >
+              {ticket.sold} sold
+            </span>
+          ) : ticket.personalizationStatus === PersonalizationStatus.COMPLETED && isAvail ? (
             <span
               className="flex items-center gap-1 shrink-0 select-none"
               style={{ fontFamily: I, fontSize: "10px", fontWeight: 600, color: "rgba(52,211,153,0.75)" }}
@@ -129,7 +137,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
               <Check className="w-2.5 h-2.5" aria-hidden="true" />
               Ready
             </span>
-          )}
+          ) : null}
         </div>
 
         {/* Name block — min-height anchors price Y-position across grid */}
