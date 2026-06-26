@@ -1,51 +1,42 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { ShoppingCart, Check, ShieldCheck } from "lucide-react";
+import { useRouter }   from "next/navigation";
+import { ShoppingCart, Check } from "lucide-react";
 import { useCartStore } from "@/frontend/store/cart";
-import { formatPrice } from "@/backend/lib/utils";
-import {
-  DeliveryMethod,
-  PersonalizationStatus,
-  TicketCategory,
-  type Ticket,
-} from "@/frontend/types/tickets";
+import { formatPrice }  from "@/backend/lib/utils";
+import { TicketCategory, type Ticket } from "@/frontend/types/tickets";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion }    from "framer-motion";
 
-/* ── Category registry ──────────────────────────────────────────────
-   The dot and label text are the only places category colour appears.
-   No card borders, no gradients, no full-width accents.             */
-type Cat = { label: string; r: number; g: number; b: number };
+/* ── 3-colour palette ───────────────────────────────────────────────
+   #FFFFFF / #EDEDED  →  primary text  (name, price)
+   rgba(161,161,170,…) →  secondary text (date, labels, face value)
+   #06B6D4             →  brand accent  (CTA button + in-cart only)
 
-const CATS: Partial<Record<TicketCategory, Cat>> = {
-  [TicketCategory.WEEKEND]:         { label: "Weekend Pass",   r: 139, g: 92,  b: 246 },
-  [TicketCategory.SATURDAY]:        { label: "Saturday",       r: 59,  g: 130, b: 246 },
-  [TicketCategory.SUNDAY]:          { label: "Sunday",         r: 6,   g: 182, b: 212 },
-  [TicketCategory.CAMPING]:         { label: "Camping",        r: 16,  g: 185, b: 129 },
-  [TicketCategory.COMFORT_CAMPING]: { label: "Comfort Camp",   r: 20,  g: 184, b: 166 },
-  [TicketCategory.CAR_CAMPING]:     { label: "Car Camping",    r: 16,  g: 185, b: 129 },
-  [TicketCategory.PREMIUM]:         { label: "Premium",        r: 245, g: 158, b: 11  },
-  [TicketCategory.ACCOMMODATION]:   { label: "Accommodation",  r: 244, g: 63,  b: 94  },
+   Status is communicated through weight and opacity, not extra hues. */
+
+const MUTED   = "rgba(161,161,170,0.52)";
+const MUTED_2 = "rgba(113,113,122,0.45)";
+const CYAN    = "#06B6D4";
+const CYAN_HV = "#22D3EE";
+const F       = "var(--font-inter, Inter, system-ui, sans-serif)";
+
+/* ── Category labels (text only — no per-category colours) ────────── */
+const CAT_LABELS: Partial<Record<TicketCategory, string>> = {
+  [TicketCategory.WEEKEND]:         "Weekend Pass",
+  [TicketCategory.SATURDAY]:        "Saturday",
+  [TicketCategory.SUNDAY]:          "Sunday",
+  [TicketCategory.CAMPING]:         "Camping",
+  [TicketCategory.COMFORT_CAMPING]: "Comfort Camp",
+  [TicketCategory.CAR_CAMPING]:     "Car Camping",
+  [TicketCategory.PREMIUM]:         "Premium",
+  [TicketCategory.ACCOMMODATION]:   "Accommodation",
 };
 
-function getCat(c: TicketCategory): Cat {
-  return CATS[c] ?? { label: String(c).replace(/_/g, " "), r: 113, g: 113, b: 122 };
-}
+const catLabel = (c: TicketCategory) =>
+  CAT_LABELS[c] ?? String(c).replace(/_/g, " ");
 
-/* ── Delivery copy ──────────────────────────────────────────────── */
-function getDeliveryLabel(m: DeliveryMethod): { text: string; warn: boolean } {
-  switch (m) {
-    case DeliveryMethod.DIGITAL:     return { text: "Digital e-ticket",  warn: false };
-    case DeliveryMethod.PHYSICAL:    return { text: "Physical delivery", warn: false };
-    case DeliveryMethod.NAME_CHANGE: return { text: "Name transfer req.", warn: true  };
-    default:                         return { text: "Digital e-ticket",  warn: false };
-  }
-}
-
-const F = "var(--font-inter, Inter, system-ui, sans-serif)";
-
-/* ── Component ──────────────────────────────────────────────────── */
+/* ── Component ──────────────────────────────────────────────────────── */
 export function TicketCard({ ticket }: { ticket: Ticket }) {
   const router  = useRouter();
   const addItem = useCartStore(s => s.addItem);
@@ -53,30 +44,25 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
   const [added,   setAdded]   = useState(false);
   const [hovered, setHovered] = useState(false);
 
-  const inCart     = !!items.find(i => i.ticketId === ticket.id);
-  const available  = ticket.quantity - ticket.sold;
-  const isAvail    = available > 0 && ticket.isVisible;
-  const isLow      = isAvail && available <= 3;
-  const isLast     = isAvail && available === 1;
-  const savings    = ticket.originalPrice - ticket.resalePrice;
-  const savePct    = ticket.originalPrice > 0
+  const inCart    = !!items.find(i => i.ticketId === ticket.id);
+  const available = ticket.quantity - ticket.sold;
+  const isAvail   = available > 0 && ticket.isVisible;
+  const isLow     = isAvail && available <= 3;
+  const isLast    = isAvail && available === 1;
+  const savings   = ticket.originalPrice - ticket.resalePrice;
+  const savePct   = ticket.originalPrice > 0
     ? Math.round((savings / ticket.originalPrice) * 100) : 0;
   const hasSavings = savings > 0 && isAvail;
 
-  const { r, g, b, label: catLabel } = getCat(ticket.category);
-  const delivery = getDeliveryLabel(ticket.deliveryMethod);
-  const ca = (a: number) => `rgba(${r},${g},${b},${a})`;
-
   /* Navigation */
   const go = () => router.push(`/tickets/${ticket.slug}`);
-  const intercepted = (e: React.MouseEvent, fn?: () => void) => {
+  const trap = (e: React.MouseEvent, fn?: () => void) => {
     e.stopPropagation();
     fn?.();
   };
 
-  /* Add to cart */
   const handleAdd = (e: React.MouseEvent) => {
-    intercepted(e);
+    trap(e);
     if (!isAvail || inCart) return;
     addItem({
       ticketId: ticket.id, name: ticket.name, slug: ticket.slug,
@@ -88,7 +74,20 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
     setTimeout(() => setAdded(false), 2400);
   };
 
-  /* CTA style — function so TypeScript is happy with the union */
+  /* ── Availability text ───────────────────────────────────────────
+     Low-stock urgency is expressed through white + bold weight, not
+     through a separate hue. Only in-cart uses the brand cyan.      */
+  const avail = (() => {
+    if (inCart)    return { text: "In cart",            color: CYAN,    bold: true  };
+    if (!isAvail)  return { text: "Sold out",           color: MUTED_2, bold: false };
+    if (isLast)    return { text: "Last ticket",        color: "#EDEDED",bold: true  };
+    if (isLow)     return { text: `${available} left`,  color: "#EDEDED",bold: true  };
+    return               { text: `${available} avail.`, color: MUTED_2, bold: false };
+  })();
+
+  /* ── CTA style ───────────────────────────────────────────────────
+     Solid cyan for "Add to cart" — the single dominant accent on
+     the card. All other states stay within neutral/white/cyan.     */
   const ctaStyle = (): React.CSSProperties => {
     const base: React.CSSProperties = {
       fontFamily: F, fontSize: "12.5px", fontWeight: 600,
@@ -97,39 +96,30 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
     };
     if (added) return {
       ...base,
-      background: "rgba(52,211,153,0.09)",
-      border:     "1px solid rgba(52,211,153,0.20)",
-      color:      "rgba(52,211,153,0.90)",
+      background: "rgba(255,255,255,0.06)",
+      border: "1px solid rgba(255,255,255,0.10)",
+      color: "rgba(237,233,225,0.80)",
     };
     if (inCart) return {
       ...base,
-      background: "rgba(6,182,212,0.08)",
-      border:     "1px solid rgba(6,182,212,0.18)",
-      color:      "rgba(6,182,212,0.85)",
+      background: `rgba(6,182,212,0.10)`,
+      border: `1px solid rgba(6,182,212,0.22)`,
+      color: CYAN,
     };
     if (isAvail) return {
       ...base,
-      background: hovered ? "#22D3EE" : "#06B6D4",
-      color:      "#030305",
-      boxShadow:  hovered ? "0 2px 14px rgba(6,182,212,0.22)" : "none",
+      background: hovered ? CYAN_HV : CYAN,
+      color: "#020204",
+      boxShadow: hovered ? "0 2px 14px rgba(6,182,212,0.22)" : "none",
     };
     return {
       ...base,
       background: "rgba(255,255,255,0.04)",
-      border:     "1px solid rgba(255,255,255,0.07)",
-      color:      "rgba(113,113,122,0.40)",
+      border: "1px solid rgba(255,255,255,0.07)",
+      color: "rgba(113,113,122,0.38)",
       fontWeight: 500,
     };
   };
-
-  /* Availability text + colour */
-  const avail = (() => {
-    if (!isAvail) return { text: "Sold out",         color: "rgba(113,113,122,0.60)", bold: false };
-    if (isLast)   return { text: "Last ticket",      color: "rgba(239,68,68,0.82)",   bold: true  };
-    if (isLow)    return { text: `${available} left`, color: "rgba(234,179,8,0.82)",  bold: true  };
-    if (inCart)   return { text: "In cart",           color: "rgba(6,182,212,0.85)",  bold: true  };
-    return              { text: `${available} avail.`, color: "rgba(113,113,122,0.50)", bold: false };
-  })();
 
   return (
     <motion.article
@@ -141,180 +131,109 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
       aria-label={`${ticket.name}, ${formatPrice(ticket.resalePrice, ticket.currency)}${!isAvail ? ", sold out" : ""}`}
       className="relative flex flex-col overflow-hidden cursor-pointer select-none"
       style={{
-        background:    hovered ? "#18191E" : "#141418",
-        border:        "1px solid rgba(255,255,255,0.08)",
-        borderRadius:  "12px",
-        boxShadow:     hovered && isAvail
-          ? "0 8px 28px rgba(0,0,0,0.48), 0 2px 8px rgba(0,0,0,0.22)"
+        background:   hovered ? "#18191E" : "#141418",
+        border:       "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "12px",
+        boxShadow:    hovered && isAvail
+          ? "0 8px 28px rgba(0,0,0,0.50), 0 2px 8px rgba(0,0,0,0.22)"
           : "0 1px 4px rgba(0,0,0,0.20)",
-        opacity:       !isAvail ? 0.50 : 1,
-        transition:    "background 0.18s ease, box-shadow 0.18s ease",
+        opacity:      !isAvail ? 0.50 : 1,
+        transition:   "background 0.18s ease, box-shadow 0.18s ease",
       }}
     >
 
-      {/* ── HEADER ROW ────────────────────────────────────────────
-          Category label (dot + small-caps text) on the left.
-          Availability plain text on the right.
-          No badges, no chips, no chrome.                        */}
+      {/* ── HEADER — category type + availability ───────────────────
+          Both elements use the same muted type scale. Availability
+          breaks to bold white (or cyan for in-cart) when it matters.  */}
       <div className="flex items-center justify-between px-5 pt-4 pb-3">
+        <span style={{
+          fontFamily: F, fontSize: "9.5px", fontWeight: 700,
+          letterSpacing: "0.08em", textTransform: "uppercase" as const,
+          color: MUTED,
+        }}>
+          {catLabel(ticket.category)}
+        </span>
 
-        {/* Category: 6px dot + small-caps label */}
-        <div className="flex items-center gap-1.5 min-w-0">
-          <span
-            aria-hidden="true"
-            className="shrink-0 rounded-full"
-            style={{ width: "6px", height: "6px", background: ca(0.80) }}
-          />
-          <span
-            className="truncate"
-            style={{
-              fontFamily: F, fontSize: "9.5px", fontWeight: 700,
-              letterSpacing: "0.08em", textTransform: "uppercase" as const,
-              color: ca(0.72),
-            }}
-          >
-            {catLabel}
-          </span>
-        </div>
-
-        {/* Availability: plain text, no badge wrapper */}
-        <span
-          style={{
-            fontFamily: F, fontSize: "11px",
-            fontWeight: avail.bold ? 600 : 400,
-            color: avail.color,
-            whiteSpace: "nowrap" as const,
-          }}
-        >
-          {inCart ? (
-            <>
-              <Check
-                className="inline w-3 h-3 mr-0.5 -mt-px"
-                aria-hidden="true"
-                strokeWidth={2.5}
-              />
-              In cart
-            </>
-          ) : (
-            avail.text
+        <span style={{
+          fontFamily: F, fontSize: "11px",
+          fontWeight: avail.bold ? 600 : 400,
+          color: avail.color,
+          whiteSpace: "nowrap" as const,
+        }}>
+          {inCart && (
+            <Check className="inline w-3 h-3 mr-0.5 -mt-px shrink-0"
+              strokeWidth={2.5} aria-hidden="true" />
           )}
+          {avail.text}
         </span>
       </div>
 
-      {/* ── BODY ──────────────────────────────────────────────────
-          Name → date → price → metadata.
-          Each element anchored and consistently spaced.         */}
+      {/* ── BODY — name, date, price ─────────────────────────────────
+          Three lines: bold white name → muted date → bold white price.
+          Face value sits right-aligned on the same row as the price.  */}
       <div className="px-5 pb-4">
 
-        {/* Ticket name */}
-        <h3
-          style={{
-            fontFamily: F, fontSize: "15px", fontWeight: 600,
-            color: "#EDEDEE", letterSpacing: "-0.012em", lineHeight: 1.28,
-            margin: "0 0 3px",
-          }}
-        >
+        {/* Name */}
+        <h3 style={{
+          fontFamily: F, fontSize: "15px", fontWeight: 600,
+          color: "#EDEDED", letterSpacing: "-0.012em", lineHeight: 1.28,
+          margin: "0 0 3px",
+        }}>
           {ticket.name}
         </h3>
 
-        {/* Date / day label */}
-        <p
-          style={{
-            fontFamily: F, fontSize: "12px",
-            color: "rgba(161,161,170,0.52)",
-            margin: "0 0 16px", lineHeight: 1.4,
-            /* Reserve space even when empty so all cards align */
-            minHeight: "17px",
-          }}
-        >
+        {/* Date */}
+        <p style={{
+          fontFamily: F, fontSize: "12px", color: MUTED,
+          margin: "0 0 16px", minHeight: "17px",
+        }}>
           {ticket.dayLabel ?? ""}
         </p>
 
-        {/* Price + face value — baseline-aligned */}
-        <div className="flex items-baseline justify-between gap-4 mb-1">
-          <span
-            style={{
-              fontFamily: F, fontSize: "1.375rem", fontWeight: 700,
-              color: "#FFFFFF", letterSpacing: "-0.028em", lineHeight: 1,
-            }}
-          >
+        {/* Price + face value on one baseline */}
+        <div className="flex items-baseline justify-between gap-3">
+          <span style={{
+            fontFamily: F, fontSize: "1.375rem", fontWeight: 700,
+            color: "#FFFFFF", letterSpacing: "-0.028em", lineHeight: 1,
+          }}>
             {formatPrice(ticket.resalePrice, ticket.currency)}
           </span>
-          <span
-            className="shrink-0"
-            style={{
-              fontFamily: F, fontSize: "11.5px",
-              color: "rgba(113,113,122,0.50)",
-              textDecoration: "line-through",
-            }}
-          >
+
+          <span style={{
+            fontFamily: F, fontSize: "11.5px",
+            color: MUTED_2, textDecoration: "line-through",
+          }}>
             {formatPrice(ticket.originalPrice, ticket.currency)}
             {" "}
-            <span
-              style={{
-                textDecoration: "none",
-                fontSize: "9.5px",
-                color: "rgba(113,113,122,0.34)",
-                textTransform: "uppercase" as const,
-                letterSpacing: "0.04em",
-              }}
-            >
+            <span style={{
+              textDecoration: "none", fontSize: "9.5px",
+              color: "rgba(113,113,122,0.30)",
+              textTransform: "uppercase" as const, letterSpacing: "0.04em",
+            }}>
               face
             </span>
           </span>
         </div>
 
-        {/* Savings pill — only when resale genuinely below face */}
+        {/* Savings — neutral tint, same white family, no green */}
         {hasSavings && (
-          <div className="mb-3 mt-2">
-            <span
-              style={{
-                fontFamily: F, fontSize: "10.5px", fontWeight: 600,
-                color: "rgba(52,211,153,0.85)",
-                background: "rgba(52,211,153,0.07)",
-                border: "1px solid rgba(52,211,153,0.14)",
-                borderRadius: "4px", padding: "2px 7px",
-              }}
-            >
+          <div className="mt-2.5">
+            <span style={{
+              fontFamily: F, fontSize: "10.5px", fontWeight: 600,
+              color: "rgba(237,233,225,0.68)",
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.09)",
+              borderRadius: "4px", padding: "2px 7px",
+            }}>
               −{savePct}% below face value
             </span>
           </div>
         )}
-
-        {/* Meta row: delivery · verified */}
-        <div
-          className="flex items-center gap-2 mt-3"
-          style={{ fontFamily: F, fontSize: "11px" }}
-        >
-          <span
-            style={{
-              color: delivery.warn
-                ? "rgba(234,179,8,0.68)"
-                : "rgba(113,113,122,0.50)",
-            }}
-          >
-            {delivery.text}
-          </span>
-          <span
-            aria-hidden="true"
-            style={{ color: "rgba(63,63,70,0.40)", userSelect: "none" as const }}
-          >
-            ·
-          </span>
-          <span
-            className="inline-flex items-center gap-1"
-            style={{ color: "rgba(6,182,212,0.55)" }}
-          >
-            <ShieldCheck className="w-3 h-3 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-            Verified source
-          </span>
-        </div>
       </div>
 
-      {/* ── FOOTER ────────────────────────────────────────────────
-          Add to cart (flex-1) + "View details" text link.
-          Hairline top-border and a barely-there dark fill
-          signal "here is where you act" without a loud zone.   */}
+      {/* ── FOOTER — add to cart + view details ─────────────────────
+          The CTA is the only cyan element. "View details" is muted
+          text that reveals itself on hover — no competing chrome.  */}
       <div
         className="flex items-center gap-3 px-5 py-3"
         style={{
@@ -322,7 +241,6 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
           background: "rgba(0,0,0,0.16)",
         }}
       >
-        {/* Primary */}
         <motion.button
           onClick={handleAdd}
           disabled={!isAvail}
@@ -339,20 +257,19 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
           {added    ? <><Check        className="w-3 h-3 shrink-0" aria-hidden="true" /> Added</>
           : inCart  ? <><ShoppingCart className="w-3 h-3 shrink-0" aria-hidden="true" /> In cart</>
           : isAvail ? <><ShoppingCart className="w-3 h-3 shrink-0" aria-hidden="true" /> Add to cart</>
-          : "Sold out"}
+          :           "Sold out"}
         </motion.button>
 
-        {/* Secondary — plain text link */}
         <button
-          onClick={(e) => intercepted(e, go)}
+          onClick={(e) => trap(e, go)}
           style={{
             fontFamily: F, fontSize: "12px", fontWeight: 500,
-            color: hovered ? "rgba(237,233,225,0.68)" : "rgba(113,113,122,0.48)",
+            color: hovered ? "rgba(237,233,225,0.65)" : "rgba(113,113,122,0.42)",
             background: "transparent", border: "none",
             cursor: "pointer", padding: "0 2px",
             textDecoration: hovered ? "underline" : "none",
             textUnderlineOffset: "3px",
-            textDecorationColor: "rgba(237,233,225,0.25)",
+            textDecorationColor: "rgba(237,233,225,0.22)",
             transition: "color 0.15s ease",
             whiteSpace: "nowrap" as const,
           }}
