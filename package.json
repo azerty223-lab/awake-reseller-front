@@ -10,6 +10,9 @@
     "lint": "eslint",
     "workers": "jiti src/backend/payments/queues/worker-boot.ts"
   },
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "prisma": {
     "seed": "jiti prisma/seed.ts"
   },
