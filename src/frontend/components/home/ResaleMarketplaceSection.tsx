@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import {
+  ArrowRight, CheckCircle2, Star,
+  Ticket, ShieldCheck, PackageCheck,
+  ClipboardCheck, UserCheck, Mail,
+  type LucideIcon,
+} from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
 import { NameTransferModal } from "@/frontend/components/home/NameTransferModal";
 
@@ -16,19 +21,22 @@ const PROTECTIONS = [
 ];
 
 /* ── Process steps ────────────────────────────────────────────── */
-const STEPS = [
+const STEPS: Array<{ num: string; Icon: LucideIcon; title: string; body: string }> = [
   {
     num:   "1",
+    Icon:  ClipboardCheck,
     title: "Order review",
     body:  "We check the resale order and ticket details before beginning the transfer.",
   },
   {
     num:   "2",
+    Icon:  UserCheck,
     title: "Name transfer",
     body:  "The ticket is transferred through the authorized process so it is issued in the buyer's name.",
   },
   {
     num:   "3",
+    Icon:  Mail,
     title: "Delivery",
     body:  "The personalized e-ticket is sent by email before the festival, ready to present at the gate.",
   },
@@ -37,11 +45,11 @@ const STEPS = [
 const I = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 /* ── Trust stats ──────────────────────────────────────────────── */
-const STATS = [
-  { value: "200+",  label: "Tickets sold"   },
-  { value: "4.9★",  label: "Avg. rating"    },
-  { value: "0",     label: "Disputes"       },
-  { value: "100%",  label: "Delivery rate"  },
+const STATS: Array<{ value: string; label: string; Icon: LucideIcon }> = [
+  { value: "200+", label: "Tickets sold",  Icon: Ticket        },
+  { value: "4.9",  label: "Avg. rating",   Icon: Star          },
+  { value: "0",    label: "Disputes",      Icon: ShieldCheck   },
+  { value: "100%", label: "Delivery rate", Icon: PackageCheck  },
 ];
 
 /* ── Reviews ──────────────────────────────────────────────────── */
@@ -75,14 +83,16 @@ const REVIEWS = [
 
 function StarRating({ count }: { count: number }) {
   return (
-    <span style={{ display: "inline-flex", gap: "2px" }}>
+    <span style={{ display: "inline-flex", gap: "2px" }} aria-label={`${count} out of 5 stars`}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} width="11" height="11" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-            fill={i < count ? "#F59E0B" : "rgba(255,255,255,0.10)"}
-          />
-        </svg>
+        <Star
+          key={i}
+          size={11}
+          strokeWidth={i < count ? 0 : 1.25}
+          fill={i < count ? "#F59E0B" : "rgba(255,255,255,0.08)"}
+          color={i < count ? "#F59E0B" : "rgba(255,255,255,0.15)"}
+          aria-hidden="true"
+        />
       ))}
     </span>
   );
@@ -271,8 +281,14 @@ export function ResaleMarketplaceSection() {
             flexWrap:       "wrap",
             gap:            "clamp(1rem, 3vw, 2rem)",
           }}>
-            {STATS.map(({ value, label }) => (
-              <div key={label} style={{ textAlign: "center", flex: "1 1 60px" }}>
+            {STATS.map(({ value, label, Icon }) => (
+              <div key={label} style={{ textAlign: "center", flex: "1 1 60px", display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+                <Icon
+                  size={16}
+                  strokeWidth={1.5}
+                  style={{ color: "rgba(6,182,212,0.55)" }}
+                  aria-hidden="true"
+                />
                 <span style={{
                   display:       "block",
                   fontFamily:    I,
@@ -281,7 +297,6 @@ export function ResaleMarketplaceSection() {
                   color:         "#EDE9E1",
                   letterSpacing: "-0.01em",
                   lineHeight:    1,
-                  marginBottom:  "5px",
                 }}>
                   {value}
                 </span>
@@ -455,9 +470,9 @@ export function ResaleMarketplaceSection() {
                 <div key={step.num} className="flex md:flex-col gap-4 md:gap-0 items-start md:items-center">
 
                   {/* Mobile node + connector */}
-                  <div className="flex md:hidden flex-col items-center shrink-0" style={{ width: "26px" }}>
-                    <div style={{ width: "26px", height: "26px", borderRadius: "50%", border: "1.5px solid rgba(6,182,212,0.38)", background: "rgba(6,182,212,0.07)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
-                      <span style={{ fontFamily: I, fontSize: "9.5px", fontWeight: 700, color: "rgba(6,182,212,0.75)" }}>{step.num}</span>
+                  <div className="flex md:hidden flex-col items-center shrink-0" style={{ width: "30px" }}>
+                    <div style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1.5px solid rgba(6,182,212,0.38)", background: "rgba(6,182,212,0.07)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
+                      <step.Icon size={13} strokeWidth={1.75} color="rgba(6,182,212,0.80)" aria-hidden="true" />
                     </div>
                     {i < STEPS.length - 1 && (
                       <div style={{ width: "1px", flex: 1, minHeight: "2rem", margin: "4px 0", background: "linear-gradient(to bottom, rgba(6,182,212,0.18), rgba(6,182,212,0.03))" }} />
@@ -466,8 +481,8 @@ export function ResaleMarketplaceSection() {
 
                   {/* Desktop node */}
                   <div className="hidden md:flex flex-col items-center mb-4 relative z-10">
-                    <div style={{ width: "26px", height: "26px", borderRadius: "50%", border: "1.5px solid rgba(6,182,212,0.38)", background: "rgba(6,182,212,0.07)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <span style={{ fontFamily: I, fontSize: "9.5px", fontWeight: 700, color: "rgba(6,182,212,0.75)" }}>{step.num}</span>
+                    <div style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1.5px solid rgba(6,182,212,0.38)", background: "rgba(6,182,212,0.07)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <step.Icon size={13} strokeWidth={1.75} color="rgba(6,182,212,0.80)" aria-hidden="true" />
                     </div>
                   </div>
 

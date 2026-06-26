@@ -2,96 +2,34 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Lock, MailCheck, Ticket, type LucideIcon } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
 
-/* ── Custom festival-grade SVG icons ────────────────────────────── */
-/* Bespoke glyphs replace generic Lucide icons — craft signals       */
-/* premium product. Festival iconography: scanner, stamp, wristband. */
-
-/** Barcode scanner / payment terminal — Secure Checkout */
-function ScannerIcon({ style }: { style?: React.CSSProperties }) {
-  return (
-    <svg
-      viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"
-      style={style} aria-hidden="true"
-    >
-      {/* Corner brackets — scanner frame */}
-      <path d="M3 7V5a2 2 0 0 1 2-2h2" />
-      <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-      <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
-      <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-      {/* Barcode lines */}
-      <line x1="7"  y1="9" x2="7"  y2="15" />
-      <line x1="10" y1="9" x2="10" y2="15" />
-      <line x1="13" y1="9" x2="13" y2="15" />
-      <line x1="16" y1="9" x2="16" y2="15" />
-    </svg>
-  );
-}
-
-/** Envelope with confirmation seal — Instant Confirmation */
-function EnvelopeCheckIcon({ style }: { style?: React.CSSProperties }) {
-  return (
-    <svg
-      viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"
-      style={style} aria-hidden="true"
-    >
-      {/* Envelope body */}
-      <rect x="2" y="5" width="20" height="14" rx="2" />
-      {/* Envelope flap */}
-      <path d="M2 7l10 8 10-8" />
-      {/* Confirmation checkmark */}
-      <path d="M15 17l2 2 4-4" />
-    </svg>
-  );
-}
-
-/** Festival wristband / access ticket — E-Ticket Delivery */
-function WristbandIcon({ style }: { style?: React.CSSProperties }) {
-  return (
-    <svg
-      viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"
-      style={style} aria-hidden="true"
-    >
-      {/* Ticket / wristband shape with cutouts on long sides */}
-      <path d="M3 9a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v1.5a2 2 0 0 0 0 3V15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-1.5a2 2 0 0 0 0-3V9z" />
-      {/* Perforated tear line */}
-      <line x1="12" y1="8" x2="12" y2="16" strokeDasharray="1.5 2" />
-    </svg>
-  );
-}
-
 /* ── Steps data ─────────────────────────────────────────────────── */
-type IconComponent = (props: { style?: React.CSSProperties }) => React.ReactNode;
-
 const STEPS: Array<{
   index: string;
-  Icon:  IconComponent;
+  Icon:  LucideIcon;
   title: string;
   body:  string;
   tags:  string[];
 }> = [
   {
     index: "01",
-    Icon:  ScannerIcon,
+    Icon:  Lock,
     title: "Secure Checkout",
     body:  "Pay by Stripe or crypto with 3D Secure authentication and end-to-end encrypted processing. Confirmation lands in your inbox within seconds.",
     tags:  ["Stripe", "Crypto", "3D Secure"],
   },
   {
     index: "02",
-    Icon:  EnvelopeCheckIcon,
+    Icon:  MailCheck,
     title: "Instant Confirmation",
     body:  "Your order confirmation, payment receipt, and full ticket details arrive by email immediately after payment.",
     tags:  ["Receipt", "Order details", "Tracking"],
   },
   {
     index: "03",
-    Icon:  WristbandIcon,
+    Icon:  Ticket,
     title: "E-Ticket Delivery",
     body:  "Your personalised PDF e-ticket is dispatched on July 8th. Show it on a charged device at maximum brightness at the gate.",
     tags:  ["PDF", "Named ticket", "Gate ready"],
@@ -200,7 +138,10 @@ export function TicketDeliverySection() {
                       marginBottom:   "8px",
                     }}>
                       <step.Icon
-                        style={{ width: "15px", height: "15px", color: iconColor(i) }}
+                        size={15}
+                        strokeWidth={1.75}
+                        color={iconColor(i)}
+                        aria-hidden="true"
                       />
                     </div>
                     <span style={{ fontFamily: I, fontSize: "9.5px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(6,182,212,0.45)" }}>

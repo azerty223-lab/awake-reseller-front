@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
+import { Check, RefreshCw, ArrowRight, ChevronDown, type LucideIcon } from "lucide-react";
 
 /* ── Festival countdown ─────────────────────────────────────────── */
 const FESTIVAL_DATE = new Date("2026-07-10T15:00:00+02:00");
@@ -50,33 +51,10 @@ const fade = (delay: number, dur = 1.2) => ({
   transition: { duration: dur, delay, ease: "easeOut" as const },
 });
 
-/* ── Trust chips — icon + label pairs ───────────────────────────── */
-/* Each icon reinforces the claim at a glance; readable in 150ms    */
-/* without needing to parse the text. Scannable on mobile at speed. */
-
-function ChipIcon({ path, viewBox = "0 0 24 24" }: { path: string; viewBox?: string }) {
-  return (
-    <svg
-      width="11" height="11" viewBox={viewBox}
-      fill="none" stroke="currentColor"
-      strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round"
-      style={{ flexShrink: 0, opacity: 0.90 }}
-      aria-hidden="true"
-    >
-      <path d={path} />
-    </svg>
-  );
-}
-
-const TRUST: Array<{ label: string; icon: React.ReactNode }> = [
-  {
-    label: "Sourced from Awakenings.nl",
-    icon:  <ChipIcon path="M20 6L9 17l-5-5" />,
-  },
-  {
-    label: "Full refund if cancelled",
-    icon:  <ChipIcon path="M3 2v6h6M3.5 15A9 9 0 1 0 6 5.3L3 8" />,
-  },
+/* ── Trust chips — Lucide icon + label pairs ────────────────────── */
+const TRUST: Array<{ label: string; Icon: LucideIcon }> = [
+  { label: "Sourced from Awakenings.nl", Icon: Check     },
+  { label: "Full refund if cancelled",   Icon: RefreshCw },
 ];
 
 /* ── Countdown unit ─────────────────────────────────────────────── */
@@ -292,9 +270,10 @@ export function CinematicHero() {
               marginTop: "clamp(0.875rem, 1.8vw, 1.5rem)",
             }}
           >
-            {TRUST.map(({ label, icon }) => (
+            {TRUST.map(({ label, Icon }) => (
               <span
                 key={label}
+                role="listitem"
                 style={{
                   display:       "inline-flex",
                   alignItems:    "center",
@@ -307,13 +286,14 @@ export function CinematicHero() {
                   border:        "1px solid rgba(237,233,225,0.13)",
                   padding:       "5px 11px 5px 9px",
                   background:    "rgba(237,233,225,0.035)",
-                  /* Semantic role so chips are announced as a list */
                 }}
-                role="listitem"
               >
-                <span style={{ color: "rgba(6,182,212,0.85)" }}>
-                  {icon}
-                </span>
+                <Icon
+                  size={11}
+                  strokeWidth={2.25}
+                  style={{ flexShrink: 0, color: "rgba(6,182,212,0.85)" }}
+                  aria-hidden="true"
+                />
                 {label}
               </span>
             ))}
@@ -398,17 +378,13 @@ export function CinematicHero() {
               }}>
                 Secure Your Ticket
               </span>
-              <svg
-                className="group-hover:translate-x-1 transition-transform duration-300"
-                width="13" height="13" viewBox="0 0 13 13" fill="none"
-                style={{ color: "#040404", flexShrink: 0 }}
-              >
-                <path
-                  d="M1 6.5h11M7.5 2l4.5 4.5L7.5 11"
-                  stroke="currentColor" strokeWidth="1.8"
-                  strokeLinecap="round" strokeLinejoin="round"
-                />
-              </svg>
+              <ArrowRight
+                size={14}
+                strokeWidth={2}
+                className="shrink-0 group-hover:translate-x-1 transition-transform duration-300"
+                style={{ color: "#040404" }}
+                aria-hidden="true"
+              />
             </button>
 
             {/* ── Secondary CTA — text, scroll to lineup ──────── */}
@@ -431,14 +407,12 @@ export function CinematicHero() {
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.38)")}
             >
               View Lineup
-              {/* Down chevron */}
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}>
-                <path
-                  d="M2 3.5L5 6.5L8 3.5"
-                  stroke="currentColor" strokeWidth="1.4"
-                  strokeLinecap="round" strokeLinejoin="round"
-                />
-              </svg>
+              <ChevronDown
+                size={11}
+                strokeWidth={1.6}
+                style={{ flexShrink: 0 }}
+                aria-hidden="true"
+              />
             </a>
           </motion.div>
 
