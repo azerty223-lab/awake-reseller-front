@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
+import { NameTransferModal } from "@/frontend/components/home/NameTransferModal";
 
 /* ── Buyer protection points ──────────────────────────────────── */
 const PROTECTIONS = [
@@ -88,8 +90,11 @@ function StarRating({ count }: { count: number }) {
 
 /* ── Section ──────────────────────────────────────────────────── */
 export function ResaleMarketplaceSection() {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <section className="relative py-5 overflow-hidden">
+      <NameTransferModal open={modalOpen} onClose={() => setModalOpen(false)} />
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
         {/* ── Eyebrow + headline — full width ─────────── */}
@@ -135,7 +140,7 @@ export function ResaleMarketplaceSection() {
             </p>
 
             {/* CTAs */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
               <Link
                 href="/tickets"
                 className="group inline-flex items-center gap-2.5 shrink-0"
@@ -154,6 +159,52 @@ export function ResaleMarketplaceSection() {
               >
                 About us
               </Link>
+            </div>
+
+            {/* ── Seller transparency block ─────────────── */}
+            <div style={{
+              background:   "rgba(237,233,225,0.018)",
+              border:       "1px solid rgba(237,233,225,0.07)",
+              borderLeft:   "2px solid rgba(6,182,212,0.25)",
+              borderRadius: "6px",
+              padding:      "1rem 1.125rem",
+            }}>
+              {/* Provenance */}
+              <p style={{ fontFamily: I, fontSize: "12px", lineHeight: 1.65, color: "rgba(237,233,225,0.55)", margin: "0 0 0.625rem" }}>
+                <span style={{ color: "rgba(237,233,225,0.78)", fontWeight: 600 }}>
+                  These tickets were purchased directly from the official Awakenings box office
+                </span>
+                {" "}at face value and are resold at market price. Our margin covers the name-transfer service and buyer protection.
+              </p>
+
+              {/* Legal anchor */}
+              <p style={{ fontFamily: I, fontSize: "11px", color: "rgba(237,233,225,0.30)", margin: "0 0 0.875rem", letterSpacing: "0.02em" }}>
+                This purchase is protected under Dutch consumer law (Art. 7:5 BW). Resale is permitted under Netherlands legislation.
+              </p>
+
+              {/* Name transfer explainer trigger */}
+              <button
+                onClick={() => setModalOpen(true)}
+                style={{
+                  background:    "transparent",
+                  border:        "none",
+                  padding:       0,
+                  cursor:        "pointer",
+                  fontFamily:    I,
+                  fontSize:      "11px",
+                  fontWeight:    600,
+                  letterSpacing: "0.10em",
+                  color:         "rgba(6,182,212,0.70)",
+                  display:       "inline-flex",
+                  alignItems:    "center",
+                  gap:           "5px",
+                  transition:    "color 0.2s ease",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = "rgba(6,182,212,1)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "rgba(6,182,212,0.70)")}
+              >
+                How does the name transfer work? →
+              </button>
             </div>
           </motion.div>
 

@@ -53,10 +53,10 @@ const fade = (delay: number, dur = 1.2) => ({
 /* ── Trust chips data ───────────────────────────────────────────── */
 const TRUST = [
   "Sourced from Awakenings.nl",
-  "Official name transfer",
+  "Name transfer included",
   "E-ticket July 8",
   "Stripe secured",
-  "4hr support",
+  "Full refund if cancelled",
 ];
 
 /* ── Countdown unit ─────────────────────────────────────────────── */
