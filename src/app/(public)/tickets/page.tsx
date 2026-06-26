@@ -66,9 +66,6 @@ export default async function TicketsPage() {
           >
             {[
               { text: "Sourced from Awakenings.nl" },
-              { text: "Official name transfer" },
-              { text: "E-ticket July 8" },
-              { text: "Stripe secured" },
               { text: "Full refund if cancelled" },
             ].map(({ text }) => (
               <span

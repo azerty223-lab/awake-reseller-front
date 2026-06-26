@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Search, X, ArrowUpDown, ChevronDown, ShieldCheck, Clock, Lock, Check } from "lucide-react";
+import { Search, X, ArrowUpDown, ChevronDown, ShieldCheck, Check } from "lucide-react";
 import Link from "next/link";
 import { TicketCard } from "./TicketCard";
 import { TicketCategory, type Ticket } from "@/frontend/types/tickets";
@@ -29,9 +29,7 @@ const SORT_OPTIONS = [
 
 const TRUST_CHIPS = [
   { Icon: ShieldCheck, text: "Sourced from Awakenings.nl" },
-  { Icon: Check,       text: "Official name transfer"     },
-  { Icon: Clock,       text: "E-ticket July 8, 2026"      },
-  { Icon: Lock,        text: "Stripe secured"             },
+  { Icon: Check,       text: "Full refund if cancelled"   },
 ] as const;
 
 /* ── Animation variants ────────────────────────────────────────── */
