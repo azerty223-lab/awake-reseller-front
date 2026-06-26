@@ -79,8 +79,12 @@
 }
 
 html {
-  /* scroll-behavior: smooth removed — Lenis handles all smooth scrolling in JS.
-     Keeping it here causes double-smoothing and scroll conflicts with Lenis. */
+  /* overflow-x:clip clips horizontal overflow WITHOUT creating a scroll
+     container. Unlike overflow-x:hidden, it does NOT force overflow-y to
+     auto, so body/html remain transparent to Lenis's window-level scroll
+     tracking. This is the only safe way to prevent horizontal scrollbars
+     while using a JS smooth-scroll library. */
+  overflow-x: clip;
 }
 
 body {
@@ -89,11 +93,6 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* overflow-x here (root element) clips horizontal overflow without creating
-     an implicit scroll container — the correct place for this rule.
-     Never put overflow-x:hidden on intermediate wrapper divs; browsers
-     silently promote overflow-y to auto, which breaks Lenis scroll tracking. */
-  overflow-x: hidden;
 }
 
 /* Custom scrollbar */

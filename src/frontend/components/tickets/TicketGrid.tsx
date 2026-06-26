@@ -114,9 +114,7 @@ export function TicketGrid({ tickets }: { tickets: Ticket[] }) {
         <div
           className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-4 sm:px-6 lg:px-8 py-3"
           style={{
-            background:   "rgba(5,5,7,0.95)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
+            background:   "#050507",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
           }}
         >
@@ -199,7 +197,7 @@ export function TicketGrid({ tickets }: { tickets: Ticket[] }) {
         {/* ── Search + count row ────────────────────────────────── */}
         <div
           className="flex items-center gap-3 px-4 sm:px-6 lg:px-8 py-2.5"
-          style={{ background: "rgba(5,5,7,0.90)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+          style={{ background: "#050507", borderTop: "1px solid rgba(255,255,255,0.04)" }}
         >
           <div className="relative flex-1 max-w-xs">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-600 pointer-events-none" aria-hidden="true" />

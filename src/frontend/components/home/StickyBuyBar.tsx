@@ -52,12 +52,9 @@ export function StickyBuyBar() {
         >
           {/* ── Bar body ─────────────────────────────────────────── */}
           <div style={{
-            background:           "rgba(4,4,6,0.97)",
-            borderTop:            "1px solid rgba(6,182,212,0.16)",
-            backdropFilter:       "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            /* iOS safe-area so the bar clears the home indicator */
-            paddingBottom:        "env(safe-area-inset-bottom, 0px)",
+            background:    "#040406",
+            borderTop:     "1px solid rgba(6,182,212,0.16)",
+            paddingBottom: "env(safe-area-inset-bottom, 0px)",
           }}>
             <div style={{
               maxWidth:   "1380px",
