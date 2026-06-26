@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Navbar }            from "@/frontend/components/layout/Navbar";
@@ -17,11 +17,14 @@ export default function PublicLayout({
   const [cartOpen, setCartOpen] = useState(false);
 
   return (
-    <div className="flex flex-col min-h-screen" style={{ background: "#020203" }}>
+    // overflow-x clipped on the outer wrapper, NOT on <main>.
+    // overflow-x:hidden on a non-root element forces overflow-y:auto,
+    // creating a scroll container that Lenis can't track.
+    <div className="flex flex-col min-h-screen" style={{ background: "#020203", overflowX: "hidden" }}>
       <AnimatedBackground />
       <Navbar onCartOpen={() => setCartOpen(true)} />
-      {/* pb-16 ensures content is never obscured by the sticky bottom buy bar on mobile */}
-      <main id="main-content" className="flex-1 pt-16 sm:pt-20 pb-16 overflow-x-hidden">{children}</main>
+      {/* pb-16 reserves space so the fixed sticky buy bar never covers the last row */}
+      <main id="main-content" className="flex-1 pt-16 sm:pt-20 pb-16">{children}</main>
       <Footer />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <StickyBuyBar />
