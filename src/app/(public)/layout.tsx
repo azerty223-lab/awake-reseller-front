@@ -1,12 +1,13 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { Navbar } from "@/frontend/components/layout/Navbar";
-import { Footer } from "@/frontend/components/layout/Footer";
-import { CartDrawer } from "@/frontend/components/layout/CartDrawer";
-import { VisitorTracker } from "@/frontend/components/analytics/VisitorTracker";
+import { Navbar }            from "@/frontend/components/layout/Navbar";
+import { Footer }            from "@/frontend/components/layout/Footer";
+import { CartDrawer }        from "@/frontend/components/layout/CartDrawer";
+import { VisitorTracker }    from "@/frontend/components/analytics/VisitorTracker";
 import { AnimatedBackground } from "@/frontend/components/layout/AnimatedBackground";
-import { ChatWidget } from "@/frontend/components/chat/ChatWidget";
+import { ChatWidget }        from "@/frontend/components/chat/ChatWidget";
+import { StickyBuyBar }      from "@/frontend/components/home/StickyBuyBar";
 
 export default function PublicLayout({
   children,
@@ -22,6 +23,7 @@ export default function PublicLayout({
       <main className="flex-1 pt-16 sm:pt-20 overflow-x-hidden">{children}</main>
       <Footer />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <StickyBuyBar />
       <VisitorTracker />
       <ChatWidget />
     </div>
