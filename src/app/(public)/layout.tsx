@@ -20,12 +20,13 @@ export default function PublicLayout({
     <div className="flex flex-col min-h-screen" style={{ background: "#020203" }}>
       <AnimatedBackground />
       <Navbar onCartOpen={() => setCartOpen(true)} />
-      <main id="main-content" className="flex-1 pt-16 sm:pt-20 overflow-x-hidden">{children}</main>
+      {/* pb-16 ensures content is never obscured by the sticky bottom buy bar on mobile */}
+      <main id="main-content" className="flex-1 pt-16 sm:pt-20 pb-16 overflow-x-hidden">{children}</main>
       <Footer />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <StickyBuyBar />
       <VisitorTracker />
-      <ChatWidget />
+      <ChatWidget cartOpen={cartOpen} />
     </div>
   );
 }

@@ -113,10 +113,13 @@ export function Footer() {
             </p>
             <ul className="space-y-3">
               {[
-                { href: "/",       label: "Home"    },
-                { href: "/tickets", label: "Tickets" },
-                { href: "/about",  label: "About"   },
-                { href: "/contact", label: "Contact" },
+                { href: "/",              label: "Home"             },
+                { href: "/tickets",       label: "Tickets"          },
+                { href: "/about",         label: "About"            },
+                { href: "/about#terms",   label: "Terms of Service" },
+                { href: "/about#refunds", label: "Refund Policy"    },
+                { href: "/about#privacy", label: "Privacy Policy"   },
+                { href: "/contact",       label: "Contact"          },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -258,9 +261,21 @@ export function Footer() {
           <p className="text-zinc-600 text-xs">
             &copy; 2026 AW Tickets. All rights reserved.
           </p>
-          <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[#06B6D4]/60">
-            AW Ticket Resale
-          </p>
+          <div className="flex items-center gap-4 flex-wrap">
+            {[
+              { href: "/about#terms",   label: "Terms" },
+              { href: "/about#privacy", label: "Privacy" },
+              { href: "/about#refunds", label: "Refunds" },
+            ].map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-[10px] text-zinc-600 hover:text-zinc-300 transition-colors"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

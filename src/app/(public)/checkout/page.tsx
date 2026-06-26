@@ -7,6 +7,7 @@ import { formatPrice } from "@/backend/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
+import Link from "next/link";
 import {
   CreditCard, Shield, Bitcoin, Lock, Check, ArrowLeft,
 } from "lucide-react";
@@ -194,6 +195,7 @@ export default function CheckoutPage() {
   const [error,          setError]          = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
   const [paymentMethod,  setPaymentMethod]  = useState<"card" | "crypto">("card");
+  const [consentChecked, setConsentChecked] = useState(false);
   const [paymentState,   setPaymentState]   = useState<"idle" | "processing" | "success">("idle");
 
   // Card fields
@@ -571,6 +573,41 @@ export default function CheckoutPage() {
                   onExpire={() => setTurnstileToken("")}
                 />
 
+                {/* Consent checkbox — required before payment */}
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className="relative mt-0.5 shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={consentChecked}
+                      onChange={(e) => setConsentChecked(e.target.checked)}
+                      className="sr-only"
+                    />
+                    <div
+                      className={[
+                        "w-4 h-4 rounded border flex items-center justify-center transition-all duration-150",
+                        consentChecked
+                          ? "bg-[#06B6D4] border-[#06B6D4]"
+                          : "bg-transparent border-white/[0.20] group-hover:border-white/[0.35]",
+                      ].join(" ")}
+                    >
+                      {consentChecked && (
+                        <Check className="w-2.5 h-2.5 text-black" strokeWidth={3} aria-hidden="true" />
+                      )}
+                    </div>
+                  </div>
+                  <span className="text-xs text-zinc-500 leading-relaxed">
+                    I have read and agree to the{" "}
+                    <Link href="/about#terms" className="text-zinc-300 hover:text-[#06B6D4] underline underline-offset-2 transition-colors">
+                      Terms of Service
+                    </Link>
+                    {" "}and{" "}
+                    <Link href="/about#privacy" className="text-zinc-300 hover:text-[#06B6D4] underline underline-offset-2 transition-colors">
+                      Privacy Policy
+                    </Link>
+                    . I understand all sales are final once the ticket transfer process has been initiated.
+                  </span>
+                </label>
+
                 {error && (
                   <div className="rounded-lg border border-red-500/25 bg-red-500/[0.06] px-4 py-3.5">
                     <p className="text-sm text-red-400">{error}</p>
@@ -579,7 +616,7 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={isLoading || !turnstileToken}
+                  disabled={isLoading || !turnstileToken || !consentChecked}
                   className={[
                     "w-full h-14 flex items-center justify-center gap-2.5 rounded-xl",
                     "text-base font-bold text-black transition-all duration-150",

@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, Check, ShoppingCart, Shield,
-  Truck, Edit3, Tag, Clock, Minus, Plus, BadgeCheck,
+  Truck, Edit3, Tag, Clock, Minus, Plus,
+  BadgeCheck, RefreshCw, UserCheck, Lock, AlertTriangle,
 } from "lucide-react";
 import { Badge } from "@/frontend/components/ui/Badge";
 import { Button } from "@/frontend/components/ui/Button";
@@ -29,26 +30,50 @@ function getCategoryBadgeVariant(
   }
 }
 
-// Section label style: uppercase tracking-widest at zinc-500 establishes
-// structural navigation infrastructure vs body copy at zinc-400.
-// Color contrast alone is insufficient; label style (uppercase+tracking) creates
-// the distinction without inflating visual weight.
 const SECTION_LABEL = "text-[10px] font-medium text-zinc-500 uppercase tracking-widest mb-3";
 
 interface TicketDetailPageProps {
   ticket: Ticket;
 }
 
+const BUYER_PROTECTION = [
+  {
+    Icon: BadgeCheck,
+    title: "Sourced from Awakenings.nl",
+    body: "Every ticket on this platform was originally purchased from the official Awakenings box office — not via third-party channels.",
+  },
+  {
+    Icon: Shield,
+    title: "Secured by Stripe",
+    body: "Your payment is encrypted and processed by Stripe. Card details are never stored on our servers.",
+  },
+  {
+    Icon: UserCheck,
+    title: "Seller payout held until delivery",
+    body: "The seller doesn't receive their payout until your ticket is confirmed delivered or transferred to your name.",
+  },
+  {
+    Icon: RefreshCw,
+    title: "Full refund if the event is cancelled",
+    body: "If Awakenings 2026 is cancelled by the organiser, you receive a full refund automatically.",
+  },
+] as const;
+
 export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
-  const addItem = useCartStore((s) => s.addItem);
+  const addItem  = useCartStore((s) => s.addItem);
+  const items    = useCartStore((s) => s.items);
   const [added, setAdded] = useState(false);
   const [qty, setQty]     = useState(1);
 
+  const inCart    = !!items.find((i) => i.ticketId === ticket.id);
   const available = ticket.quantity - ticket.sold;
   const savings   = ticket.originalPrice - ticket.resalePrice;
   const isLow     = available > 0 && available <= 3;
+  const isAvail   = available > 0;
+  const isNameTransfer = ticket.deliveryMethod === DeliveryMethod.NAME_CHANGE;
 
   const handleAddToCart = () => {
+    if (!isAvail) return;
     addItem({
       ticketId:       ticket.id,
       name:           ticket.name,
@@ -71,16 +96,19 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
 
         <Link
           href="/tickets"
-          className="inline-flex items-center gap-1.5 text-xs text-zinc-600 hover:text-zinc-300 transition-colors mb-10 group"
+          className="inline-flex items-center gap-1.5 text-xs text-zinc-600 hover:text-zinc-300 transition-colors mb-8 group"
         >
-          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-          Tickets
+          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
+          All tickets
         </Link>
 
+        {/* On mobile the grid stacks: purchase panel first, content below.
+            On desktop: content left, sticky sidebar right. */}
         <div className="grid md:grid-cols-[1fr_348px] gap-10 items-start">
 
-          {/* ── Left: content flow ─────────────────────────────── */}
+          {/* ── Left: content (order-2 on mobile, order-1 on desktop) ── */}
           <motion.div
+            className="order-2 md:order-1"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28 }}
@@ -104,7 +132,10 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
                 {ticket.name}
               </h1>
               {ticket.dayLabel && (
-                <p className="text-zinc-500 text-base mt-1.5">{ticket.dayLabel}</p>
+                <p className="flex items-center gap-1.5 text-zinc-500 text-sm mt-1.5">
+                  <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                  {ticket.dayLabel}
+                </p>
               )}
             </div>
 
@@ -126,7 +157,7 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
                     {ticket.includes.map((item, i) => (
                       <li key={i} className="flex items-start gap-3">
                         <div className="w-4 h-4 rounded-full bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center shrink-0 mt-0.5">
-                          <Check className="w-2.5 h-2.5 text-[#06B6D4]/70" />
+                          <Check className="w-2.5 h-2.5 text-[#06B6D4]/70" aria-hidden="true" />
                         </div>
                         <span className="text-sm text-zinc-400">{item}</span>
                       </li>
@@ -136,51 +167,98 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
               </>
             )}
 
-            {/* Delivery */}
+            {/* Delivery & Transfer */}
             <div className="h-px bg-white/[0.06] mb-8" />
-            <section>
+            <section className="mb-8">
               <h2 className={SECTION_LABEL}>Delivery &amp; Transfer</h2>
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.07] flex items-center justify-center shrink-0">
-                  {ticket.deliveryMethod === DeliveryMethod.NAME_CHANGE && <Edit3 className="w-3.5 h-3.5 text-zinc-400" />}
-                  {ticket.deliveryMethod === DeliveryMethod.DIGITAL      && <Tag   className="w-3.5 h-3.5 text-zinc-400" />}
-                  {ticket.deliveryMethod === DeliveryMethod.PHYSICAL     && <Truck className="w-3.5 h-3.5 text-zinc-400" />}
+              <div
+                className="flex items-start gap-3 rounded-xl p-4"
+                style={{
+                  background: isNameTransfer ? "rgba(245,158,11,0.04)" : "rgba(255,255,255,0.02)",
+                  border: isNameTransfer ? "1px solid rgba(245,158,11,0.14)" : "1px solid rgba(255,255,255,0.06)",
+                }}
+              >
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+                  style={{
+                    background: isNameTransfer ? "rgba(245,158,11,0.10)" : "rgba(6,182,212,0.08)",
+                    border: isNameTransfer ? "1px solid rgba(245,158,11,0.20)" : "1px solid rgba(6,182,212,0.15)",
+                  }}
+                >
+                  {ticket.deliveryMethod === DeliveryMethod.NAME_CHANGE && (
+                    <Edit3 className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
+                  )}
+                  {ticket.deliveryMethod === DeliveryMethod.DIGITAL && (
+                    <Tag className="w-3.5 h-3.5 text-[#06B6D4]/80" aria-hidden="true" />
+                  )}
+                  {ticket.deliveryMethod === DeliveryMethod.PHYSICAL && (
+                    <Truck className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
+                  )}
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-zinc-200 mb-1">
-                    {ticket.deliveryMethod === DeliveryMethod.NAME_CHANGE && "Name Transfer Service"}
-                    {ticket.deliveryMethod === DeliveryMethod.DIGITAL      && "Digital Delivery"}
-                    {ticket.deliveryMethod === DeliveryMethod.PHYSICAL     && "Physical Delivery"}
+                <div className="flex-1">
+                  <p
+                    className="text-sm font-semibold mb-1.5"
+                    style={{ color: isNameTransfer ? "rgba(245,158,11,0.90)" : "rgba(237,233,225,0.85)" }}
+                  >
+                    {ticket.deliveryMethod === DeliveryMethod.NAME_CHANGE && "Official Name Transfer"}
+                    {ticket.deliveryMethod === DeliveryMethod.DIGITAL && "Digital Delivery"}
+                    {ticket.deliveryMethod === DeliveryMethod.PHYSICAL && "Physical Delivery"}
                   </p>
-                  <p className="text-xs text-zinc-500 leading-relaxed max-w-md">
+                  <p className="text-xs text-zinc-500 leading-relaxed">
                     {ticket.deliveryMethod === DeliveryMethod.NAME_CHANGE &&
-                      "We handle the official name change with Awakenings. After payment, we initiate the transfer process. Your personalized e-ticket arrives within 3–5 business days."}
+                      "We manage the official name change directly with Awakenings.nl. After payment, we initiate the transfer process. Your personalised e-ticket arrives by July 8, 2026 — fully registered in your name and gate-ready."}
                     {ticket.deliveryMethod === DeliveryMethod.DIGITAL &&
-                      "Your e-ticket will be sent to your email address immediately after payment confirmation."}
+                      "Your e-ticket will be sent to your email address immediately after payment confirmation. No transfer required — the ticket is already prepared and ready to use."}
                     {ticket.deliveryMethod === DeliveryMethod.PHYSICAL &&
                       "Ticket will be shipped to your specified address. Allow 3–7 business days for delivery."}
                   </p>
+                  {isNameTransfer && (
+                    <p className="flex items-center gap-1.5 mt-2.5" style={{ fontSize: "10.5px", color: "rgba(245,158,11,0.60)", fontWeight: 500 }}>
+                      <Lock className="w-3 h-3 shrink-0" strokeWidth={2} aria-hidden="true" />
+                      Your name only — non-transferable after Awakenings registers it
+                    </p>
+                  )}
                 </div>
+              </div>
+            </section>
+
+            {/* Buyer Protection */}
+            <div className="h-px bg-white/[0.06] mb-8" />
+            <section>
+              <h2 className={SECTION_LABEL}>Buyer protection</h2>
+              <div className="space-y-4">
+                {BUYER_PROTECTION.map(({ Icon, title, body }) => (
+                  <div key={title} className="flex items-start gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[#06B6D4]/[0.07] border border-[#06B6D4]/[0.12] flex items-center justify-center shrink-0 mt-0.5">
+                      <Icon className="w-3.5 h-3.5 text-[#06B6D4]/70" strokeWidth={1.75} aria-hidden="true" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-zinc-300 mb-0.5">{title}</p>
+                      <p className="text-xs text-zinc-600 leading-relaxed">{body}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
           </motion.div>
 
-          {/* ── Right: purchase sidebar ────────────────────────── */}
+          {/* ── Right: purchase panel (order-1 on mobile, order-2 on desktop) ── */}
           <motion.div
+            className="order-1 md:order-2"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.06, duration: 0.28 }}
           >
-            <div className="bg-[#0F1013] border border-white/[0.09] rounded-xl p-5 sticky top-24">
+            <div
+              className="rounded-xl p-5 md:sticky md:top-24"
+              style={{ background: "#0F1013", border: "1px solid rgba(255,255,255,0.09)" }}
+            >
 
-              {/* Price — text-white: the purchase amount must be neutral/high-contrast.
-                  Gold color communicates branding; white communicates transaction value.
-                  These are different cognitive frames. Prices are always white in
-                  professional commerce (Stripe, Airbnb, Ticketmaster). */}
+              {/* Price block */}
               <div className="mb-5 pb-5 border-b border-white/[0.06]">
                 <p className={`${SECTION_LABEL} mb-2`}>Resale price</p>
                 <span
-                  className="block font-semibold text-white tabular-nums leading-none"
+                  className="block font-bold text-white tabular-nums leading-none"
                   style={{ fontSize: "2rem", letterSpacing: "-0.03em" }}
                 >
                   {formatPrice(ticket.resalePrice, ticket.currency)}
@@ -191,50 +269,76 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
                   </span>
                   <span className="text-xs text-zinc-700">face value</span>
                   {savings > 0 && (
-                    <span className="text-[10px] font-semibold text-emerald-400/80 bg-emerald-400/[0.08] border border-emerald-400/[0.12] px-1.5 py-0.5 rounded">
+                    <span
+                      className="text-[10px] font-semibold tabular-nums px-1.5 py-0.5 rounded"
+                      style={{
+                        color: "rgba(52,211,153,0.85)",
+                        background: "rgba(52,211,153,0.08)",
+                        border: "1px solid rgba(52,211,153,0.15)",
+                      }}
+                    >
                       −{formatPrice(savings, ticket.currency)}
                     </span>
                   )}
                 </div>
               </div>
 
-              {/* Availability — no animate-pulse: perpetual motion in the purchase
-                  decision zone continuously interrupts focused attention. Color alone
-                  communicates state. Animation adds no information, only distraction. */}
+              {/* Availability */}
               <div className="mb-5">
-                {available > 0 ? (
-                  <div className="flex items-center gap-2">
-                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isLow ? "bg-amber-400" : "bg-emerald-500/60"}`} />
-                    <span className={`text-xs font-medium ${isLow ? "text-amber-400/90" : "text-emerald-500/70"}`}>
-                      {available === 1 ? "Last ticket available" : `${available} tickets available`}
-                    </span>
-                  </div>
+                {isAvail ? (
+                  isLow ? (
+                    <div
+                      className="flex items-center gap-2 rounded-lg px-3 py-2"
+                      style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.15)" }}
+                    >
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" strokeWidth={2} aria-hidden="true" />
+                      <span className="text-xs font-medium text-amber-400/90">
+                        {available === 1 ? "Last ticket — secure yours now" : `Only ${available} tickets remaining`}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-emerald-500/60" aria-hidden="true" />
+                      <span className="text-xs font-medium text-emerald-500/70">
+                        {available} tickets available
+                      </span>
+                    </div>
+                  )
                 ) : (
                   <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-zinc-700" />
+                    <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-zinc-700" aria-hidden="true" />
                     <span className="text-xs text-zinc-600">Sold out</span>
                   </div>
                 )}
               </div>
 
-              {/* Quantity */}
-              {available > 1 && (
+              {/* Quantity selector */}
+              {isAvail && available > 1 && (
                 <div className="mb-5 pb-5 border-b border-white/[0.06]">
                   <p className={`${SECTION_LABEL} mb-3`}>Quantity</p>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center border border-white/[0.09] rounded-lg overflow-hidden bg-white/[0.02]">
+                    <div
+                      className="flex items-center rounded-lg overflow-hidden"
+                      style={{ border: "1px solid rgba(255,255,255,0.09)", background: "rgba(255,255,255,0.02)" }}
+                    >
                       <button
                         onClick={() => setQty((q) => Math.max(1, q - 1))}
-                        className="w-9 h-9 flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-colors border-r border-white/[0.07]"
+                        className="w-9 h-9 flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
+                        style={{ borderRight: "1px solid rgba(255,255,255,0.07)" }}
+                        aria-label="Decrease quantity"
                       >
-                        <Minus className="w-3 h-3" />
+                        <Minus className="w-3 h-3" aria-hidden="true" />
                       </button>
-                      <span className="w-10 text-center text-sm font-medium text-white tabular-nums">{qty}</span>
+                      <span className="w-10 text-center text-sm font-medium text-white tabular-nums" aria-live="polite">
+                        {qty}
+                      </span>
                       <button
                         onClick={() => setQty((q) => Math.min(available, q + 1))}
-                        className="w-9 h-9 flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-colors border-l border-white/[0.07]"
+                        className="w-9 h-9 flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
+                        style={{ borderLeft: "1px solid rgba(255,255,255,0.07)" }}
+                        aria-label="Increase quantity"
                       >
-                        <Plus className="w-3 h-3" />
+                        <Plus className="w-3 h-3" aria-hidden="true" />
                       </button>
                     </div>
                     {qty > 1 && (
@@ -254,37 +358,52 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
                 variant={added ? "secondary" : "primary"}
                 size="lg"
                 className="w-full mb-3"
-                disabled={available === 0}
+                disabled={!isAvail}
                 onClick={handleAddToCart}
-                leftIcon={added ? <Check className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
+                leftIcon={added ? <Check className="w-4 h-4" aria-hidden="true" /> : <ShoppingCart className="w-4 h-4" aria-hidden="true" />}
               >
-                {available === 0 ? "Sold Out" : added ? "Added to Cart" : "Add to Cart"}
+                {!isAvail ? "Sold Out" : added ? "Added to Cart" : inCart ? "Add More" : "Add to Cart"}
               </Button>
 
-              {/* Secondary CTA — plain text link, not a button.
-                  Two visually weighted CTAs produce decision paralysis.
-                  The secondary action must be unmistakably subordinate
-                  to prevent "which one is right?" cognitive load. */}
+              {/* Secondary CTA — visually subordinate to prevent decision paralysis */}
               <Link
                 href="/checkout"
                 className="block text-center py-2 text-xs text-zinc-600 hover:text-zinc-300 transition-colors"
               >
-                Or checkout now
+                Or checkout now →
               </Link>
 
-              {/* Trust signals */}
-              <div className="mt-5 pt-4 border-t border-white/[0.05] space-y-2.5">
-                <div className="flex items-center gap-2.5 text-zinc-500">
-                  <BadgeCheck className="w-3.5 h-3.5 shrink-0 text-[#00A0B6]" strokeWidth={1.75} />
-                  <span className="text-xs">Purchased directly from Awakenings.nl</span>
+              {/* Trust signals — specific, not vague */}
+              <div className="mt-5 pt-4 border-t border-white/[0.05] space-y-3">
+                <div className="flex items-start gap-2.5">
+                  <BadgeCheck className="w-3.5 h-3.5 shrink-0 text-[#06B6D4]/80 mt-0.5" strokeWidth={1.75} aria-hidden="true" />
+                  <span className="text-xs text-zinc-500 leading-relaxed">
+                    Purchased directly from <strong className="text-zinc-400 font-medium">Awakenings.nl</strong>
+                  </span>
                 </div>
-                <div className="flex items-center gap-2.5 text-zinc-500">
-                  <Clock className="w-3.5 h-3.5 shrink-0" />
-                  <span className="text-xs">E-ticket delivered <strong className="text-zinc-300 font-semibold">July 8, 2026</strong></span>
+                <div className="flex items-start gap-2.5">
+                  <Clock className="w-3.5 h-3.5 shrink-0 text-zinc-600 mt-0.5" aria-hidden="true" />
+                  <span className="text-xs text-zinc-500 leading-relaxed">
+                    E-ticket delivered by <strong className="text-zinc-300 font-semibold">July 8, 2026</strong>
+                  </span>
                 </div>
-                <div className="flex items-center gap-2.5 text-zinc-500">
-                  <Shield className="w-3.5 h-3.5 shrink-0" />
-                  <span className="text-xs">Secure payment via Stripe</span>
+                <div className="flex items-start gap-2.5">
+                  <Shield className="w-3.5 h-3.5 shrink-0 text-zinc-600 mt-0.5" aria-hidden="true" />
+                  <span className="text-xs text-zinc-500 leading-relaxed">
+                    Secure payment via <strong className="text-zinc-400 font-medium">Stripe</strong>
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <UserCheck className="w-3.5 h-3.5 shrink-0 text-zinc-600 mt-0.5" aria-hidden="true" />
+                  <span className="text-xs text-zinc-500 leading-relaxed">
+                    Seller payout held until your ticket is delivered
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <RefreshCw className="w-3.5 h-3.5 shrink-0 text-zinc-600 mt-0.5" aria-hidden="true" />
+                  <span className="text-xs text-zinc-500 leading-relaxed">
+                    Full refund if the event is cancelled
+                  </span>
                 </div>
               </div>
             </div>

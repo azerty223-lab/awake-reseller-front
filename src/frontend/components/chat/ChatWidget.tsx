@@ -23,7 +23,7 @@ const SUGGESTIONS = [
 ];
 
 /* ── Component ──────────────────────────────────────────────────── */
-export function ChatWidget() {
+export function ChatWidget({ cartOpen = false }: { cartOpen?: boolean }) {
   const [open,     setOpen]     = useState(false);
   const [input,    setInput]    = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -45,6 +45,9 @@ export function ChatWidget() {
 
   /* Clean up on unmount */
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  /* Close chat when cart opens */
+  useEffect(() => { if (cartOpen) setOpen(false); }, [cartOpen]);
 
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
@@ -355,57 +358,66 @@ export function ChatWidget() {
       </AnimatePresence>
 
       {/* ── Floating trigger button ────────────────────────────── */}
-      <motion.button
-        onClick={() => setOpen(v => !v)}
-        aria-label={open ? "Close chat" : "Open support chat"}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.94 }}
-        style={{
-          position:       "fixed",
-          bottom:         "1.5rem",
-          right:          "1.5rem",
-          zIndex:         9999,
-          width:          "52px",
-          height:         "52px",
-          borderRadius:   "50%",
-          border:         "1px solid rgba(6,182,212,0.45)",
-          background:     open ? "rgba(6,182,212,0.20)" : "rgba(6,182,212,0.12)",
-          cursor:         "pointer",
-          display:        "flex",
-          alignItems:     "center",
-          justifyContent: "center",
-          boxShadow:      "0 0 0 0 rgba(6,182,212,0)",
-          transition:     "background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease",
-        }}
-        onMouseEnter={e => {
-          const el = e.currentTarget as HTMLButtonElement;
-          el.style.background  = "rgba(6,182,212,0.22)";
-          el.style.borderColor = "rgba(6,182,212,0.70)";
-          el.style.boxShadow   = "0 0 24px rgba(6,182,212,0.18)";
-        }}
-        onMouseLeave={e => {
-          const el = e.currentTarget as HTMLButtonElement;
-          el.style.background  = open ? "rgba(6,182,212,0.20)" : "rgba(6,182,212,0.12)";
-          el.style.borderColor = "rgba(6,182,212,0.45)";
-          el.style.boxShadow   = "0 0 0 0 rgba(6,182,212,0)";
-        }}
-      >
-        <AnimatePresence mode="wait">
-          {open ? (
-            <motion.span key="x"
-              initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-              <X style={{ width: "20px", height: "20px", color: CYAN }} />
-            </motion.span>
-          ) : (
-            <motion.span key="chat"
-              initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-              <MessageCircle style={{ width: "22px", height: "22px", color: CYAN }} strokeWidth={1.75} />
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </motion.button>
+      <AnimatePresence>
+        {!cartOpen && (
+          <motion.button
+            key="chat-trigger"
+            onClick={() => setOpen(v => !v)}
+            aria-label={open ? "Close chat" : "Open support chat"}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.94 }}
+            style={{
+              position:       "fixed",
+              bottom:         "1.5rem",
+              right:          "1.5rem",
+              zIndex:         9999,
+              width:          "52px",
+              height:         "52px",
+              borderRadius:   "50%",
+              border:         "1px solid rgba(6,182,212,0.45)",
+              background:     open ? "rgba(6,182,212,0.20)" : "rgba(6,182,212,0.12)",
+              cursor:         "pointer",
+              display:        "flex",
+              alignItems:     "center",
+              justifyContent: "center",
+              boxShadow:      "0 0 0 0 rgba(6,182,212,0)",
+              transition:     "background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease",
+            }}
+            onMouseEnter={e => {
+              const el = e.currentTarget as HTMLButtonElement;
+              el.style.background  = "rgba(6,182,212,0.22)";
+              el.style.borderColor = "rgba(6,182,212,0.70)";
+              el.style.boxShadow   = "0 0 24px rgba(6,182,212,0.18)";
+            }}
+            onMouseLeave={e => {
+              const el = e.currentTarget as HTMLButtonElement;
+              el.style.background  = open ? "rgba(6,182,212,0.20)" : "rgba(6,182,212,0.12)";
+              el.style.borderColor = "rgba(6,182,212,0.45)";
+              el.style.boxShadow   = "0 0 0 0 rgba(6,182,212,0)";
+            }}
+          >
+            <AnimatePresence mode="wait">
+              {open ? (
+                <motion.span key="x"
+                  initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                  <X style={{ width: "20px", height: "20px", color: CYAN }} />
+                </motion.span>
+              ) : (
+                <motion.span key="chat"
+                  initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                  <MessageCircle style={{ width: "22px", height: "22px", color: CYAN }} strokeWidth={1.75} />
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* CSS keyframes for typing dots + spinner */}
       <style>{`

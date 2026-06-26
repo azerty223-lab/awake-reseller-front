@@ -3,6 +3,7 @@ import { z } from "zod/v4";
 import { prisma } from "@/backend/lib/prisma";
 import { auth } from "@/backend/lib/auth";
 import { CheckoutValidationError, resolveCheckoutItems } from "@/backend/lib/checkout";
+import { getIp, rateLimit, tooManyRequests } from "@/backend/lib/rate-limit";
 
 const schema = z.object({
   items: z.array(z.object({
@@ -17,6 +18,10 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  // 5 pending-order creations per IP per 5 minutes — prevents inventory lock abuse
+  const { allowed } = await rateLimit(`order-create:${getIp(req)}`, { windowSeconds: 300, maxRequests: 5 });
+  if (!allowed) return tooManyRequests();
+
   try {
     const body = await req.json() as unknown;
     const parsed = schema.safeParse(body);
