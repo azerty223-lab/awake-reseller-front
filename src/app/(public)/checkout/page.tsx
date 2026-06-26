@@ -13,7 +13,7 @@ import {
   UserRound, Lock, Shield, Bitcoin, Check, ArrowLeft,
 } from "lucide-react";
 import {
-  SiVisa, SiMastercard, SiAmericanexpress,
+  SiVisa, SiAmericanexpress,
   SiBitcoin, SiEthereum,
 } from "@icons-pack/react-simple-icons";
 import { Turnstile } from "@/frontend/components/ui/Turnstile";
@@ -103,37 +103,83 @@ interface SummaryItem {
   quantity:    number;
 }
 
-/* ── Payment brand icons ─────────────────────────────────────────────
-   Simple Icons (flat official SVGs). Each icon sits inside a subtle
-   pill so the varied shapes have consistent visual weight on the
-   dark background.                                                  */
+/* ── Mastercard logo ─────────────────────────────────────────────────
+   The two-overlapping-circles mark cannot be represented by any flat
+   single-color icon library. This is an inline SVG — the same approach
+   used by Stripe, Braintree, and every production payment UI.        */
+function MastercardLogo({ size = 32 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={Math.round(size * 0.63)}
+      viewBox="0 0 38 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Mastercard"
+      role="img"
+    >
+      <circle cx="15" cy="12" r="7" fill="#EB001B" />
+      <circle cx="23" cy="12" r="7" fill="#F79E1B" />
+      {/* Lens-shaped overlap — the orange bridge between the two circles */}
+      <path
+        d="M19 6.26C17.1 7.66 15.86 9.88 15.86 12.4s1.24 4.74 3.14 6.14c1.9-1.4 3.14-3.62 3.14-6.14s-1.24-4.74-3.14-6.14z"
+        fill="#FF5F00"
+      />
+    </svg>
+  );
+}
 
-const BRANDS = [
-  { Icon: SiVisa,           color: "#FFFFFF",  title: "Visa"             },
-  { Icon: SiMastercard,     color: "#FF5F00",  title: "Mastercard"       },
-  { Icon: SiAmericanexpress,color: "#2671CE",  title: "American Express" },
-  { Icon: SiBitcoin,        color: "#F7931A",  title: "Bitcoin"          },
-  { Icon: SiEthereum,       color: "#8B97F0",  title: "Ethereum"         },
-] as const;
+/* ── Payment brand icons ─────────────────────────────────────────────
+   Each icon sits on a near-white pill (rgba 92%) — matching the
+   reference image and ensuring dark brand colours like Visa navy
+   remain visible. Crypto icons use a dark pill since their palettes
+   are bright enough to read on a dark background.                    */
+
+const LIGHT_PILL = {
+  background: "rgba(255,255,255,0.92)",
+  border:     "1px solid rgba(255,255,255,0.15)",
+} as const;
+
+const DARK_PILL = {
+  background: "rgba(255,255,255,0.06)",
+  border:     "1px solid rgba(255,255,255,0.10)",
+} as const;
+
+function Pill({
+  children, title, dark = false,
+}: {
+  children: React.ReactNode; title: string; dark?: boolean;
+}) {
+  return (
+    <span
+      title={title}
+      aria-label={title}
+      className="inline-flex items-center justify-center rounded-md"
+      style={{ width: "46px", height: "30px", ...(dark ? DARK_PILL : LIGHT_PILL) }}
+    >
+      {children}
+    </span>
+  );
+}
 
 function PaymentIcons() {
   return (
     <div className="flex items-center gap-1.5 flex-wrap" aria-label="Accepted payment methods">
-      {BRANDS.map(({ Icon, color, title }) => (
-        <span
-          key={title}
-          title={title}
-          aria-label={title}
-          className="inline-flex items-center justify-center rounded-md"
-          style={{
-            width: "44px", height: "28px",
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.09)",
-          }}
-        >
-          <Icon size={18} color={color} />
-        </span>
-      ))}
+      <Pill title="Visa">
+        <SiVisa size={22} color="#1A1F71" />
+      </Pill>
+      <Pill title="Mastercard">
+        <MastercardLogo size={30} />
+      </Pill>
+      <Pill title="American Express">
+        <SiAmericanexpress size={18} color="#007BC1" />
+      </Pill>
+      <Pill title="Bitcoin" dark>
+        <SiBitcoin size={16} color="#F7931A" />
+      </Pill>
+      <Pill title="Ethereum" dark>
+        <SiEthereum size={16} color="#8B97F0" />
+      </Pill>
     </div>
   );
 }
@@ -354,9 +400,9 @@ export default function CheckoutPage() {
   const activeBrand = getCardBrand(cardNumber);
 
   const brandIcons = {
-    VISA: <SiVisa            size={16} color="#FFFFFF" aria-label="Visa"             />,
-    MC:   <SiMastercard      size={16} color="#FF5F00" aria-label="Mastercard"       />,
-    AMEX: <SiAmericanexpress size={16} color="#2671CE" aria-label="American Express" />,
+    VISA: <SiVisa            size={18} color="#1A1F71" aria-label="Visa"             />,
+    MC:   <MastercardLogo    size={26}                 aria-label="Mastercard"       />,
+    AMEX: <SiAmericanexpress size={16} color="#007BC1" aria-label="American Express" />,
   };
 
   // ── Main ───────────────────────────────────────────────────────────────
@@ -542,18 +588,21 @@ export default function CheckoutPage() {
                         ].join(" ")}
                       />
 
-                      {/* Right: detected brand icon (fades in when detected) */}
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 select-none">
+                      {/* Right: detected brand icon on a white pill so dark logos show up */}
+                      <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 select-none">
                         {activeBrand ? (
-                          <span className="transition-opacity duration-150">
+                          <span
+                            className="inline-flex items-center justify-center rounded transition-opacity duration-150"
+                            style={{ width: "38px", height: "24px", background: "rgba(255,255,255,0.92)" }}
+                          >
                             {brandIcons[activeBrand]}
                           </span>
                         ) : (
-                          /* Show all three faded when no brand is detected */
-                          <span className="flex gap-1 opacity-20" aria-hidden="true">
-                            <SiVisa            size={14} color="#fff" />
-                            <SiMastercard      size={14} color="#fff" />
-                            <SiAmericanexpress size={14} color="#fff" />
+                          /* Faded ghost trio — no brand detected yet */
+                          <span className="flex gap-0.5 opacity-20" aria-hidden="true">
+                            <SiVisa            size={12} color="#fff" />
+                            <MastercardLogo    size={18} />
+                            <SiAmericanexpress size={12} color="#fff" />
                           </span>
                         )}
                       </div>
