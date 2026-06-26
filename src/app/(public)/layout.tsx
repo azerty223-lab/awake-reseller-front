@@ -17,10 +17,7 @@ export default function PublicLayout({
   const [cartOpen, setCartOpen] = useState(false);
 
   return (
-    // overflow-x clipped on the outer wrapper, NOT on <main>.
-    // overflow-x:hidden on a non-root element forces overflow-y:auto,
-    // creating a scroll container that Lenis can't track.
-    <div className="flex flex-col min-h-screen" style={{ background: "#020203", overflowX: "hidden" }}>
+    <div className="flex flex-col min-h-screen" style={{ background: "#020203" }}>
       <AnimatedBackground />
       <Navbar onCartOpen={() => setCartOpen(true)} />
       {/* pb-16 reserves space so the fixed sticky buy bar never covers the last row */}
