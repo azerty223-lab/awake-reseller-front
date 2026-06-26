@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 28" role="img" aria-label="Visa">
+  <!--
+    Visa classic wordmark.
+    Gold accent: the triangular notch in the upper-left of the V stroke.
+    Navy text: official Visa brand colour #1A1F71.
+  -->
+
+  <!-- Visa wordmark — bold italic, official navy -->
+  <text
+    x="40" y="22"
+    text-anchor="middle"
+    dominant-baseline="auto"
+    font-family="'Arial Black', 'Arial Bold', Arial, sans-serif"
+    font-weight="900"
+    font-style="italic"
+    font-size="24"
+    letter-spacing="1"
+    fill="#1A1F71"
+  >VISA</text>
+
+  <!-- Gold accent — triangular highlight in the V's upper-left corner -->
+  <polygon points="6,2 14,2 10,10" fill="#F9A533"/>
+</svg>

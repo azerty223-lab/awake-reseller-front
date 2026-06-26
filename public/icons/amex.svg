@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="American Express">
+  <!-- Blue square background — official American Express blue -->
+  <rect width="80" height="80" rx="6" fill="#2271C3"/>
+
+  <!-- AMERICAN — condensed bold white, upper line -->
+  <text
+    x="40" y="34"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="'Arial Narrow', 'Arial', sans-serif"
+    font-weight="900"
+    font-size="13"
+    letter-spacing="0.5"
+    fill="white"
+  >AMERICAN</text>
+
+  <!-- EXPRESS — condensed bold white, lower line -->
+  <text
+    x="40" y="50"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="'Arial Narrow', 'Arial', sans-serif"
+    font-weight="900"
+    font-size="13"
+    letter-spacing="0.5"
+    fill="white"
+  >EXPRESS</text>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152.4 108" role="img" aria-label="Mastercard">
+  <defs>
+    <!-- Stripe pattern inside the overlap lens -->
+    <pattern id="mc-stripes" x="0" y="0" width="152.4" height="9.6" patternUnits="userSpaceOnUse">
+      <rect width="152.4" height="4.8" fill="#CC0000"/>
+      <rect y="4.8" width="152.4" height="4.8" fill="#FF9900"/>
+    </pattern>
+    <!-- Clip the stripes to the lens-shaped intersection of both circles -->
+    <clipPath id="mc-lens">
+      <path d="M76.2 4.16 A54 54 0 0 1 76.2 103.84 A54 54 0 0 0 76.2 4.16 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Red left circle -->
+  <circle cx="54" cy="54" r="54" fill="#CC0000"/>
+
+  <!-- Orange right circle -->
+  <circle cx="98.4" cy="54" r="54" fill="#FF9900"/>
+
+  <!-- Horizontal stripes clipped to the lens intersection -->
+  <rect x="0" y="0" width="152.4" height="108" fill="url(#mc-stripes)" clip-path="url(#mc-lens)"/>
+
+  <!-- MasterCard wordmark — italic bold, white with dark-blue outline -->
+  <text
+    x="76.2" y="62"
+    text-anchor="middle"
+    font-family="'Times New Roman', 'Georgia', serif"
+    font-style="italic"
+    font-weight="900"
+    font-size="26"
+    letter-spacing="-0.5"
+    stroke="#1A237E"
+    stroke-width="3"
+    stroke-linejoin="round"
+    paint-order="stroke"
+    fill="white"
+  >MasterCard</text>
+</svg>

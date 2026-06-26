@@ -13,7 +13,6 @@ import {
   UserRound, Lock, Shield, Bitcoin, Check, ArrowLeft,
 } from "lucide-react";
 import {
-  SiVisa, SiAmericanexpress,
   SiBitcoin, SiEthereum,
 } from "@icons-pack/react-simple-icons";
 import { Turnstile } from "@/frontend/components/ui/Turnstile";
@@ -103,61 +102,37 @@ interface SummaryItem {
   quantity:    number;
 }
 
-/* ── Mastercard logo ─────────────────────────────────────────────────
-   The two-overlapping-circles mark cannot be represented by any flat
-   single-color icon library. This is an inline SVG — the same approach
-   used by Stripe, Braintree, and every production payment UI.        */
-function MastercardLogo({ size = 32 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={Math.round(size * 0.63)}
-      viewBox="0 0 38 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="Mastercard"
-      role="img"
-    >
-      <circle cx="15" cy="12" r="7" fill="#EB001B" />
-      <circle cx="23" cy="12" r="7" fill="#F79E1B" />
-      {/* Lens-shaped overlap — the orange bridge between the two circles */}
-      <path
-        d="M19 6.26C17.1 7.66 15.86 9.88 15.86 12.4s1.24 4.74 3.14 6.14c1.9-1.4 3.14-3.62 3.14-6.14s-1.24-4.74-3.14-6.14z"
-        fill="#FF5F00"
-      />
-    </svg>
-  );
-}
+/* ── Payment brand icons ──────────────────────────────────────────────
+   Card brands load from /public/icons/*.svg so the full-colour
+   multi-element logos (Mastercard circles, Visa navy+gold, Amex blue
+   square) render exactly as designed — no icon library can replicate
+   these correctly as single-colour paths.
+   Crypto uses simple-icons on a dark pill (bright palettes work fine). */
 
-/* ── Payment brand icons ─────────────────────────────────────────────
-   Each icon sits on a near-white pill (rgba 92%) — matching the
-   reference image and ensuring dark brand colours like Visa navy
-   remain visible. Crypto icons use a dark pill since their palettes
-   are bright enough to read on a dark background.                    */
-
-const LIGHT_PILL = {
+const LIGHT_PILL: React.CSSProperties = {
   background: "rgba(255,255,255,0.92)",
-  border:     "1px solid rgba(255,255,255,0.15)",
-} as const;
+  border:     "1px solid rgba(255,255,255,0.12)",
+};
 
-const DARK_PILL = {
+const DARK_PILL: React.CSSProperties = {
   background: "rgba(255,255,255,0.06)",
   border:     "1px solid rgba(255,255,255,0.10)",
-} as const;
+};
 
-function Pill({
-  children, title, dark = false,
+function CardBrand({
+  src, alt, w = 36, h = 24, dark = false,
 }: {
-  children: React.ReactNode; title: string; dark?: boolean;
+  src: string; alt: string; w?: number; h?: number; dark?: boolean;
 }) {
   return (
     <span
-      title={title}
-      aria-label={title}
-      className="inline-flex items-center justify-center rounded-md"
+      title={alt} aria-label={alt}
+      className="inline-flex items-center justify-center rounded-md shrink-0"
       style={{ width: "46px", height: "30px", ...(dark ? DARK_PILL : LIGHT_PILL) }}
     >
-      {children}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt={alt} width={w} height={h}
+           style={{ objectFit: "contain", maxWidth: "100%", maxHeight: "100%" }} />
     </span>
   );
 }
@@ -165,21 +140,19 @@ function Pill({
 function PaymentIcons() {
   return (
     <div className="flex items-center gap-1.5 flex-wrap" aria-label="Accepted payment methods">
-      <Pill title="Visa">
-        <SiVisa size={22} color="#1A1F71" />
-      </Pill>
-      <Pill title="Mastercard">
-        <MastercardLogo size={30} />
-      </Pill>
-      <Pill title="American Express">
-        <SiAmericanexpress size={18} color="#007BC1" />
-      </Pill>
-      <Pill title="Bitcoin" dark>
-        <SiBitcoin size={16} color="#F7931A" />
-      </Pill>
-      <Pill title="Ethereum" dark>
+      <CardBrand src="/icons/visa.svg"       alt="Visa"             w={36} h={13} />
+      <CardBrand src="/icons/mastercard.svg" alt="Mastercard"       w={36} h={26} />
+      <CardBrand src="/icons/amex.svg"       alt="American Express" w={24} h={24} />
+      <span title="Bitcoin" aria-label="Bitcoin"
+            className="inline-flex items-center justify-center rounded-md shrink-0"
+            style={{ width: "46px", height: "30px", ...DARK_PILL }}>
+        <SiBitcoin  size={16} color="#F7931A" />
+      </span>
+      <span title="Ethereum" aria-label="Ethereum"
+            className="inline-flex items-center justify-center rounded-md shrink-0"
+            style={{ width: "46px", height: "30px", ...DARK_PILL }}>
         <SiEthereum size={16} color="#8B97F0" />
-      </Pill>
+      </span>
     </div>
   );
 }
@@ -399,10 +372,15 @@ export default function CheckoutPage() {
 
   const activeBrand = getCardBrand(cardNumber);
 
+  /* Live brand icons — shown inside the white mini-pill on the right
+     of the card number field once the brand is detected.            */
   const brandIcons = {
-    VISA: <SiVisa            size={18} color="#1A1F71" aria-label="Visa"             />,
-    MC:   <MastercardLogo    size={26}                 aria-label="Mastercard"       />,
-    AMEX: <SiAmericanexpress size={16} color="#007BC1" aria-label="American Express" />,
+    // eslint-disable-next-line @next/next/no-img-element
+    VISA: <img src="/icons/visa.svg"       alt="Visa"             width={28} height={10} style={{ objectFit: "contain" }} />,
+    // eslint-disable-next-line @next/next/no-img-element
+    MC:   <img src="/icons/mastercard.svg" alt="Mastercard"       width={28} height={18} style={{ objectFit: "contain" }} />,
+    // eslint-disable-next-line @next/next/no-img-element
+    AMEX: <img src="/icons/amex.svg"       alt="American Express" width={20} height={20} style={{ objectFit: "contain" }} />,
   };
 
   // ── Main ───────────────────────────────────────────────────────────────
@@ -599,10 +577,13 @@ export default function CheckoutPage() {
                           </span>
                         ) : (
                           /* Faded ghost trio — no brand detected yet */
-                          <span className="flex gap-0.5 opacity-20" aria-hidden="true">
-                            <SiVisa            size={12} color="#fff" />
-                            <MastercardLogo    size={18} />
-                            <SiAmericanexpress size={12} color="#fff" />
+                          <span className="flex gap-0.5 opacity-25" aria-hidden="true">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/icons/visa.svg"       alt="" width={18} height={7}  style={{ objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/icons/mastercard.svg" alt="" width={18} height={11} style={{ objectFit: "contain" }} />
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/icons/amex.svg"       alt="" width={11} height={11} style={{ objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                           </span>
                         )}
                       </div>
