@@ -28,6 +28,8 @@ export function SocialProofTicker() {
         background:    "rgba(6,182,212,0.035)",
         borderTop:    "1px solid rgba(6,182,212,0.10)",
         borderBottom: "1px solid rgba(6,182,212,0.10)",
+        width:    "100%",
+        maxWidth: "100vw",
       }}
       aria-hidden="true"
     >
