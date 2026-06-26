@@ -9,8 +9,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import Link from "next/link";
 import {
-  CreditCard, Shield, Bitcoin, Lock, Check, ArrowLeft,
+  User, Mail, Phone, CreditCard, Calendar, KeyRound,
+  UserRound, Lock, Shield, Bitcoin, Check, ArrowLeft,
 } from "lucide-react";
+import {
+  FaCcVisa, FaCcMastercard, FaCcAmex,
+  FaBitcoin, FaEthereum,
+} from "react-icons/fa";
 import { Turnstile } from "@/frontend/components/ui/Turnstile";
 import { StaticCryptoCheckout } from "@/frontend/components/crypto/StaticCryptoCheckout";
 
@@ -41,9 +46,9 @@ function luhn(value: string): boolean {
 
 function getCardBrand(value: string): "VISA" | "MC" | "AMEX" | null {
   const n = value.replace(/\s/g, "");
-  if (/^4/.test(n))             return "VISA";
+  if (/^4/.test(n))                return "VISA";
   if (/^(5[1-5]|2[2-7])/.test(n)) return "MC";
-  if (/^3[47]/.test(n))         return "AMEX";
+  if (/^3[47]/.test(n))            return "AMEX";
   return null;
 }
 
@@ -61,26 +66,79 @@ function validateExpiry(value: string): string | null {
 
 // ── Styles ─────────────────────────────────────────────────────────────────
 
-const INPUT = [
-  "w-full px-4 py-3 rounded-lg text-sm text-zinc-100",
+const INPUT_BASE = [
+  "w-full py-3 rounded-lg text-sm text-zinc-100",
   "bg-[#111113] border border-white/[0.1] placeholder-zinc-700",
   "focus:outline-none focus:border-[#06B6D4]/55 focus:ring-1 focus:ring-[#06B6D4]/[0.09]",
   "transition-all duration-150",
 ].join(" ");
 
-const LABEL = "block text-xs font-medium text-zinc-400 mb-2";
+// Input without icon — full left padding
+const INPUT = `${INPUT_BASE} px-4`;
 
+// Input with left icon — extra left padding to clear the icon
+const INPUT_ICON = `${INPUT_BASE} pl-10 pr-4`;
+
+const LABEL = "block text-xs font-medium text-zinc-400 mb-2";
 const SECTION = "text-sm font-semibold text-zinc-100 mb-5";
+
+// ── Reusable: field wrapper with an icon on the left ───────────────────────
+
+function FieldIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-600">
+      {children}
+    </span>
+  );
+}
 
 // ── Order summary ───────────────────────────────────────────────────────────
 
 interface SummaryItem {
-  ticketId: string;
-  name: string;
-  dayLabel?: string | null;
+  ticketId:    string;
+  name:        string;
+  dayLabel?:   string | null;
   resalePrice: number;
-  currency: string;
-  quantity: number;
+  currency:    string;
+  quantity:    number;
+}
+
+/* Payment brand icons — sized and coloured per brand guidelines */
+function PaymentIcons() {
+  return (
+    <div className="flex items-center gap-2 flex-wrap" aria-label="Accepted payment methods">
+      <FaCcVisa
+        size={28}
+        style={{ color: "#1A1F71" }}
+        title="Visa"
+        aria-label="Visa"
+      />
+      <FaCcMastercard
+        size={28}
+        style={{ color: "#EB001B" }}
+        title="Mastercard"
+        aria-label="Mastercard"
+      />
+      <FaCcAmex
+        size={28}
+        style={{ color: "#007BC1" }}
+        title="American Express"
+        aria-label="American Express"
+      />
+      <FaBitcoin
+        size={22}
+        style={{ color: "#F7931A" }}
+        title="Bitcoin"
+        aria-label="Bitcoin"
+      />
+      <FaEthereum
+        size={22}
+        style={{ color: "#627EEA" }}
+        title="Ethereum"
+        aria-label="Ethereum"
+      />
+    </div>
+  );
 }
 
 function OrderSummary({ items, total }: { items: SummaryItem[]; total: number }) {
@@ -109,14 +167,15 @@ function OrderSummary({ items, total }: { items: SummaryItem[]; total: number })
                 {formatPrice(item.resalePrice, item.currency)} × {item.quantity}
               </p>
             </div>
-            <p className="text-sm font-semibold text-zinc-100 tabular-nums shrink-0" style={{ letterSpacing: "-0.015em" }}>
+            <p className="text-sm font-semibold text-zinc-100 tabular-nums shrink-0"
+               style={{ letterSpacing: "-0.015em" }}>
               {formatPrice(item.resalePrice * item.quantity, item.currency)}
             </p>
           </div>
         ))}
       </div>
 
-      {/* Fee breakdown — transparency builds trust */}
+      {/* Fee breakdown */}
       <div className="px-5 py-4 border-b border-white/[0.07] space-y-2.5">
         <div className="flex items-center justify-between">
           <span className="text-xs text-zinc-500">Subtotal</span>
@@ -129,14 +188,12 @@ function OrderSummary({ items, total }: { items: SummaryItem[]; total: number })
         <p className="text-[10px] text-zinc-700 pt-0.5">No hidden charges — all fees included in ticket price</p>
       </div>
 
-      {/* TOTAL — the dominant number on the page */}
+      {/* Total */}
       <div className="px-5 py-5 border-b border-white/[0.07]">
         <div className="flex items-baseline justify-between">
           <span className="text-sm font-semibold text-zinc-300">Total due</span>
-          <span
-            className="font-bold text-white tabular-nums"
-            style={{ fontSize: "2.25rem", letterSpacing: "-0.035em", lineHeight: 1 }}
-          >
+          <span className="font-bold text-white tabular-nums"
+                style={{ fontSize: "2.25rem", letterSpacing: "-0.035em", lineHeight: 1 }}>
             {formatPrice(total)}
           </span>
         </div>
@@ -146,37 +203,22 @@ function OrderSummary({ items, total }: { items: SummaryItem[]; total: number })
       {/* Security indicators */}
       <div className="px-5 py-5 border-b border-white/[0.07] space-y-2.5">
         <div className="flex items-center gap-2.5 text-zinc-500">
-          <Lock   className="w-3 h-3 shrink-0 text-zinc-600" />
+          <Lock   className="w-3.5 h-3.5 shrink-0 text-zinc-500" />
           <span className="text-xs">256-bit SSL — payment data is encrypted end-to-end</span>
         </div>
         <div className="flex items-center gap-2.5 text-zinc-500">
-          <Shield className="w-3 h-3 shrink-0 text-zinc-600" />
+          <Shield className="w-3.5 h-3.5 shrink-0 text-zinc-500" />
           <span className="text-xs">PCI DSS Level 1 certified payment processing</span>
         </div>
         <div className="flex items-center gap-2.5 text-zinc-500">
-          <Check  className="w-3 h-3 shrink-0 text-zinc-600" />
+          <Check  className="w-3.5 h-3.5 shrink-0 text-zinc-500" />
           <span className="text-xs">Ticket delivered to your inbox immediately</span>
         </div>
       </div>
 
-      {/* Payment badges + refund policy */}
+      {/* Payment brand icons + refund policy */}
       <div className="px-5 py-4 space-y-3">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {[
-            { label: "VISA",  cls: "text-[#1A1F71]/80 border-[#1A1F71]/30 bg-white/[0.04]" },
-            { label: "MC",    cls: "text-[#EB001B]/70 border-[#EB001B]/20 bg-white/[0.04]" },
-            { label: "AMEX",  cls: "text-[#007BC1]/70 border-[#007BC1]/20 bg-white/[0.04]" },
-            { label: "BTC",   cls: "text-[#F7931A]/70 border-[#F7931A]/20 bg-white/[0.04]" },
-            { label: "ETH",   cls: "text-[#627EEA]/70 border-[#627EEA]/20 bg-white/[0.04]" },
-          ].map(({ label, cls }) => (
-            <span
-              key={label}
-              className={`text-[9px] font-bold border rounded px-1.5 py-0.5 leading-none ${cls}`}
-            >
-              {label}
-            </span>
-          ))}
-        </div>
+        <PaymentIcons />
         <p className="text-[10px] text-zinc-600 leading-relaxed">
           Free cancellation within 24 hours of purchase. After that, all sales are final per our resale terms.
         </p>
@@ -213,7 +255,6 @@ export default function CheckoutPage() {
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
-  // Reactively pass contact values to StaticCryptoCheckout as the user types
   const watchedName  = watch("name")  ?? "";
   const watchedEmail = watch("email") ?? "";
 
@@ -233,23 +274,19 @@ export default function CheckoutPage() {
     else if (cardExpiryError) setCardExpiryError(null);
   };
 
-  // Submit handler — card only (crypto pays via QR scan, no form submit needed)
   const onSubmit = async (data: FormValues) => {
-    // Crypto tab active: ignore form submission
     if (paymentMethod === "crypto") return;
 
-    // Card: validate card fields
-    if (!luhn(cardNumber))     { setError("Please enter a valid card number."); return; }
+    if (!luhn(cardNumber))  { setError("Please enter a valid card number."); return; }
     const expErr = validateExpiry(cardExpiry);
-    if (expErr)                { setError(expErr); return; }
-    if (cardCvc.length < 3)    { setError("Please enter your CVV."); return; }
-    if (!cardName.trim())      { setError("Please enter the name on your card."); return; }
+    if (expErr)             { setError(expErr); return; }
+    if (cardCvc.length < 3) { setError("Please enter your CVV."); return; }
+    if (!cardName.trim())   { setError("Please enter the name on your card."); return; }
 
     setError("");
     setIsLoading(true);
     setPaymentState("processing");
 
-    // Save lead (fire-and-forget)
     fetch("/api/checkout/order", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
@@ -315,6 +352,16 @@ export default function CheckoutPage() {
     );
   }
 
+  // ── Active card brand icon shown inside the card-number field ─────────
+
+  const activeBrand = getCardBrand(cardNumber);
+
+  const brandIcons = {
+    VISA: <FaCcVisa  size={20} style={{ color: "#1A1F71", opacity: 1    }} aria-label="Visa"             />,
+    MC:   <FaCcMastercard size={20} style={{ color: "#EB001B", opacity: 1 }} aria-label="Mastercard"    />,
+    AMEX: <FaCcAmex  size={20} style={{ color: "#007BC1", opacity: 1    }} aria-label="American Express" />,
+  };
+
   // ── Main ───────────────────────────────────────────────────────────────
 
   return (
@@ -323,7 +370,6 @@ export default function CheckoutPage() {
       {/* ── Minimal header ─────────────────────────────────────────── */}
       <header className="border-b border-white/[0.07] px-4 sm:px-6">
         <div className="max-w-5xl mx-auto h-14 flex items-center justify-between">
-          {/* Back navigation — exit path without cluttering the flow */}
           <button
             onClick={() => router.back()}
             className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
@@ -353,33 +399,47 @@ export default function CheckoutPage() {
           {/* ── LEFT: form ─────────────────────────────────────────── */}
           <div className="space-y-8">
 
-            {/* ── Contact ────────────────────────────────────────── */}
+            {/* ── Contact information ──────────────────────────────── */}
             <section>
               <h2 className={SECTION}>Contact information</h2>
               <div className="space-y-5">
 
+                {/* Full name */}
                 <div>
-                  <label className={LABEL}>Full name</label>
-                  <input
-                    {...register("name")}
-                    placeholder="Your full name"
-                    autoComplete="name"
-                    className={INPUT}
-                  />
+                  <label className={LABEL} htmlFor="name">Full name</label>
+                  <div className="relative">
+                    <FieldIcon>
+                      <User className="w-4 h-4" aria-hidden="true" />
+                    </FieldIcon>
+                    <input
+                      id="name"
+                      {...register("name")}
+                      placeholder="Your full name"
+                      autoComplete="name"
+                      className={INPUT_ICON}
+                    />
+                  </div>
                   {errors.name && (
                     <p className="mt-2 text-xs text-red-400">{errors.name.message}</p>
                   )}
                 </div>
 
+                {/* Email address */}
                 <div>
-                  <label className={LABEL}>Email address</label>
-                  <input
-                    {...register("email")}
-                    type="email"
-                    placeholder="you@email.com"
-                    autoComplete="email"
-                    className={INPUT}
-                  />
+                  <label className={LABEL} htmlFor="email">Email address</label>
+                  <div className="relative">
+                    <FieldIcon>
+                      <Mail className="w-4 h-4" aria-hidden="true" />
+                    </FieldIcon>
+                    <input
+                      id="email"
+                      {...register("email")}
+                      type="email"
+                      placeholder="you@email.com"
+                      autoComplete="email"
+                      className={INPUT_ICON}
+                    />
+                  </div>
                   {errors.email && (
                     <p className="mt-2 text-xs text-red-400">{errors.email.message}</p>
                   )}
@@ -388,20 +448,27 @@ export default function CheckoutPage() {
                   </p>
                 </div>
 
+                {/* Phone — optional */}
                 <div>
-                  <label className={LABEL}>
+                  <label className={LABEL} htmlFor="phone">
                     Phone
                     <span className="ml-1.5 font-normal text-zinc-600 normal-case tracking-normal">
                       — optional
                     </span>
                   </label>
-                  <input
-                    {...register("phone")}
-                    type="tel"
-                    placeholder="+31 6 00000000"
-                    autoComplete="tel"
-                    className={INPUT}
-                  />
+                  <div className="relative">
+                    <FieldIcon>
+                      <Phone className="w-4 h-4" aria-hidden="true" />
+                    </FieldIcon>
+                    <input
+                      id="phone"
+                      {...register("phone")}
+                      type="tel"
+                      placeholder="+31 6 00000000"
+                      autoComplete="tel"
+                      className={INPUT_ICON}
+                    />
+                  </div>
                 </div>
 
               </div>
@@ -427,7 +494,7 @@ export default function CheckoutPage() {
                       : "border-white/[0.1] text-zinc-500 hover:border-white/[0.18] hover:text-zinc-200",
                   ].join(" ")}
                 >
-                  <CreditCard className="w-4 h-4" />
+                  <CreditCard className="w-4 h-4" aria-hidden="true" />
                   Card
                 </button>
                 <button
@@ -441,20 +508,26 @@ export default function CheckoutPage() {
                       : "border-white/[0.1] text-zinc-500 hover:border-white/[0.18] hover:text-zinc-200",
                   ].join(" ")}
                 >
-                  <Bitcoin className="w-4 h-4" />
+                  <Bitcoin className="w-4 h-4" aria-hidden="true" />
                   Crypto
                 </button>
               </div>
 
-              {/* ── Card form ──────────────────────────────────── */}
+              {/* ── Card form ──────────────────────────────────────── */}
               {paymentMethod === "card" && (
                 <div className="space-y-5">
 
-                  {/* Card number */}
+                  {/* Card number + live brand icon */}
                   <div>
-                    <label className={LABEL}>Card number</label>
+                    <label className={LABEL} htmlFor="cc-number">Card number</label>
                     <div className="relative">
+                      {/* Left: card icon */}
+                      <FieldIcon>
+                        <CreditCard className="w-4 h-4" aria-hidden="true" />
+                      </FieldIcon>
+
                       <input
+                        id="cc-number"
                         value={cardNumber}
                         onChange={handleCardNumberChange}
                         onBlur={() => {
@@ -466,29 +539,26 @@ export default function CheckoutPage() {
                         inputMode="numeric"
                         autoComplete="cc-number"
                         className={[
-                          INPUT, "pr-24 tracking-widest",
+                          INPUT_ICON, "pr-12 tracking-widest",
                           cardNumberError  ? "!border-red-500/50" : "",
                           luhn(cardNumber) ? "!border-emerald-500/40" : "",
                         ].join(" ")}
                       />
-                      {/* Card brand — active brand brightens, others fade */}
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1 select-none">
-                        {(["VISA", "MC", "AMEX"] as const).map((b) => {
-                          const active = getCardBrand(cardNumber) === b;
-                          return (
-                            <span
-                              key={b}
-                              className={[
-                                "text-[9px] font-bold border rounded px-1 py-0.5 leading-none transition-colors",
-                                active
-                                  ? "text-white border-white/30"
-                                  : "text-zinc-700 border-zinc-800",
-                              ].join(" ")}
-                            >
-                              {b}
-                            </span>
-                          );
-                        })}
+
+                      {/* Right: detected brand icon (fades in when detected) */}
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 select-none">
+                        {activeBrand ? (
+                          <span className="transition-opacity duration-150">
+                            {brandIcons[activeBrand]}
+                          </span>
+                        ) : (
+                          /* Show all three faded when no brand is detected */
+                          <span className="flex gap-1 opacity-25">
+                            <FaCcVisa      size={18} style={{ color: "#fff" }} aria-hidden="true" />
+                            <FaCcMastercard size={18} style={{ color: "#fff" }} aria-hidden="true" />
+                            <FaCcAmex      size={18} style={{ color: "#fff" }} aria-hidden="true" />
+                          </span>
+                        )}
                       </div>
                     </div>
                     {cardNumberError && (
@@ -499,62 +569,77 @@ export default function CheckoutPage() {
                   {/* Expiry + CVV */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className={LABEL}>Expiry date</label>
-                      <input
-                        value={cardExpiry}
-                        onChange={handleExpiryChange}
-                        onBlur={() => {
-                          if (cardExpiry) setCardExpiryError(validateExpiry(cardExpiry));
-                        }}
-                        placeholder="MM / YY"
-                        maxLength={7}
-                        inputMode="numeric"
-                        autoComplete="cc-exp"
-                        className={[
-                          INPUT,
-                          cardExpiryError ? "!border-red-500/50" : "",
-                          cardExpiry.replace(/[\s/]/g, "").length === 4 && !cardExpiryError
-                            ? "!border-emerald-500/40" : "",
-                        ].join(" ")}
-                      />
+                      <label className={LABEL} htmlFor="cc-exp">Expiry date</label>
+                      <div className="relative">
+                        <FieldIcon>
+                          <Calendar className="w-4 h-4" aria-hidden="true" />
+                        </FieldIcon>
+                        <input
+                          id="cc-exp"
+                          value={cardExpiry}
+                          onChange={handleExpiryChange}
+                          onBlur={() => {
+                            if (cardExpiry) setCardExpiryError(validateExpiry(cardExpiry));
+                          }}
+                          placeholder="MM / YY"
+                          maxLength={7}
+                          inputMode="numeric"
+                          autoComplete="cc-exp"
+                          className={[
+                            INPUT_ICON,
+                            cardExpiryError ? "!border-red-500/50" : "",
+                            cardExpiry.replace(/[\s/]/g, "").length === 4 && !cardExpiryError
+                              ? "!border-emerald-500/40" : "",
+                          ].join(" ")}
+                        />
+                      </div>
                       {cardExpiryError && (
                         <p className="mt-2 text-xs text-red-400">{cardExpiryError}</p>
                       )}
                     </div>
+
                     <div>
-                      <label className={LABEL}>Security code</label>
-                      <input
-                        value={cardCvc}
-                        onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4))}
-                        placeholder="CVV"
-                        maxLength={4}
-                        inputMode="numeric"
-                        autoComplete="cc-csc"
-                        className={INPUT}
-                      />
+                      <label className={LABEL} htmlFor="cc-cvc">Security code</label>
+                      <div className="relative">
+                        <FieldIcon>
+                          <KeyRound className="w-4 h-4" aria-hidden="true" />
+                        </FieldIcon>
+                        <input
+                          id="cc-cvc"
+                          value={cardCvc}
+                          onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                          placeholder="CVV"
+                          maxLength={4}
+                          inputMode="numeric"
+                          autoComplete="cc-csc"
+                          className={INPUT_ICON}
+                        />
+                      </div>
                     </div>
                   </div>
 
                   {/* Name on card */}
                   <div>
-                    <label className={LABEL}>Name on card</label>
-                    <input
-                      value={cardName}
-                      onChange={(e) => setCardName(e.target.value)}
-                      placeholder="As it appears on the card"
-                      autoComplete="cc-name"
-                      className={INPUT}
-                    />
+                    <label className={LABEL} htmlFor="cc-name">Name on card</label>
+                    <div className="relative">
+                      <FieldIcon>
+                        <UserRound className="w-4 h-4" aria-hidden="true" />
+                      </FieldIcon>
+                      <input
+                        id="cc-name"
+                        value={cardName}
+                        onChange={(e) => setCardName(e.target.value)}
+                        placeholder="As it appears on the card"
+                        autoComplete="cc-name"
+                        className={INPUT_ICON}
+                      />
+                    </div>
                   </div>
 
                 </div>
               )}
 
-              {/* ── Crypto: show immediately on tab selection ──────
-                  watchedName / watchedEmail are reactive — update in
-                  real time as the user types in the contact section.
-                  StaticCryptoCheckout shows its own inline form when
-                  name/email are still empty. */}
+              {/* ── Crypto ─────────────────────────────────────────── */}
               {paymentMethod === "crypto" && (
                 <StaticCryptoCheckout
                   fiatAmount={total}
@@ -565,7 +650,7 @@ export default function CheckoutPage() {
               )}
             </section>
 
-            {/* Turnstile + error + CTA — card payment only */}
+            {/* ── Turnstile + consent + submit — card only ─────────── */}
             {paymentMethod === "card" && (
               <>
                 <Turnstile
@@ -573,7 +658,7 @@ export default function CheckoutPage() {
                   onExpire={() => setTurnstileToken("")}
                 />
 
-                {/* Consent checkbox — required before payment */}
+                {/* Consent checkbox */}
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <div className="relative mt-0.5 shrink-0">
                     <input
@@ -597,11 +682,13 @@ export default function CheckoutPage() {
                   </div>
                   <span className="text-xs text-zinc-500 leading-relaxed">
                     I have read and agree to the{" "}
-                    <Link href="/about#terms" className="text-zinc-300 hover:text-[#06B6D4] underline underline-offset-2 transition-colors">
+                    <Link href="/about#terms"
+                      className="text-zinc-300 hover:text-[#06B6D4] underline underline-offset-2 transition-colors">
                       Terms of Service
                     </Link>
                     {" "}and{" "}
-                    <Link href="/about#privacy" className="text-zinc-300 hover:text-[#06B6D4] underline underline-offset-2 transition-colors">
+                    <Link href="/about#privacy"
+                      className="text-zinc-300 hover:text-[#06B6D4] underline underline-offset-2 transition-colors">
                       Privacy Policy
                     </Link>
                     . I understand all sales are final once the ticket transfer process has been initiated.
@@ -620,7 +707,7 @@ export default function CheckoutPage() {
                   className={[
                     "w-full h-14 flex items-center justify-center gap-2.5 rounded-xl",
                     "text-base font-bold text-black transition-all duration-150",
-                    "bg-[#06B6D4] hover:bg-[#D4B855]",
+                    "bg-[#06B6D4] hover:bg-[#22D3EE]",
                     "shadow-[0_2px_16px_rgba(6,182,212,0.2)]",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
                     "active:scale-[0.99]",
@@ -629,21 +716,23 @@ export default function CheckoutPage() {
                   {isLoading ? (
                     <>
                       <svg className="w-4 h-4 animate-spin text-black/50" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        <circle className="opacity-25" cx="12" cy="12" r="10"
+                                stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
                       Processing…
                     </>
                   ) : (
                     <>
-                      <Lock className="w-4 h-4" />
+                      <Lock className="w-4 h-4" aria-hidden="true" />
                       Pay {formatPrice(total)}
                     </>
                   )}
                 </button>
 
                 <p className="text-center text-[11px] text-zinc-600 flex items-center justify-center gap-1.5">
-                  <Shield className="w-3 h-3 shrink-0" />
+                  <Shield className="w-3 h-3 shrink-0" aria-hidden="true" />
                   Secured by Stripe · 256-bit SSL · PCI DSS Level 1
                 </p>
               </>
