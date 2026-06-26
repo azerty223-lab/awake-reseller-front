@@ -4,6 +4,7 @@ import { z } from "zod/v4";
 import { auth } from "@/backend/lib/auth";
 import { PaymentService } from "@/backend/payments/service";
 import { RateLimitError } from "@/backend/payments/errors";
+import { getIp } from "@/backend/lib/rate-limit";
 
 const createInvoiceSchema = z.object({
   orderId: z.string().min(1, "orderId is required"),
@@ -27,8 +28,8 @@ export async function POST(req: NextRequest) {
 
     const { orderId, preferredCurrency, preferredNetwork, fiatAmount, customerEmail } = parsed.data;
 
-    const reqHeaders = await headers();
-    const ip = reqHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "127.0.0.1";
+    await headers(); // required to opt into dynamic rendering
+    const ip = getIp(req);
 
     const session = await auth();
     const userId = session?.user?.id;
