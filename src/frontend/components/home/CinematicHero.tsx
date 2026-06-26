@@ -157,57 +157,14 @@ export function CinematicHero() {
           fontSize: "min(55vw, 820px)",
           lineHeight: 1, letterSpacing: "0.10em",
           textTransform: "uppercase",
-          color: "rgba(237,233,225,0.016)",
+          color: "rgba(237,233,225,0.028)",
           zIndex: 1,
         }}
       >
         2026
       </motion.span>
 
-      {/* ── ANNOUNCEMENT BADGE — centered, below navbar ───────── */}
-      <motion.div
-        {...fade(0.0, 0.9)}
-        className="absolute left-0 right-0 flex items-center justify-center pointer-events-none"
-        style={{
-          top:   "clamp(76px, 11vw, 96px)",
-          zIndex: 3,
-        }}
-      >
-        <div style={{
-          display:        "inline-flex",
-          alignItems:     "center",
-          gap:            "8px",
-          background:     "rgba(6,182,212,0.08)",
-          border:         "1px solid rgba(6,182,212,0.22)",
-          borderRadius:   "100px",
-          padding:        "5px 16px 5px 10px",
-        }}>
-          {/* Pulsing dot */}
-          <span style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: "16px", height: "16px" }}>
-            <motion.span
-              animate={{ scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
-              style={{
-                position: "absolute",
-                width: "12px", height: "12px",
-                borderRadius: "50%",
-                background: "rgba(6,182,212,0.35)",
-              }}
-            />
-            <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: C, position: "relative" }} />
-          </span>
-          <span style={{
-            fontFamily:    I,
-            fontSize:      "11px",
-            fontWeight:    600,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color:         "rgba(6,182,212,0.90)",
-          }}>
-            Verified resale · Delivering July 8 · Limited availability
-          </span>
-        </div>
-      </motion.div>
+      {/* Announcement badge removed — replaced by AnnouncementBar above the hero */}
 
       {/* ── MAIN CONTENT — bottom-anchored ────────────────────── */}
       <div className="absolute inset-0 flex flex-col justify-end" style={{ zIndex: 2 }}>
@@ -234,25 +191,43 @@ export function CinematicHero() {
             </span>
           </motion.div>
 
-          {/* ── Headline ──────────────────────────────────────── */}
-          <div style={{ overflow: "hidden", marginBottom: "clamp(0.625rem, 1.2vw, 1rem)" }}>
-            <motion.h1 {...reveal(0.28)} style={{ margin: 0, padding: 0 }}>
+          {/* ── Headline — two-line value proposition ─────────── */}
+          {/* Line 1: conversion claim (primary)                    */}
+          {/* Line 2: festival identity (secondary, muted)           */}
+          <div style={{ marginBottom: "clamp(0.625rem, 1.2vw, 1rem)" }}>
+            <motion.h1 {...reveal(0.28)} style={{ margin: 0, padding: 0, overflow: "hidden" }}>
+              {/* "The last verified tickets" */}
               <span style={{
                 display:       "block",
                 fontFamily:    I,
                 fontWeight:    800,
-                /* Premium display scale — fills the viewport like         */
-                /* Dekmantel, Sonar, and Awakenings' own hero typography.  */
-                fontSize:      "clamp(3.5rem, 11vw, 9.5rem)",
-                lineHeight:    0.86,
-                /* Tighter tracking at display scale — premium convention  */
-                letterSpacing: "0.05em",
+                fontSize:      "clamp(2rem, 5.5vw, 5.25rem)",
+                lineHeight:    0.92,
+                letterSpacing: "0.03em",
                 textTransform: "uppercase",
                 color:         W,
               }}>
-                Awakenings
+                The last verified tickets
               </span>
             </motion.h1>
+
+            {/* "for Awakenings 2026" — muted, secondary rhythm */}
+            <motion.div {...reveal(0.38)} style={{ overflow: "hidden" }}>
+              <span style={{
+                display:       "block",
+                fontFamily:    I,
+                fontWeight:    800,
+                fontSize:      "clamp(2rem, 5.5vw, 5.25rem)",
+                lineHeight:    0.92,
+                letterSpacing: "0.03em",
+                textTransform: "uppercase",
+                /* Muted so "Awakenings 2026" reads as qualifier,     */
+                /* not competing with the scarcity claim on line 1.   */
+                color:         "rgba(237,233,225,0.42)",
+              }}>
+                for Awakenings 2026
+              </span>
+            </motion.div>
           </div>
 
           {/* ── Value prop tagline ─────────────────────────────── */}

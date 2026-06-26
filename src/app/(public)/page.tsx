@@ -1,3 +1,4 @@
+import { AnnouncementBar }          from "@/frontend/components/home/AnnouncementBar";
 import { CinematicHero }            from "@/frontend/components/home/CinematicHero";
 import { SocialProofTicker }        from "@/frontend/components/home/SocialProofTicker";
 import { FeaturedTickets }          from "@/frontend/components/home/FeaturedTickets";
@@ -51,6 +52,9 @@ function AltBg({ children }: { children: React.ReactNode }) {
 export default function HomePage() {
   return (
     <>
+      {/* 0 — Announcement bar: scarcity signal anchored below the navbar */}
+      <AnnouncementBar />
+
       {/* 1 — Cinematic hero: value prop, urgency, trust, solid CTA */}
       <CinematicHero />
 
