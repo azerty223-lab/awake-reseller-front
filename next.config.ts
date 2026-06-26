@@ -18,11 +18,6 @@ const CSP = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
-  // Required for Railway (and any Docker/container deployment).
-  // Produces a self-contained .next/standalone folder with only the
-  // files needed to run the server — no node_modules at runtime.
-  output: "standalone",
-
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
