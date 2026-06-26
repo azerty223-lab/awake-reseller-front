@@ -71,23 +71,11 @@ function ChipIcon({ path, viewBox = "0 0 24 24" }: { path: string; viewBox?: str
 const TRUST: Array<{ label: string; icon: React.ReactNode }> = [
   {
     label: "Sourced from Awakenings.nl",
-    icon:  <ChipIcon path="M20 6L9 17l-5-5" />,              /* checkmark */
-  },
-  {
-    label: "Name transfer included",
-    icon:  <ChipIcon path="M16 3l4 4-4 4M8 21l-4-4 4-4M20 7H4M4 17h16" />, /* swap arrows */
-  },
-  {
-    label: "E-ticket July 8",
-    icon:  <ChipIcon path="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />, /* calendar */
-  },
-  {
-    label: "Stripe secured",
-    icon:  <ChipIcon path="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />, /* shield */
+    icon:  <ChipIcon path="M20 6L9 17l-5-5" />,
   },
   {
     label: "Full refund if cancelled",
-    icon:  <ChipIcon path="M3 2v6h6M3.5 15A9 9 0 1 0 6 5.3L3 8" />,        /* return arrow */
+    icon:  <ChipIcon path="M3 2v6h6M3.5 15A9 9 0 1 0 6 5.3L3 8" />,
   },
 ];
 
