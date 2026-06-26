@@ -95,14 +95,49 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
 
         <div className={COL.stock}>
           {isAvail ? (
-            <>
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isLow ? "bg-amber-400" : "bg-emerald-500/60"}`} />
-              <span className={`text-[11px] ${isLow ? "text-amber-400/90 font-semibold" : "text-zinc-600"}`}>
+            isLow ? (
+              /* LOW STOCK — amber pill, prominent */
+              <span style={{
+                display:       "inline-flex",
+                alignItems:    "center",
+                gap:           "5px",
+                fontFamily:    INTER,
+                fontSize:      "10px",
+                fontWeight:    700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color:         "#F59E0B",
+                background:    "rgba(245,158,11,0.10)",
+                border:        "1px solid rgba(245,158,11,0.28)",
+                borderRadius:  "4px",
+                padding:       "3px 8px 3px 6px",
+              }}>
+                <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#F59E0B", flexShrink: 0 }} />
                 {available === 1 ? "Last one" : `${available} left`}
               </span>
-            </>
+            ) : (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-emerald-500/55" />
+                <span className="text-[11px] text-zinc-600">{available} left</span>
+              </span>
+            )
           ) : (
-            <span className="text-[11px] text-zinc-700">Sold out</span>
+            /* SOLD OUT — visible but muted, creates scarcity FOMO */
+            <span style={{
+              fontFamily:    INTER,
+              fontSize:      "10px",
+              fontWeight:    600,
+              letterSpacing: "0.10em",
+              textTransform: "uppercase",
+              color:         "rgba(113,113,122,0.55)",
+              background:    "rgba(255,255,255,0.025)",
+              border:        "1px solid rgba(255,255,255,0.05)",
+              borderRadius:  "4px",
+              padding:       "3px 8px",
+              display:       "inline-block",
+            }}>
+              Sold out
+            </span>
           )}
         </div>
 
@@ -114,24 +149,42 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
         </div>
 
         <div className={COL.action}>
-          <button
-            onClick={handleAdd}
-            disabled={!isAvail}
-            className={[
-              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-semibold",
-              "transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed select-none",
-              added || inCart
-                ? "bg-white/[0.05] text-zinc-500"
-                : "bg-[#06B6D4]/90 text-[#0C0900] hover:bg-[#06B6D4] active:scale-[0.97]",
-            ].join(" ")}
-          >
-            {added
-              ? <><Check className="w-3 h-3" />Done</>
-              : inCart
-                ? <><ShoppingCart className="w-3 h-3" />In cart</>
-                : <><ShoppingCart className="w-3 h-3" />Add</>
-            }
-          </button>
+          {inCart ? (
+            /* IN CART — prompt to checkout */
+            <Link
+              href="/checkout"
+              onClick={e => e.stopPropagation()}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-semibold
+                         transition-all duration-300 select-none whitespace-nowrap"
+              style={{
+                background: "rgba(6,182,212,0.10)",
+                border:     "1px solid rgba(6,182,212,0.30)",
+                color:      "rgba(6,182,212,0.90)",
+              }}
+            >
+              <Check className="w-3 h-3" />
+              Pay now
+            </Link>
+          ) : (
+            <button
+              onClick={handleAdd}
+              disabled={!isAvail}
+              className={[
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-semibold",
+                "transition-all duration-300 disabled:opacity-35 disabled:cursor-not-allowed select-none",
+                isAvail
+                  ? "bg-[#06B6D4]/90 text-[#0C0900] hover:bg-[#06B6D4] active:scale-[0.97]"
+                  : "bg-white/[0.03] text-zinc-600 border border-white/[0.05]",
+              ].join(" ")}
+            >
+              {added
+                ? <><Check className="w-3 h-3" />Done</>
+                : isAvail
+                  ? <><ShoppingCart className="w-3 h-3" />Add</>
+                  : <span style={{ letterSpacing: "0.06em", fontSize: "10px" }}>Sold out</span>
+              }
+            </button>
+          )}
         </div>
       </Link>
     </motion.div>
@@ -172,7 +225,7 @@ export function FeaturedTickets() {
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <span style={{ width: "16px", height: "1px", background: "rgba(6,182,212,0.45)", flexShrink: 0 }} />
               <span style={{ fontFamily: INTER, fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(237,233,225,0.82)" }}>
-                Available now
+                Limited stock — act now
               </span>
             </div>
             <Link
@@ -199,7 +252,10 @@ export function FeaturedTickets() {
             className="font-[var(--font-playfair)] font-black text-white"
             style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.025em", lineHeight: 0.92 }}
           >
-            <LineReveal>Top Picks</LineReveal>
+            <LineReveal>Last Available</LineReveal>
+            <LineReveal delay={0.07}>
+              <span style={{ color: "rgba(237,233,225,0.42)" }}>Tickets</span>
+            </LineReveal>
           </h2>
         </motion.div>
 

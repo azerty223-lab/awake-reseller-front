@@ -29,7 +29,23 @@ const faqs = [
   },
   {
     q: "How do I contact support?",
-    a: "You can reach us via the Contact page or email us directly at awtickets@outlook.com. We aim to respond within a few hours during business hours (CET). For urgent matters close to the festival date, mention 'URGENT' in your subject line.",
+    a: "You can reach us via the Contact page or by using the chat widget on this page. We aim to respond within a few hours during business hours (CET). For urgent matters close to the festival date, mention 'URGENT' in your subject line.",
+  },
+  {
+    q: "What ID do I need at the gate?",
+    a: "Your government-issued ID (passport, national ID, or driving licence) must match the name on your ticket exactly. Mismatches may result in denied entry. Ensure your ticket is transferred to the correct name before the festival.",
+  },
+  {
+    q: "Can I re-enter the festival once I leave?",
+    a: "No. Once you exit the festival site, re-entry is not permitted. Plan your day accordingly before leaving. This is an Awakenings policy that applies to all ticket holders.",
+  },
+  {
+    q: "What format is my ticket? Can I print it?",
+    a: "Your ticket is a digital PDF e-ticket. Paper printouts are not accepted at the gate — you must present your ticket on a fully charged device at maximum brightness. We recommend downloading it before arriving so you don't rely on mobile data.",
+  },
+  {
+    q: "When do gates open?",
+    a: "Gates open 30 minutes before the first act. Late arrivals are admitted until 23:00 on Friday and Saturday. Check the official Awakenings schedule for exact times per day.",
   },
 ];
 
@@ -61,15 +77,17 @@ export function FAQSection() {
               textTransform: "uppercase",
               color:         "rgba(237,233,225,0.50)",
             }}>
-              FAQs
+              Before you buy
             </span>
           </div>
           <h2
             className="font-[var(--font-playfair)] font-black text-white"
             style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", letterSpacing: "-0.03em", lineHeight: 0.92 }}
           >
-            <LineReveal>Common</LineReveal>
-            <LineReveal delay={0.09}>questions</LineReveal>
+            <LineReveal>Everything you need</LineReveal>
+            <LineReveal delay={0.09}>
+              <span style={{ color: "rgba(237,233,225,0.42)" }}>to know</span>
+            </LineReveal>
           </h2>
         </motion.div>
 
@@ -189,24 +207,16 @@ export function FAQSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           style={{ marginTop: "3rem" }}
         >
-          <p style={{
-            fontFamily: INTER,
-            fontSize:   "0.875rem",
-            color:      "rgba(113,113,122,0.7)",
-          }}>
-            Still have questions?{" "}
+          <p style={{ fontFamily: INTER, fontSize: "0.875rem", color: "rgba(113,113,122,0.7)" }}>
+            Still unsure?{" "}
             <Link
               href="/contact"
               className="group inline-flex items-center gap-1.5"
-              style={{
-                color:      "#06B6D4",
-                fontWeight: 400,
-                transition: "color 0.3s ease",
-              }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#06B6D4")}
-              onMouseLeave={e => (e.currentTarget.style.color = "#06B6D4")}
+              style={{ color: "#06B6D4", fontWeight: 500, transition: "opacity 0.3s ease" }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = "0.75")}
+              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
             >
-              Get in touch
+              Chat with us — we respond within 4 hours
               <ArrowRight
                 className="group-hover:translate-x-0.5 transition-transform duration-300"
                 style={{ width: "13px", height: "13px" }}
