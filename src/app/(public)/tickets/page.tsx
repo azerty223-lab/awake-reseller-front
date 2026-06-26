@@ -6,8 +6,19 @@ import Image from "next/image";
 import { TicketGrid } from "@/frontend/components/tickets/TicketGrid";
 
 export const metadata: Metadata = {
-  title: "Browse Tickets",
-  description: "Buy verified resale tickets for Awakenings Festival 2026. Weekend, day, camping, VIP, and premium passes available.",
+  title: "All Available Tickets — Verified Resale",
+  description:
+    "Buy verified resale tickets for Awakenings Festival 2026 — July 10–12, Beekse Bergen. Weekend, Saturday and Sunday day passes, camping. Name transfer included. Only 8 left.",
+  openGraph: {
+    title:       "Awakenings 2026 Tickets — All Available | AW Tickets",
+    description: "Verified resale tickets with official name transfer. E-ticket July 8. Stripe secured. Only 8 left.",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card:        "summary_large_image",
+    title:       "Awakenings 2026 — Browse All Tickets | AW Tickets",
+    description: "Verified resale. Name transfer included. Only 8 tickets left.",
+  },
 };
 
 export default async function TicketsPage() {
@@ -34,30 +45,49 @@ export default async function TicketsPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050507] via-[#050507]/50 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-[#00A0B6] font-bold mb-3">
-            Private Verified Resale
-          </div>
-          <h1 className="font-[var(--font-playfair)] text-5xl sm:text-6xl font-black text-white mb-4">
-            Ticket Marketplace
-          </h1>
-          {/* Seller legitimacy statement — most important trust signal on this page */}
-          <p className="text-zinc-400 text-sm max-w-md leading-relaxed mb-5">
-            All tickets purchased directly from the official Awakenings website.
-            Private resale — name transfers handled through the official Awakenings process.
+          <p className="text-[10px] uppercase tracking-[0.28em] font-semibold mb-3"
+             style={{ color: "rgba(6,182,212,0.75)", fontFamily: "var(--font-inter)" }}>
+            Official Verified Resale · Awakenings 2026
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-2">
+          <h1 className="font-[var(--font-inter)] font-black text-white mb-4 uppercase"
+              style={{ fontSize: "clamp(2rem, 5vw, 3.75rem)", letterSpacing: "0.04em", lineHeight: 0.92 }}>
+            All Available Tickets
+          </h1>
+          <p className="text-sm max-w-md leading-relaxed mb-6"
+             style={{ color: "rgba(161,161,170,0.72)", fontFamily: "var(--font-inter)" }}>
+            Every ticket sourced directly from the official Awakenings box office.
+            Name transfer handled through the authorised Awakenings process —
+            your ticket, your name, gate-ready by July 8.
+          </p>
+          <div
+            role="list"
+            aria-label="Purchase guarantees"
+            className="flex flex-wrap items-center justify-center gap-2"
+          >
             {[
-              { icon: "✓", text: "From Awakenings.nl" },
-              { icon: "✓", text: "Official transfer" },
-              { icon: "✓", text: "July 10–12 · Hilvarenbeek" },
-              { icon: "✓", text: "Stripe checkout" },
-            ].map(({ icon, text }) => (
+              { text: "Sourced from Awakenings.nl" },
+              { text: "Official name transfer" },
+              { text: "E-ticket July 8" },
+              { text: "Stripe secured" },
+              { text: "Full refund if cancelled" },
+            ].map(({ text }) => (
               <span
                 key={text}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold"
-                style={{ background: "rgba(0,160,182,0.08)", border: "1px solid rgba(0,160,182,0.20)", color: "rgba(0,160,182,0.85)" }}
+                role="listitem"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold"
+                style={{
+                  background:    "rgba(6,182,212,0.06)",
+                  border:        "1px solid rgba(6,182,212,0.18)",
+                  color:         "rgba(237,233,225,0.72)",
+                  fontFamily:    "var(--font-inter)",
+                  letterSpacing: "0.04em",
+                }}
               >
-                <span style={{ color: "#00A0B6" }}>{icon}</span>
+                <span style={{
+                  width: "4px", height: "4px", borderRadius: "50%",
+                  background: "rgba(6,182,212,0.85)", flexShrink: 0,
+                  display: "inline-block",
+                }} />
                 {text}
               </span>
             ))}

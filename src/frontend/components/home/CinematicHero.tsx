@@ -50,13 +50,45 @@ const fade = (delay: number, dur = 1.2) => ({
   transition: { duration: dur, delay, ease: "easeOut" as const },
 });
 
-/* ── Trust chips data ───────────────────────────────────────────── */
-const TRUST = [
-  "Sourced from Awakenings.nl",
-  "Name transfer included",
-  "E-ticket July 8",
-  "Stripe secured",
-  "Full refund if cancelled",
+/* ── Trust chips — icon + label pairs ───────────────────────────── */
+/* Each icon reinforces the claim at a glance; readable in 150ms    */
+/* without needing to parse the text. Scannable on mobile at speed. */
+
+function ChipIcon({ path, viewBox = "0 0 24 24" }: { path: string; viewBox?: string }) {
+  return (
+    <svg
+      width="11" height="11" viewBox={viewBox}
+      fill="none" stroke="currentColor"
+      strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round"
+      style={{ flexShrink: 0, opacity: 0.90 }}
+      aria-hidden="true"
+    >
+      <path d={path} />
+    </svg>
+  );
+}
+
+const TRUST: Array<{ label: string; icon: React.ReactNode }> = [
+  {
+    label: "Sourced from Awakenings.nl",
+    icon:  <ChipIcon path="M20 6L9 17l-5-5" />,              /* checkmark */
+  },
+  {
+    label: "Name transfer included",
+    icon:  <ChipIcon path="M16 3l4 4-4 4M8 21l-4-4 4-4M20 7H4M4 17h16" />, /* swap arrows */
+  },
+  {
+    label: "E-ticket July 8",
+    icon:  <ChipIcon path="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />, /* calendar */
+  },
+  {
+    label: "Stripe secured",
+    icon:  <ChipIcon path="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />, /* shield */
+  },
+  {
+    label: "Full refund if cancelled",
+    icon:  <ChipIcon path="M3 2v6h6M3.5 15A9 9 0 1 0 6 5.3L3 8" />,        /* return arrow */
+  },
 ];
 
 /* ── Countdown unit ─────────────────────────────────────────────── */
@@ -260,9 +292,11 @@ export function CinematicHero() {
             </div>
           </motion.div>
 
-          {/* ── TRUST CHIPS — visible, readable, icon-led ─────── */}
+          {/* ── TRUST CHIPS — icon-led, readable, semantic list ── */}
           <motion.div
             {...fade(0.60, 1.0)}
+            role="list"
+            aria-label="Purchase guarantees"
             style={{
               display:   "flex",
               flexWrap:  "wrap",
@@ -270,13 +304,13 @@ export function CinematicHero() {
               marginTop: "clamp(0.875rem, 1.8vw, 1.5rem)",
             }}
           >
-            {TRUST.map(label => (
+            {TRUST.map(({ label, icon }) => (
               <span
                 key={label}
                 style={{
                   display:       "inline-flex",
                   alignItems:    "center",
-                  gap:           "7px",
+                  gap:           "6px",
                   fontFamily:    I,
                   fontSize:      "11px",
                   fontWeight:    600,
@@ -285,16 +319,13 @@ export function CinematicHero() {
                   border:        "1px solid rgba(237,233,225,0.13)",
                   padding:       "5px 11px 5px 9px",
                   background:    "rgba(237,233,225,0.035)",
+                  /* Semantic role so chips are announced as a list */
                 }}
+                role="listitem"
               >
-                {/* Cyan dot */}
-                <span style={{
-                  width:        "4px",
-                  height:       "4px",
-                  borderRadius: "50%",
-                  background:   "rgba(6,182,212,0.90)",
-                  flexShrink:   0,
-                }} />
+                <span style={{ color: "rgba(6,182,212,0.85)" }}>
+                  {icon}
+                </span>
                 {label}
               </span>
             ))}

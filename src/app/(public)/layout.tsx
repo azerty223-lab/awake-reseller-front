@@ -20,7 +20,7 @@ export default function PublicLayout({
     <div className="flex flex-col min-h-screen" style={{ background: "#020203" }}>
       <AnimatedBackground />
       <Navbar onCartOpen={() => setCartOpen(true)} />
-      <main className="flex-1 pt-16 sm:pt-20 overflow-x-hidden">{children}</main>
+      <main id="main-content" className="flex-1 pt-16 sm:pt-20 overflow-x-hidden">{children}</main>
       <Footer />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <StickyBuyBar />

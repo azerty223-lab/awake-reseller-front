@@ -1,3 +1,4 @@
+import { SchemaMarkup }             from "@/frontend/components/schema/SchemaMarkup";
 import { AnnouncementBar }          from "@/frontend/components/home/AnnouncementBar";
 import { CinematicHero }            from "@/frontend/components/home/CinematicHero";
 import { SocialProofTicker }        from "@/frontend/components/home/SocialProofTicker";
@@ -52,6 +53,9 @@ function AltBg({ children }: { children: React.ReactNode }) {
 export default function HomePage() {
   return (
     <>
+      {/* Structured data — injected into <head> for SEO rich results */}
+      <SchemaMarkup />
+
       {/* 0 — Announcement bar: scarcity signal anchored below the navbar */}
       <AnnouncementBar />
 

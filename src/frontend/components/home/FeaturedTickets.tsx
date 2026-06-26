@@ -291,7 +291,22 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
             <p className="text-xs text-zinc-600 mt-0.5 truncate">{ticket.dayLabel}</p>
           )}
 
-          {/* Mobile-only sold-out label */}
+          {/* Viewing count — visible on ALL screen sizes.
+              On desktop this duplicates the stock column signal; on mobile
+              it's the ONLY herd-instinct signal a user sees.            */}
+          {isAvail && (
+            <p style={{
+              fontFamily:    INTER,
+              fontSize:      "10px",
+              color:         "rgba(113,113,122,0.42)",
+              letterSpacing: "0.03em",
+              marginTop:     "2px",
+            }}>
+              {viewingNow} viewing now
+            </p>
+          )}
+
+          {/* Sold-at timestamp — mobile only (desktop shows this in stock column) */}
           {!isAvail && (
             <p
               className="md:hidden text-[10px] mt-0.5"
@@ -342,16 +357,7 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
                 </span>
               )}
 
-              {/* Viewing count — subtle social proof */}
-              <span style={{
-                fontFamily:    INTER,
-                fontSize:      "10px",
-                color:         "rgba(113,113,122,0.55)",
-                letterSpacing: "0.03em",
-                alignSelf:     "flex-start",
-              }}>
-                {viewingNow} viewing
-              </span>
+              {/* Viewing count is now in the name column (visible on all screens) */}
             </>
           ) : (
             <>
