@@ -258,16 +258,16 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
 
         {/* Name + day label + mobile urgency pill */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 min-w-0">
-            <p className="text-[0.9375rem] font-medium text-zinc-200 truncate group-hover:text-white
-                          transition-colors duration-200 min-w-0">
+          <div className="flex items-start gap-2">
+            <p className="text-[0.9375rem] font-medium text-zinc-200 group-hover:text-white
+                          transition-colors duration-200 leading-snug">
               {ticket.name}
             </p>
 
             {/* Mobile-only urgency pill — hidden on desktop where stock column exists */}
             {isLow && (
               <span
-                className="md:hidden shrink-0 inline-flex items-center gap-1"
+                className="md:hidden shrink-0 inline-flex items-center gap-1 mt-[3px]"
                 style={{
                   fontFamily:    INTER,
                   fontSize:      "9px",
@@ -288,7 +288,7 @@ function TicketRow({ ticket, index }: { ticket: PrismaTicket; index: number }) {
           </div>
 
           {ticket.dayLabel && (
-            <p className="text-xs text-zinc-600 mt-0.5 truncate">{ticket.dayLabel}</p>
+            <p className="text-xs text-zinc-600 mt-0.5">{ticket.dayLabel}</p>
           )}
 
           {/* Viewing count — visible on ALL screen sizes.
