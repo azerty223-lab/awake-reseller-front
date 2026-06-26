@@ -110,10 +110,10 @@ export function TicketCard({ ticket }: TicketCardProps) {
       {isLow && (
         <div
           className="flex items-center justify-center gap-1.5 px-4 py-1.5"
-          style={{ background: "rgba(251,191,36,0.07)", borderBottom: "1px solid rgba(251,191,36,0.14)" }}
+          style={{ background: "rgba(6,182,212,0.07)", borderBottom: "1px solid rgba(6,182,212,0.18)" }}
         >
-          <AlertTriangle className="w-3 h-3 text-amber-400 shrink-0" strokeWidth={2} aria-hidden="true" />
-          <span style={{ fontFamily: I, fontSize: "10.5px", fontWeight: 600, color: "rgba(251,191,36,0.90)", letterSpacing: "0.04em" }}>
+          <AlertTriangle className="w-3 h-3 shrink-0" style={{ color: "rgba(6,182,212,0.85)" }} strokeWidth={2} aria-hidden="true" />
+          <span style={{ fontFamily: I, fontSize: "10.5px", fontWeight: 600, color: "rgba(6,182,212,0.90)", letterSpacing: "0.04em" }}>
             {available === 1 ? "Last ticket" : `Only ${available} left`}
           </span>
         </div>
@@ -230,10 +230,10 @@ export function TicketCard({ ticket }: TicketCardProps) {
             <>
               <span
                 aria-hidden="true"
-                className={`w-1.5 h-1.5 rounded-full shrink-0 ${isLow ? "bg-amber-400" : "bg-emerald-500/60"}`}
+                className={`w-1.5 h-1.5 rounded-full shrink-0 ${isLow ? "bg-[#06B6D4]" : "bg-emerald-500/60"}`}
               />
               <span
-                style={{ fontFamily: I, fontSize: "11px", fontWeight: isLow ? 600 : 400, color: isLow ? "rgba(251,191,36,0.90)" : "rgba(161,161,170,0.50)" }}
+                style={{ fontFamily: I, fontSize: "11px", fontWeight: isLow ? 600 : 400, color: isLow ? "rgba(6,182,212,0.90)" : "rgba(161,161,170,0.50)" }}
               >
                 {available === 1 ? "Last one" : `${available} left`}
               </span>

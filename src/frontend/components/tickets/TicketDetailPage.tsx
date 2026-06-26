@@ -289,10 +289,10 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
                   isLow ? (
                     <div
                       className="flex items-center gap-2 rounded-lg px-3 py-2"
-                      style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.15)" }}
+                      style={{ background: "rgba(6,182,212,0.07)", border: "1px solid rgba(6,182,212,0.20)" }}
                     >
-                      <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" strokeWidth={2} aria-hidden="true" />
-                      <span className="text-xs font-medium text-amber-400/90">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: "rgba(6,182,212,0.90)" }} strokeWidth={2} aria-hidden="true" />
+                      <span className="text-xs font-medium" style={{ color: "rgba(6,182,212,0.90)" }}>
                         {available === 1 ? "Last ticket — secure yours now" : `Only ${available} tickets remaining`}
                       </span>
                     </div>
