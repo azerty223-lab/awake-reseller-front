@@ -8,33 +8,55 @@ function getTransporter() {
   if (!user || !pass) throw new Error("SMTP_USER and SMTP_PASS must be set");
 
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST ?? "smtp.gmail.com",
-    port: parseInt(process.env.SMTP_PORT ?? "587"),
+    host:   process.env.SMTP_HOST ?? "smtp.gmail.com",
+    port:   parseInt(process.env.SMTP_PORT ?? "587"),
     secure: false,
-    auth: { user, pass },
+    auth:   { user, pass },
   });
 }
 
 const FROM = () =>
   `AW Tickets <${process.env.EMAIL_FROM ?? process.env.SMTP_USER ?? ADMIN}>`;
 
+/* ── Security helpers ───────────────────────────────────────────────
+   escapeHtml: prevents XSS when user-controlled strings are embedded
+               in HTML email bodies.
+   safeHeader: strips CR/LF characters from strings used in email
+               headers (Subject, From, To) to prevent header injection
+               attacks (adding BCC/CC lines via newline smuggling).   */
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function safeHeader(s: string, maxLen = 998): string {
+  return s.replace(/[\r\n\t]/g, " ").slice(0, maxLen);
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface OrderConfirmationData {
-  to: string;
+  to:           string;
   customerName: string;
-  orderNumber: string;
-  items: { name: string; quantity: number; unitPrice: number }[];
-  totalAmount: number;
-  currency: string;
+  orderNumber:  string;
+  items:        { name: string; quantity: number; unitPrice: number }[];
+  totalAmount:  number;
+  currency:     string;
 }
 
 export async function sendOrderConfirmation(data: OrderConfirmationData) {
+  const safeCustomerName = safeHeader(data.customerName);
+
   const itemsList = data.items
     .map(
-      (item) => `
+      item => `
         <tr>
-          <td style="padding:8px 0;border-bottom:1px solid #2a2a2a;color:#fff;">${item.name}</td>
+          <td style="padding:8px 0;border-bottom:1px solid #2a2a2a;color:#fff;">${escapeHtml(item.name)}</td>
           <td style="padding:8px 0;border-bottom:1px solid #2a2a2a;color:#fff;text-align:center;">${item.quantity}</td>
           <td style="padding:8px 0;border-bottom:1px solid #2a2a2a;color:#c9a84c;text-align:right;">€${item.unitPrice.toFixed(2)}</td>
         </tr>`
@@ -51,10 +73,10 @@ export async function sendOrderConfirmation(data: OrderConfirmationData) {
     </div>
     <div style="background:#161616;border:1px solid #2a2a2a;border-radius:12px;padding:32px;margin-bottom:24px;">
       <h2 style="color:#fff;margin:0 0 8px;">Order Confirmed</h2>
-      <p style="color:#999;margin:0 0 24px;">Thank you, ${data.customerName}. Your order has been confirmed.</p>
+      <p style="color:#999;margin:0 0 24px;">Thank you, ${escapeHtml(safeCustomerName)}. Your order has been confirmed.</p>
       <div style="background:#0a0a0a;border-radius:8px;padding:16px;margin-bottom:24px;">
         <p style="color:#666;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 4px;">Order Number</p>
-        <p style="color:#c9a84c;font-family:monospace;font-size:16px;margin:0;">#${data.orderNumber}</p>
+        <p style="color:#c9a84c;font-family:monospace;font-size:16px;margin:0;">#${escapeHtml(data.orderNumber)}</p>
       </div>
       <table style="width:100%;border-collapse:collapse;">
         <thead>
@@ -90,9 +112,9 @@ export async function sendOrderConfirmation(data: OrderConfirmationData) {
 </body></html>`;
 
   await getTransporter().sendMail({
-    from: FROM(),
+    from:    FROM(),
     replyTo: ADMIN,
-    to: data.to,
+    to:      data.to,
     subject: `Order Confirmation #${data.orderNumber} — Awakenings Festival 2026`,
     html,
   });
@@ -101,13 +123,24 @@ export async function sendOrderConfirmation(data: OrderConfirmationData) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface InquiryConfirmationData {
-  to: string;
-  name: string;
+  to:      string;
+  name:    string;
   subject: string;
   message: string;
 }
 
 export async function sendInquiryConfirmation(data: InquiryConfirmationData) {
+  /* Strip CRLF from any field used in email headers.
+     Without this an attacker can inject "Subject: x\r\nBcc: evil@..." */
+  const safeName    = safeHeader(data.name);
+  const safeSubject = safeHeader(data.subject);
+
+  /* Escape user content that lands inside HTML to prevent XSS reaching
+     the admin's email client. */
+  const escapedName    = escapeHtml(safeName);
+  const escapedSubject = escapeHtml(safeSubject);
+  const escapedMessage = escapeHtml(data.message);
+
   const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
 <body style="background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;padding:40px 20px;margin:0;">
@@ -117,14 +150,14 @@ export async function sendInquiryConfirmation(data: InquiryConfirmationData) {
     </div>
     <div style="background:#161616;border:1px solid #2a2a2a;border-radius:12px;padding:32px;">
       <h2 style="color:#fff;margin:0 0 8px;">We Got Your Message</h2>
-      <p style="color:#999;margin:0 0 24px;">Hi ${data.name}, we've received your inquiry and will respond within 24 hours.</p>
+      <p style="color:#999;margin:0 0 24px;">Hi ${escapedName}, we&#39;ve received your inquiry and will respond within 24 hours.</p>
       <div style="background:#0a0a0a;border-radius:8px;padding:16px;margin-bottom:16px;">
         <p style="color:#666;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 4px;">Subject</p>
-        <p style="color:#fff;margin:0;">${data.subject}</p>
+        <p style="color:#fff;margin:0;">${escapedSubject}</p>
       </div>
       <div style="background:#0a0a0a;border-radius:8px;padding:16px;">
         <p style="color:#666;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 4px;">Your Message</p>
-        <p style="color:#999;margin:0;line-height:1.6;">${data.message}</p>
+        <p style="color:#999;margin:0;line-height:1.6;white-space:pre-wrap;">${escapedMessage}</p>
       </div>
     </div>
   </div>
@@ -132,38 +165,47 @@ export async function sendInquiryConfirmation(data: InquiryConfirmationData) {
 
   const transporter = getTransporter();
 
+  // Confirmation to the user
   await transporter.sendMail({
-    from: FROM(),
+    from:    FROM(),
     replyTo: ADMIN,
-    to: data.to,
+    to:      data.to,
     subject: `We received your inquiry — Awakenings Tickets`,
     html,
   });
 
+  // Notification to admin — all user content escaped
   await transporter.sendMail({
-    from: FROM(),
+    from:    FROM(),
     replyTo: data.to,
-    to: ADMIN,
-    subject: `New inquiry from ${data.name}: ${data.subject}`,
-    html: `<p><b>From:</b> ${data.name} (${data.to})</p>
-           <p><b>Subject:</b> ${data.subject}</p>
-           <p><b>Message:</b></p>
-           <p style="white-space:pre-wrap;">${data.message}</p>`,
+    to:      ADMIN,
+    subject: `New inquiry from ${safeName}: ${safeSubject}`,
+    html: `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family:Arial,sans-serif;">
+      <p><b>From:</b> ${escapedName} (${escapeHtml(data.to)})</p>
+      <p><b>Subject:</b> ${escapedSubject}</p>
+      <p><b>Message:</b></p>
+      <pre style="white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:4px;">${escapedMessage}</pre>
+    </body></html>`,
   });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface TicketEmailData {
-  to: string;
+  to:           string;
   customerName: string;
-  orderNumber: string;
-  ticketTypes: string;
-  ticketUrl: string;
-  qrDataUri: string;
+  orderNumber:  string;
+  ticketTypes:  string;
+  ticketUrl:    string;
+  qrDataUri:    string;
 }
 
 export async function sendTicketEmail(data: TicketEmailData) {
+  const safeCustomerName = safeHeader(data.customerName);
+  const escapedName      = escapeHtml(safeCustomerName);
+  const escapedTypes     = escapeHtml(data.ticketTypes);
+  const escapedOrder     = escapeHtml(data.orderNumber);
+
   const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:40px 16px;background:#f0f0f0;font-family:Arial,sans-serif;">
@@ -201,13 +243,13 @@ export async function sendTicketEmail(data: TicketEmailData) {
       </table>
       <div style="background:#f8f8f8;border-radius:10px;padding:14px 16px;margin-bottom:24px;">
         <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;">Attendee</div>
-        <div style="font-size:15px;font-weight:700;color:#0a0a0a;">${data.customerName}</div>
-        <div style="font-size:12px;color:#888;margin-top:3px;">${data.ticketTypes}</div>
+        <div style="font-size:15px;font-weight:700;color:#0a0a0a;">${escapedName}</div>
+        <div style="font-size:12px;color:#888;margin-top:3px;">${escapedTypes}</div>
       </div>
       <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
         <tr>
           <td style="padding-right:6px;">
-            <a href="${data.ticketUrl}" style="display:block;background:#c9a84c;color:#000;text-align:center;padding:13px 8px;border-radius:10px;text-decoration:none;font-weight:800;font-size:13px;">Access my ticket →</a>
+            <a href="${escapeHtml(data.ticketUrl)}" style="display:block;background:#c9a84c;color:#000;text-align:center;padding:13px 8px;border-radius:10px;text-decoration:none;font-weight:800;font-size:13px;">Access my ticket →</a>
           </td>
           <td style="padding-left:6px;">
             <a href="https://www.awakenings.com/en/events/2026/07/awakenings-festival/378057/" style="display:block;background:#0a0a0a;color:#fff;text-align:center;padding:13px 8px;border-radius:10px;text-decoration:none;font-weight:700;font-size:13px;">Event Page</a>
@@ -215,8 +257,8 @@ export async function sendTicketEmail(data: TicketEmailData) {
         </tr>
       </table>
       <div style="border:1.5px solid #eee;border-radius:14px;padding:24px;text-align:center;">
-        <img src="${data.qrDataUri}" width="190" height="190" alt="Entry QR Code" style="display:block;margin:0 auto 14px;">
-        <div style="font-family:monospace;font-size:13px;color:#555;letter-spacing:.08em;">${data.orderNumber}</div>
+        <img src="${escapeHtml(data.qrDataUri)}" width="190" height="190" alt="Entry QR Code" style="display:block;margin:0 auto 14px;">
+        <div style="font-family:monospace;font-size:13px;color:#555;letter-spacing:.08em;">${escapedOrder}</div>
         <p style="font-size:11px;color:#aaa;margin:10px 0 0;line-height:1.5;">This QR code is your entry pass.<br>Have it ready and accessible on your mobile device.</p>
       </div>
     </div>
@@ -228,10 +270,10 @@ export async function sendTicketEmail(data: TicketEmailData) {
 </body></html>`;
 
   await getTransporter().sendMail({
-    from: FROM(),
+    from:    FROM(),
     replyTo: ADMIN,
-    to: data.to,
-    subject: `Ticket of "${data.customerName}" for Awakenings 2026`,
+    to:      data.to,
+    subject: `Ticket of "${safeCustomerName}" for Awakenings 2026`,
     html,
   });
 }
