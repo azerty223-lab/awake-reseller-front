@@ -2,27 +2,41 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/backend/lib/prisma";
 
 /* ── Health check endpoint ──────────────────────────────────────────
-   Railway (and any uptime monitor) pings this to verify the app and
-   its critical dependencies are reachable.
+   Railway pings this to decide whether to restart the container.
 
-   Returns 200 { status: "ok" }       when everything is healthy
-   Returns 503 { status: "degraded" } when the database is unreachable
+   Design decision: always return 200 as long as the Node process is
+   alive. Returning 503 on a slow DB query was causing Railway to
+   restart the app in a loop during cold-start (DB takes a few seconds
+   to accept connections after a deploy).
 
-   Intentionally lightweight — no auth, no heavy queries.           */
+   DB status is included in the response body so an external uptime
+   monitor (UptimeRobot, BetterUptime, etc.) can alert on degradation
+   without Railway treating it as a crash.                          */
 
 export async function GET() {
-  try {
-    // Minimal DB round-trip — confirms connection pool is alive
-    await prisma.$queryRaw`SELECT 1`;
+  let dbStatus: "ok" | "degraded" = "ok";
 
-    return NextResponse.json(
-      { status: "ok", timestamp: new Date().toISOString() },
-      { status: 200 }
-    );
+  try {
+    // 3-second timeout — if the DB doesn't respond in time we still
+    // return 200 so Railway doesn't restart a healthy Node process.
+    await Promise.race([
+      prisma.$queryRaw`SELECT 1`,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), 3000)
+      ),
+    ]);
   } catch {
-    return NextResponse.json(
-      { status: "degraded", error: "database unreachable" },
-      { status: 503 }
-    );
+    dbStatus = "degraded";
   }
+
+  return NextResponse.json(
+    {
+      status:    dbStatus === "ok" ? "ok" : "degraded",
+      db:        dbStatus,
+      timestamp: new Date().toISOString(),
+    },
+    // Always 200 — Railway only uses the status code to decide whether
+    // to restart. DB degradation is monitored separately.
+    { status: 200 }
+  );
 }
