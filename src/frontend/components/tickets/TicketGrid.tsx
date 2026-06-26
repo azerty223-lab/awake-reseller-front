@@ -7,47 +7,45 @@ import { TicketCard } from "./TicketCard";
 import { TicketCategory, type Ticket } from "@/frontend/types/tickets";
 import { motion, AnimatePresence } from "framer-motion";
 
+/* ── Filter + sort config ──────────────────────────────────────── */
 const TABS = [
-  { value: "ALL",                          label: "All" },
-  { value: TicketCategory.WEEKEND,         label: "Weekend" },
+  { value: "ALL",                          label: "All"      },
+  { value: TicketCategory.WEEKEND,         label: "Weekend"  },
   { value: TicketCategory.SATURDAY,        label: "Saturday" },
-  { value: TicketCategory.SUNDAY,          label: "Sunday" },
-  { value: TicketCategory.CAMPING,         label: "Camping" },
-  { value: TicketCategory.COMFORT_CAMPING, label: "Comfort" },
+  { value: TicketCategory.SUNDAY,          label: "Sunday"   },
+  { value: TicketCategory.CAMPING,         label: "Camping"  },
+  { value: TicketCategory.COMFORT_CAMPING, label: "Comfort"  },
   { value: TicketCategory.CAR_CAMPING,     label: "Car Camp" },
-  { value: TicketCategory.PREMIUM,         label: "Premium" },
-  { value: TicketCategory.ACCOMMODATION,   label: "Stay" },
+  { value: TicketCategory.PREMIUM,         label: "Premium"  },
+  { value: TicketCategory.ACCOMMODATION,   label: "Stay"     },
 ] as const;
 
 const SORT_OPTIONS = [
-  { value: "price-asc",    label: "Price: Low to High" },
-  { value: "price-desc",   label: "Price: High to Low" },
-  { value: "newest",       label: "Newest First" },
-  { value: "availability", label: "Most Available" },
+  { value: "price-asc",    label: "Price: low → high"  },
+  { value: "price-desc",   label: "Price: high → low"  },
+  { value: "newest",       label: "Newest first"        },
+  { value: "availability", label: "Most available"      },
 ];
 
 const TRUST_CHIPS = [
   { Icon: ShieldCheck, text: "Sourced from Awakenings.nl" },
-  { Icon: Check,       text: "Official name transfer" },
-  { Icon: Clock,       text: "E-ticket July 8, 2026" },
-  { Icon: Lock,        text: "Stripe secured" },
+  { Icon: Check,       text: "Official name transfer"     },
+  { Icon: Clock,       text: "E-ticket July 8, 2026"      },
+  { Icon: Lock,        text: "Stripe secured"             },
 ] as const;
 
+/* ── Animation variants ────────────────────────────────────────── */
 const containerVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.02 } },
+  visible: { transition: { staggerChildren: 0.04 } },
 };
 
 const itemVariants = {
-  hidden:  { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" as const } },
+  hidden:  { opacity: 0, y: 14 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.28, ease: "easeOut" as const } },
 };
 
-interface TicketGridProps {
-  tickets: Ticket[];
-}
-
-export function TicketGrid({ tickets }: TicketGridProps) {
+export function TicketGrid({ tickets }: { tickets: Ticket[] }) {
   const [category, setCategory] = useState("ALL");
   const [sort, setSort]         = useState("price-asc");
   const [query, setQuery]       = useState("");
@@ -65,13 +63,13 @@ export function TicketGrid({ tickets }: TicketGridProps) {
   }, []);
 
   const visible = useMemo(
-    () => tickets.filter((t) => t.isVisible),
+    () => tickets.filter(t => t.isVisible),
     [tickets]
   );
 
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = { ALL: visible.length };
-    visible.forEach((t) => { counts[t.category] = (counts[t.category] ?? 0) + 1; });
+    visible.forEach(t => { counts[t.category] = (counts[t.category] ?? 0) + 1; });
     return counts;
   }, [visible]);
 
@@ -79,55 +77,50 @@ export function TicketGrid({ tickets }: TicketGridProps) {
     let result = visible;
 
     if (category !== "ALL") {
-      result = result.filter((t) => t.category === category);
+      result = result.filter(t => t.category === category);
     }
 
     if (query.trim()) {
       const q = query.toLowerCase();
-      result = result.filter(
-        (t) =>
-          t.name.toLowerCase().includes(q) ||
-          t.description.toLowerCase().includes(q) ||
-          (t.dayLabel && t.dayLabel.toLowerCase().includes(q))
+      result = result.filter(t =>
+        t.name.toLowerCase().includes(q) ||
+        t.description.toLowerCase().includes(q) ||
+        (t.dayLabel && t.dayLabel.toLowerCase().includes(q))
       );
     }
 
     switch (sort) {
-      case "price-asc":
-        result = [...result].sort((a, b) => a.resalePrice - b.resalePrice);
-        break;
-      case "price-desc":
-        result = [...result].sort((a, b) => b.resalePrice - a.resalePrice);
-        break;
-      case "newest":
-        result = [...result].sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        break;
-      case "availability":
-        result = [...result].sort(
-          (a, b) => (b.quantity - b.sold) - (a.quantity - a.sold)
-        );
-        break;
+      case "price-asc":    return [...result].sort((a, b) => a.resalePrice - b.resalePrice);
+      case "price-desc":   return [...result].sort((a, b) => b.resalePrice - a.resalePrice);
+      case "newest":       return [...result].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      case "availability": return [...result].sort((a, b) => (b.quantity - b.sold) - (a.quantity - a.sold));
     }
 
     return result;
   }, [visible, category, sort, query]);
 
   const hasFilters      = category !== "ALL" || query.trim() !== "";
-  const activeTabLabel  = TABS.find((t) => t.value === category)?.label ?? "All";
-  const activeSortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.label ?? "";
+  const activeTabLabel  = TABS.find(t => t.value === category)?.label ?? "All";
+  const activeSortLabel = SORT_OPTIONS.find(o => o.value === sort)?.label ?? "";
 
   const clearFilters = () => { setCategory("ALL"); setQuery(""); };
 
   return (
     <div>
-      {/* ── Sticky toolbar ──────────────────────────────────────────── */}
-      <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 bg-[#050507]/95 backdrop-blur-sm border-b border-white/[0.06] mb-8">
+      {/* ── Sticky toolbar ────────────────────────────────────────── */}
+      <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 mb-8">
 
-        {/* Category tabs */}
-        <div className="flex items-stretch overflow-x-auto hide-scrollbar px-4 sm:px-6 lg:px-8">
-          {TABS.map((tab) => {
+        {/* ── Category filter pills ─────────────────────────────── */}
+        <div
+          className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-4 sm:px-6 lg:px-8 py-3"
+          style={{
+            background:   "rgba(5,5,7,0.95)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+          }}
+        >
+          {TABS.map(tab => {
             const count    = tabCounts[tab.value] ?? 0;
             const isActive = category === tab.value;
             if (tab.value !== "ALL" && count === 0) return null;
@@ -137,70 +130,44 @@ export function TicketGrid({ tickets }: TicketGridProps) {
                 key={tab.value}
                 onClick={() => setCategory(tab.value)}
                 className={[
-                  "flex-shrink-0 flex items-center gap-2 px-3 py-3 text-sm font-medium",
-                  "whitespace-nowrap border-b-2 -mb-px transition-colors duration-150 select-none cursor-pointer",
+                  "flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full",
+                  "text-xs font-medium whitespace-nowrap",
+                  "transition-all duration-150 select-none cursor-pointer",
                   isActive
-                    ? "border-white text-white"
-                    : "border-transparent text-zinc-500 hover:text-zinc-300",
+                    ? "bg-white/[0.14] text-white border border-white/[0.18]"
+                    : "text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] border border-transparent",
                 ].join(" ")}
               >
                 {tab.label}
-                {count > 0 && tab.value !== "ALL" && (
-                  <span className={[
-                    "px-1.5 py-0.5 rounded-full text-[10px] font-medium tabular-nums leading-none",
-                    "transition-colors duration-150",
-                    isActive
-                      ? "bg-white/[0.12] text-zinc-300"
-                      : "bg-white/[0.06] text-zinc-600",
-                  ].join(" ")}>
+                {tab.value !== "ALL" && count > 0 && (
+                  <span
+                    className={[
+                      "text-[10px] font-semibold tabular-nums px-1.5 py-0.5 rounded-full leading-none",
+                      isActive ? "bg-white/[0.14] text-zinc-300" : "bg-white/[0.06] text-zinc-600",
+                    ].join(" ")}
+                  >
                     {count}
                   </span>
                 )}
               </button>
             );
           })}
-          <div className="flex-1 border-b-2 border-transparent -mb-px" />
-        </div>
 
-        {/* Search / Sort row */}
-        <div className="flex items-center gap-3 px-4 sm:px-6 lg:px-8 py-2.5">
-
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-600 pointer-events-none" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search tickets…"
-              aria-label="Search tickets"
-              className="w-full pl-8 pr-7 py-1.5 bg-white/[0.04] border border-white/[0.07] rounded-lg text-zinc-200 placeholder-zinc-700 text-sm focus:outline-none focus:border-white/[0.16] transition-colors"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-300 transition-colors cursor-pointer"
-                aria-label="Clear search"
-              >
-                <X className="w-3 h-3" aria-hidden="true" />
-              </button>
-            )}
-          </div>
-
-          <div className="w-px h-4 bg-white/[0.07] shrink-0" aria-hidden="true" />
-
-          {/* Sort dropdown */}
+          {/* Push-right: sort control */}
+          <div className="flex-1 min-w-[1rem]" />
           <div className="relative shrink-0" ref={sortRef}>
             <button
               onClick={() => setSortOpen(v => !v)}
-              className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-200 transition-colors py-1 select-none cursor-pointer"
+              className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-200 transition-colors py-1.5 px-2 rounded-lg hover:bg-white/[0.05] select-none cursor-pointer"
               aria-haspopup="listbox"
               aria-expanded={sortOpen}
-              aria-label={`Sort by: ${activeSortLabel}`}
+              aria-label={`Sort: ${activeSortLabel}`}
             >
               <ArrowUpDown className="w-3 h-3 shrink-0" aria-hidden="true" />
-              <span>{activeSortLabel}</span>
+              <span className="hidden sm:inline">{activeSortLabel}</span>
               <ChevronDown className={`w-3 h-3 shrink-0 transition-transform duration-150 ${sortOpen ? "rotate-180" : ""}`} aria-hidden="true" />
             </button>
+
             {sortOpen && (
               <div
                 role="listbox"
@@ -208,7 +175,7 @@ export function TicketGrid({ tickets }: TicketGridProps) {
                 className="absolute right-0 top-full mt-1.5 z-30 min-w-[176px] rounded-xl border border-white/[0.10] py-1 shadow-2xl"
                 style={{ background: "#0C0D10" }}
               >
-                {SORT_OPTIONS.map((opt) => (
+                {SORT_OPTIONS.map(opt => (
                   <button
                     key={opt.value}
                     role="option"
@@ -227,10 +194,35 @@ export function TicketGrid({ tickets }: TicketGridProps) {
               </div>
             )}
           </div>
+        </div>
 
-          <div className="flex-1" />
+        {/* ── Search + count row ────────────────────────────────── */}
+        <div
+          className="flex items-center gap-3 px-4 sm:px-6 lg:px-8 py-2.5"
+          style={{ background: "rgba(5,5,7,0.90)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+        >
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-600 pointer-events-none" aria-hidden="true" />
+            <input
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Search tickets…"
+              aria-label="Search tickets"
+              className="w-full pl-8 pr-7 py-1.5 bg-white/[0.04] border border-white/[0.07] rounded-lg text-zinc-200 placeholder-zinc-700 text-sm focus:outline-none focus:border-white/[0.16] transition-colors"
+            />
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-300 transition-colors cursor-pointer"
+                aria-label="Clear search"
+              >
+                <X className="w-3 h-3" aria-hidden="true" />
+              </button>
+            )}
+          </div>
 
-          <p className="text-xs text-zinc-600 tabular-nums shrink-0" aria-live="polite">
+          <p className="text-xs text-zinc-600 tabular-nums shrink-0 ml-auto" aria-live="polite">
             {filtered.length === 0 ? "No results" : `${filtered.length} ticket${filtered.length !== 1 ? "s" : ""}`}
           </p>
 
@@ -246,7 +238,7 @@ export function TicketGrid({ tickets }: TicketGridProps) {
         </div>
       </div>
 
-      {/* ── Trust chips ──────────────────────────────────────────────── */}
+      {/* ── Trust chips ───────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-2 mb-8">
         {TRUST_CHIPS.map(({ Icon, text }) => (
           <span
@@ -254,13 +246,13 @@ export function TicketGrid({ tickets }: TicketGridProps) {
             className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium whitespace-nowrap"
             style={{
               background: "rgba(6,182,212,0.05)",
-              border: "1px solid rgba(6,182,212,0.13)",
-              color: "rgba(161,161,170,0.72)",
+              border:     "1px solid rgba(6,182,212,0.12)",
+              color:      "rgba(161,161,170,0.68)",
             }}
           >
             <Icon
               className="w-3 h-3 shrink-0"
-              style={{ color: "rgba(6,182,212,0.70)" }}
+              style={{ color: "rgba(6,182,212,0.65)" }}
               strokeWidth={1.75}
               aria-hidden="true"
             />
@@ -269,37 +261,44 @@ export function TicketGrid({ tickets }: TicketGridProps) {
         ))}
       </div>
 
-      {/* ── Grid / Empty state ───────────────────────────────────────── */}
+      {/* ── Grid / empty state ────────────────────────────────────── */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-          <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
-            <Search className="w-4 h-4 text-zinc-700" aria-hidden="true" />
+        <div className="flex flex-col items-center justify-center py-24 gap-5 text-center">
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center"
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+          >
+            <Search className="w-5 h-5 text-zinc-700" aria-hidden="true" />
           </div>
-          <div className="max-w-[240px]">
-            <p className="text-sm font-medium text-zinc-300 mb-1">
-              {query
-                ? "No matching tickets"
-                : `No ${activeTabLabel !== "All" ? activeTabLabel + " " : ""}tickets`}
+          <div className="max-w-[260px]">
+            <p className="text-sm font-semibold text-zinc-300 mb-1.5">
+              {query ? "No matching tickets" : `No ${activeTabLabel !== "All" ? activeTabLabel + " " : ""}tickets`}
             </p>
             <p className="text-xs text-zinc-600 leading-relaxed">
               {query
                 ? `"${query}" returned no results${category !== "ALL" ? ` in ${activeTabLabel}` : ""}.`
-                : "Try a different category or check back later."}
+                : "Try a different category or check back soon."}
             </p>
           </div>
           {hasFilters && (
             <div className="flex items-center gap-2">
               <button
                 onClick={clearFilters}
-                className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white/[0.06] text-zinc-200 hover:bg-white/[0.09] transition-colors border border-white/[0.07] cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-all duration-150"
+                style={{
+                  background: "rgba(6,182,212,0.10)",
+                  border:     "1px solid rgba(6,182,212,0.22)",
+                  color:      "rgba(6,182,212,0.90)",
+                }}
               >
                 Clear filters
               </button>
               <Link
                 href="/"
-                className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-300 transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-medium text-zinc-600 hover:text-zinc-300 transition-colors"
+                style={{ border: "1px solid rgba(255,255,255,0.07)" }}
               >
-                Back to home
+                Go home
               </Link>
             </div>
           )}
@@ -313,7 +312,7 @@ export function TicketGrid({ tickets }: TicketGridProps) {
           key={`${category}-${sort}-${query}`}
         >
           <AnimatePresence mode="popLayout">
-            {filtered.map((ticket) => (
+            {filtered.map(ticket => (
               <motion.div
                 key={ticket.id}
                 layout
@@ -327,6 +326,7 @@ export function TicketGrid({ tickets }: TicketGridProps) {
         </motion.div>
       )}
 
+      {/* Screen-reader live region for filter changes */}
       <p className="sr-only" aria-live="polite">
         Sorted by {activeSortLabel}. Showing {filtered.length} tickets.
       </p>
