@@ -13,9 +13,9 @@ import {
   UserRound, Lock, Shield, Bitcoin, Check, ArrowLeft,
 } from "lucide-react";
 import {
-  FaCcVisa, FaCcMastercard, FaCcAmex,
-  FaBitcoin, FaEthereum,
-} from "react-icons/fa";
+  SiVisa, SiMastercard, SiAmericanexpress,
+  SiBitcoin, SiEthereum,
+} from "@icons-pack/react-simple-icons";
 import { Turnstile } from "@/frontend/components/ui/Turnstile";
 import { StaticCryptoCheckout } from "@/frontend/components/crypto/StaticCryptoCheckout";
 
@@ -103,40 +103,37 @@ interface SummaryItem {
   quantity:    number;
 }
 
-/* Payment brand icons — sized and coloured per brand guidelines */
+/* ── Payment brand icons ─────────────────────────────────────────────
+   Simple Icons (flat official SVGs). Each icon sits inside a subtle
+   pill so the varied shapes have consistent visual weight on the
+   dark background.                                                  */
+
+const BRANDS = [
+  { Icon: SiVisa,           color: "#FFFFFF",  title: "Visa"             },
+  { Icon: SiMastercard,     color: "#FF5F00",  title: "Mastercard"       },
+  { Icon: SiAmericanexpress,color: "#2671CE",  title: "American Express" },
+  { Icon: SiBitcoin,        color: "#F7931A",  title: "Bitcoin"          },
+  { Icon: SiEthereum,       color: "#8B97F0",  title: "Ethereum"         },
+] as const;
+
 function PaymentIcons() {
   return (
-    <div className="flex items-center gap-2 flex-wrap" aria-label="Accepted payment methods">
-      <FaCcVisa
-        size={28}
-        style={{ color: "#1A1F71" }}
-        title="Visa"
-        aria-label="Visa"
-      />
-      <FaCcMastercard
-        size={28}
-        style={{ color: "#EB001B" }}
-        title="Mastercard"
-        aria-label="Mastercard"
-      />
-      <FaCcAmex
-        size={28}
-        style={{ color: "#007BC1" }}
-        title="American Express"
-        aria-label="American Express"
-      />
-      <FaBitcoin
-        size={22}
-        style={{ color: "#F7931A" }}
-        title="Bitcoin"
-        aria-label="Bitcoin"
-      />
-      <FaEthereum
-        size={22}
-        style={{ color: "#627EEA" }}
-        title="Ethereum"
-        aria-label="Ethereum"
-      />
+    <div className="flex items-center gap-1.5 flex-wrap" aria-label="Accepted payment methods">
+      {BRANDS.map(({ Icon, color, title }) => (
+        <span
+          key={title}
+          title={title}
+          aria-label={title}
+          className="inline-flex items-center justify-center rounded-md"
+          style={{
+            width: "44px", height: "28px",
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid rgba(255,255,255,0.09)",
+          }}
+        >
+          <Icon size={18} color={color} />
+        </span>
+      ))}
     </div>
   );
 }
@@ -357,9 +354,9 @@ export default function CheckoutPage() {
   const activeBrand = getCardBrand(cardNumber);
 
   const brandIcons = {
-    VISA: <FaCcVisa  size={20} style={{ color: "#1A1F71", opacity: 1    }} aria-label="Visa"             />,
-    MC:   <FaCcMastercard size={20} style={{ color: "#EB001B", opacity: 1 }} aria-label="Mastercard"    />,
-    AMEX: <FaCcAmex  size={20} style={{ color: "#007BC1", opacity: 1    }} aria-label="American Express" />,
+    VISA: <SiVisa            size={16} color="#FFFFFF" aria-label="Visa"             />,
+    MC:   <SiMastercard      size={16} color="#FF5F00" aria-label="Mastercard"       />,
+    AMEX: <SiAmericanexpress size={16} color="#2671CE" aria-label="American Express" />,
   };
 
   // ── Main ───────────────────────────────────────────────────────────────
@@ -553,10 +550,10 @@ export default function CheckoutPage() {
                           </span>
                         ) : (
                           /* Show all three faded when no brand is detected */
-                          <span className="flex gap-1 opacity-25">
-                            <FaCcVisa      size={18} style={{ color: "#fff" }} aria-hidden="true" />
-                            <FaCcMastercard size={18} style={{ color: "#fff" }} aria-hidden="true" />
-                            <FaCcAmex      size={18} style={{ color: "#fff" }} aria-hidden="true" />
+                          <span className="flex gap-1 opacity-20" aria-hidden="true">
+                            <SiVisa            size={14} color="#fff" />
+                            <SiMastercard      size={14} color="#fff" />
+                            <SiAmericanexpress size={14} color="#fff" />
                           </span>
                         )}
                       </div>
