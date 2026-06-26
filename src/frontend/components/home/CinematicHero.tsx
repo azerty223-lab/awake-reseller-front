@@ -130,6 +130,22 @@ export function CinematicHero() {
         }}
       />
 
+      {/* ── Grain / film texture — premium festival aesthetic ─── */}
+      {/* Sonar, Dekmantel, and Awakenings itself all use grain     */}
+      {/* to add tactile depth to dark digital surfaces.            */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          zIndex: 1,
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.90' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")",
+          backgroundRepeat: "repeat",
+          backgroundSize:   "128px 128px",
+          mixBlendMode:     "overlay",
+          opacity:          0.042,
+        }}
+      />
+
       {/* ── Ghost watermark ───────────────────────────────────── */}
       <motion.span
         {...fade(1.4, 3.0)}
@@ -225,9 +241,12 @@ export function CinematicHero() {
                 display:       "block",
                 fontFamily:    I,
                 fontWeight:    800,
-                fontSize:      "clamp(2.5rem, 7vw, 6.25rem)",
-                lineHeight:    0.88,
-                letterSpacing: "0.08em",
+                /* Premium display scale — fills the viewport like         */
+                /* Dekmantel, Sonar, and Awakenings' own hero typography.  */
+                fontSize:      "clamp(3.5rem, 11vw, 9.5rem)",
+                lineHeight:    0.86,
+                /* Tighter tracking at display scale — premium convention  */
+                letterSpacing: "0.05em",
                 textTransform: "uppercase",
                 color:         W,
               }}>

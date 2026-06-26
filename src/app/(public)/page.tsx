@@ -9,13 +9,42 @@ import { AccommodationSection }     from "@/frontend/components/home/Accommodati
 import { FAQSection }               from "@/frontend/components/home/FAQSection";
 import { FinalCTASection }          from "@/frontend/components/home/FinalCTASection";
 
-/** Thin editorial divider between sections */
+/**
+ * Enhanced section divider — replaces the flat h-px rule.
+ * A 1px bar with a warm-white fade and a subtle cyan centre glow
+ * creates section rhythm without breaking the dark aesthetic.
+ */
 function Divider() {
   return (
-    <div
-      aria-hidden="true"
-      className="h-px bg-gradient-to-r from-transparent via-white/[0.18] to-transparent"
-    />
+    <div aria-hidden="true" style={{ height: "1px", position: "relative" }}>
+      {/* Warm-white gradient line */}
+      <div style={{
+        position:   "absolute",
+        inset:      0,
+        background: "linear-gradient(to right, transparent, rgba(237,233,225,0.10) 30%, rgba(237,233,225,0.10) 70%, transparent)",
+      }} />
+      {/* Cyan centre ghost — brand colour reinforcement at micro scale */}
+      <div style={{
+        position:   "absolute",
+        inset:      0,
+        background: "linear-gradient(to right, transparent, transparent 35%, rgba(6,182,212,0.09) 50%, transparent 65%, transparent)",
+      }} />
+    </div>
+  );
+}
+
+/**
+ * Alternating warm-tint wrapper.
+ * rgba(237,233,225,0.014) is imperceptible on its own but, when applied
+ * to every other section, creates a barely-visible depth rhythm that
+ * subconsciously signals distinct content zones — the same technique
+ * editorial publications use with paper weight alternation.
+ */
+function AltBg({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ background: "rgba(237,233,225,0.014)" }}>
+      {children}
+    </div>
   );
 }
 
@@ -28,9 +57,11 @@ export default function HomePage() {
       {/* 2 — Social proof ticker: live purchase activity builds trust immediately */}
       <SocialProofTicker />
 
-      {/* 3 — Featured tickets: first conversion opportunity, low friction */}
+      {/* 3 — Featured tickets: first conversion opportunity */}
       <Divider />
-      <FeaturedTickets />
+      <AltBg>
+        <FeaturedTickets />
+      </AltBg>
 
       {/* 4 — Trust & verification: justify the purchase right after the first CTA */}
       <Divider />
@@ -38,27 +69,33 @@ export default function HomePage() {
 
       {/* 5 — Delivery process: reduce anxiety about how/when tickets arrive */}
       <Divider />
-      <TicketDeliverySection />
+      <AltBg>
+        <TicketDeliverySection />
+      </AltBg>
 
       {/* 6 — Ticket tiers: inform and upsell (weekend vs day passes) */}
       <Divider />
       <FestivalAccessSection />
 
-      {/* 7 — Lineup: emotional sell, primary reason to attend — anchor for hero CTA */}
+      {/* 7 — Lineup: emotional sell — anchor target for hero 'View Lineup' CTA */}
       <div id="lineup">
         <Divider />
-        <LineupSection />
+        <AltBg>
+          <LineupSection />
+        </AltBg>
       </div>
 
-      {/* 8 — Accommodation: secondary upsell, not a conversion blocker */}
+      {/* 8 — Accommodation: compact secondary upsell */}
       <Divider />
       <AccommodationSection />
 
-      {/* 9 — FAQ: answers buying objections + entry rules (replaces FestivalRulesSection) */}
+      {/* 9 — FAQ: buying objections + entry rules */}
       <Divider />
-      <FAQSection />
+      <AltBg>
+        <FAQSection />
+      </AltBg>
 
-      {/* 10 — Final CTA: last push before footer, email capture for waitlist */}
+      {/* 10 — Final CTA: last push before footer, email capture */}
       <Divider />
       <FinalCTASection />
     </>
