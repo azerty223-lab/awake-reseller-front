@@ -110,8 +110,8 @@ interface SummaryItem {
    Crypto uses simple-icons on a dark pill (bright palettes work fine). */
 
 const LIGHT_PILL: React.CSSProperties = {
-  background: "rgba(255,255,255,0.92)",
-  border:     "1px solid rgba(255,255,255,0.12)",
+  background: "transparent",
+  border:     "none",
 };
 
 const DARK_PILL: React.CSSProperties = {
@@ -570,8 +570,7 @@ export default function CheckoutPage() {
                       <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 select-none">
                         {activeBrand ? (
                           <span
-                            className="inline-flex items-center justify-center rounded transition-opacity duration-150"
-                            style={{ width: "38px", height: "24px", background: "rgba(255,255,255,0.92)" }}
+                            className="inline-flex items-center justify-center transition-opacity duration-150"
                           >
                             {brandIcons[activeBrand]}
                           </span>
