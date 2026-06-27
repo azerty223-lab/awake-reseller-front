@@ -361,13 +361,7 @@ export function ResaleMarketplaceSection() {
     <section className="relative py-5 overflow-hidden">
       <NameTransferModal open={modalOpen} onClose={() => setModalOpen(false)} />
 
-      {/* Festival photo background */}
-      <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-        <img src="/ticket-bg-1.jpg" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 32%" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(3,3,5,0.82) 0%, rgba(3,3,5,0.72) 50%, rgba(3,3,5,0.88) 100%)" }} />
-      </div>
-
-      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20" style={{ position: "relative", zIndex: 1 }}>
+      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
 
         {/* ── Eyebrow + headline — full width ─────────── */}
         <motion.div
