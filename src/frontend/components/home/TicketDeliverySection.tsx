@@ -2,34 +2,28 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Lock, MailCheck, Ticket, type LucideIcon } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
 
 /* ── Steps data ─────────────────────────────────────────────────── */
-const STEPS: Array<{
-  index: string;
-  Icon:  LucideIcon;
-  title: string;
-  body:  string;
-  tags:  string[];
-}> = [
+const STEPS = [
   {
     index: "01",
-    Icon:  Lock,
+    illus: "/illus-checkout.svg",
     title: "Secure Checkout",
     body:  "Pay by Stripe or crypto with 3D Secure authentication and end-to-end encrypted processing. Confirmation lands in your inbox within seconds.",
     tags:  ["Stripe", "Crypto", "3D Secure"],
   },
   {
     index: "02",
-    Icon:  MailCheck,
+    illus: "/illus-confirm.svg",
     title: "Instant Confirmation",
     body:  "Your order confirmation, payment receipt, and full ticket details arrive by email immediately after payment.",
     tags:  ["Receipt", "Order details", "Tracking"],
   },
   {
     index: "03",
-    Icon:  Ticket,
+    illus: "/illus-eticket.svg",
     title: "E-Ticket Delivery",
     body:  "Your personalised PDF e-ticket is dispatched on July 8th. Show it on a charged device at maximum brightness at the gate.",
     tags:  ["PDF", "Named ticket", "Gate ready"],
@@ -37,12 +31,6 @@ const STEPS: Array<{
 ];
 
 const I = "var(--font-inter, Inter, system-ui, sans-serif)";
-
-/* ── Node visual helpers ─────────────────────────────────────────── */
-// Final step (e-ticket) gets slightly stronger emphasis — it's the destination.
-const nodeBorder  = (i: number) => `rgba(6,182,212,${i === 2 ? "0.55" : "0.28"})`;
-const nodeBg      = (i: number) => `rgba(6,182,212,${i === 2 ? "0.13" : "0.06"})`;
-const iconColor   = (i: number) => `rgba(6,182,212,${i === 2 ? "0.90" : "0.60"})`;
 
 /* ── Tag pill ────────────────────────────────────────────────────── */
 function TagPill({ label }: { label: string }) {
@@ -93,142 +81,114 @@ export function TicketDeliverySection() {
           </h2>
         </motion.div>
 
-        {/* ── DESKTOP: horizontal connected timeline ──────────── */}
-        <div className="hidden md:block">
+        {/* ── Steps with illustrations ──────────────────────────── */}
+        <div className="relative">
+
+          {/* Desktop connecting rail — at mid-illustration height */}
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="relative"
-          >
-            {/* Animated rail — runs from node 1 centre to node 3 centre */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              style={{
-                position:        "absolute",
-                top:             "19px",          // half of 38px node
-                left:            "calc(100% / 6)",
-                right:           "calc(100% / 6)",
-                height:          "1px",
-                background:      "linear-gradient(to right, rgba(6,182,212,0.30), rgba(6,182,212,0.14), rgba(6,182,212,0.30))",
-                transformOrigin: "left",
-                zIndex:          0,
-              }}
-            />
+            transition={{ duration: 1.5, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="hidden md:block"
+            style={{
+              position:        "absolute",
+              top:             "80px",
+              left:            "calc(100% / 6)",
+              right:           "calc(100% / 6)",
+              height:          "1px",
+              background:      "linear-gradient(to right, rgba(6,182,212,0.30), rgba(6,182,212,0.10), rgba(6,182,212,0.30))",
+              transformOrigin: "left",
+              zIndex:          0,
+            }}
+          />
 
-            <div className="grid grid-cols-3 gap-8">
-              {STEPS.map((step, i) => (
-                <div key={step.index} className="flex flex-col">
-
-                  {/* Node */}
-                  <div className="flex flex-col items-center mb-5 relative z-10">
-                    <div style={{
-                      width:          "38px",
-                      height:         "38px",
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+            {STEPS.map((step, i) => (
+              <motion.div
+                key={step.index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.75, delay: 0.15 + i * 0.14, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col items-center text-center"
+              >
+                {/* Illustration + numbered badge */}
+                <div style={{ position: "relative", marginBottom: "1.5rem", zIndex: 1 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={step.illus}
+                    alt=""
+                    aria-hidden="true"
+                    width={160}
+                    height={160}
+                    style={{
+                      width:        "160px",
+                      height:       "160px",
+                      objectFit:    "contain",
+                      display:      "block",
+                      filter:       "drop-shadow(0 8px 28px rgba(0,0,0,0.50))",
+                      borderRadius: "12px",
+                    }}
+                  />
+                  {/* Step number badge */}
+                  <div
+                    aria-label={`Step ${step.index}`}
+                    style={{
+                      position:       "absolute",
+                      bottom:         "-6px",
+                      right:          "-6px",
+                      width:          "24px",
+                      height:         "24px",
                       borderRadius:   "50%",
-                      border:         `1.5px solid ${nodeBorder(i)}`,
-                      background:     nodeBg(i),
+                      background:     "#06B6D4",
+                      border:         "2px solid #050507",
                       display:        "flex",
                       alignItems:     "center",
                       justifyContent: "center",
-                      marginBottom:   "8px",
-                    }}>
-                      <step.Icon
-                        size={15}
-                        strokeWidth={1.75}
-                        color={iconColor(i)}
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <span style={{ fontFamily: I, fontSize: "9.5px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(6,182,212,0.45)" }}>
-                      {step.index}
-                    </span>
-                  </div>
-
-                  {/* Content — centre-aligned under the node */}
-                  <div className="text-center">
-                    <h3 style={{ fontFamily: I, fontWeight: 700, fontSize: "clamp(0.9375rem, 1.8vw, 1.0625rem)", letterSpacing: "0.01em", color: "rgba(237,233,225,0.96)", marginBottom: "0.625rem", lineHeight: 1.25 }}>
-                      {step.title}
-                    </h3>
-                    <p style={{ fontFamily: I, fontSize: "0.875rem", lineHeight: 1.75, color: "rgba(161,161,170,0.80)", marginBottom: "1rem" }}>
-                      {step.body}
-                    </p>
-                    <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "5px" }}>
-                      {step.tags.map(t => <TagPill key={t} label={t} />)}
-                    </div>
-                  </div>
-
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-
-        {/* ── MOBILE: vertical stepper ─────────────────────────── */}
-        <div className="md:hidden">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {STEPS.map((step, i) => (
-              <div key={step.index} className="flex gap-5">
-
-                {/* Left rail: node + vertical connector */}
-                <div className="flex flex-col items-center" style={{ width: "38px", flexShrink: 0 }}>
-                  <div style={{
-                    width:          "38px",
-                    height:         "38px",
-                    borderRadius:   "50%",
-                    border:         `1.5px solid ${nodeBorder(i)}`,
-                    background:     nodeBg(i),
-                    display:        "flex",
-                    alignItems:     "center",
-                    justifyContent: "center",
-                    flexShrink:     0,
-                    zIndex:         1,
-                    position:       "relative",
-                  }}>
-                    <step.Icon
-                      style={{ width: "15px", height: "15px", color: iconColor(i) }}
-                    />
-                  </div>
-                  {/* Vertical connector to next step */}
-                  {i < STEPS.length - 1 && (
-                    <div style={{
-                      width:      "1px",
-                      flex:       1,
-                      minHeight:  "2rem",
-                      margin:     "5px 0",
-                      background: "linear-gradient(to bottom, rgba(6,182,212,0.20), rgba(6,182,212,0.04))",
-                    }} />
-                  )}
-                </div>
-
-                {/* Right: content */}
-                <div style={{ paddingTop: "5px", paddingBottom: i < STEPS.length - 1 ? "2rem" : 0, flex: 1 }}>
-                  <span style={{ fontFamily: I, fontSize: "9.5px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(6,182,212,0.45)", display: "block", marginBottom: "5px" }}>
-                    {step.index}
-                  </span>
-                  <h3 style={{ fontFamily: I, fontWeight: 700, fontSize: "1rem", letterSpacing: "0.01em", color: "rgba(237,233,225,0.96)", marginBottom: "0.5rem", lineHeight: 1.25 }}>
-                    {step.title}
-                  </h3>
-                  <p style={{ fontFamily: I, fontSize: "0.875rem", lineHeight: 1.75, color: "rgba(161,161,170,0.80)", marginBottom: "0.875rem" }}>
-                    {step.body}
-                  </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
-                    {step.tags.map(t => <TagPill key={t} label={t} />)}
+                      fontFamily:     I,
+                      fontSize:       "11px",
+                      fontWeight:     800,
+                      color:          "#000",
+                      lineHeight:     1,
+                    }}
+                  >
+                    {i + 1}
                   </div>
                 </div>
 
-              </div>
+                {/* Title */}
+                <h3 style={{
+                  fontFamily:   I,
+                  fontWeight:   700,
+                  fontSize:     "clamp(0.9375rem, 1.8vw, 1.0625rem)",
+                  letterSpacing:"0.01em",
+                  color:        "rgba(237,233,225,0.96)",
+                  marginBottom: "0.625rem",
+                  lineHeight:   1.25,
+                }}>
+                  {step.title}
+                </h3>
+
+                {/* Body */}
+                <p style={{
+                  fontFamily:   I,
+                  fontSize:     "0.875rem",
+                  lineHeight:   1.75,
+                  color:        "rgba(161,161,170,0.80)",
+                  marginBottom: "1rem",
+                  maxWidth:     "220px",
+                }}>
+                  {step.body}
+                </p>
+
+                {/* Tags */}
+                <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "5px" }}>
+                  {step.tags.map(t => <TagPill key={t} label={t} />)}
+                </div>
+              </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* Support row */}
@@ -237,7 +197,7 @@ export function TicketDeliverySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-10 pt-7 border-t border-white/[0.06]"
+          className="mt-12 pt-7 border-t border-white/[0.06]"
           style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}
         >
           <p style={{ fontFamily: I, fontSize: "0.875rem", color: "rgba(161,161,170,0.70)", lineHeight: 1.6 }}>
@@ -271,15 +231,15 @@ export function TicketDeliverySection() {
             }}
             onMouseEnter={e => {
               const el = e.currentTarget as HTMLAnchorElement;
-              el.style.background   = "rgba(6,182,212,0.14)";
-              el.style.borderColor  = "rgba(6,182,212,0.45)";
-              el.style.color        = "rgba(6,182,212,1)";
+              el.style.background  = "rgba(6,182,212,0.14)";
+              el.style.borderColor = "rgba(6,182,212,0.45)";
+              el.style.color       = "rgba(6,182,212,1)";
             }}
             onMouseLeave={e => {
               const el = e.currentTarget as HTMLAnchorElement;
-              el.style.background   = "rgba(6,182,212,0.07)";
-              el.style.borderColor  = "rgba(6,182,212,0.22)";
-              el.style.color        = "rgba(6,182,212,0.80)";
+              el.style.background  = "rgba(6,182,212,0.07)";
+              el.style.borderColor = "rgba(6,182,212,0.22)";
+              el.style.color       = "rgba(6,182,212,0.80)";
             }}
           >
             Browse tickets
