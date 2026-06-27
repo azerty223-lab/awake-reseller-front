@@ -21,6 +21,20 @@ const CYAN    = "#06B6D4";
 const CYAN_HV = "#22D3EE";
 const F       = "var(--font-inter, Inter, system-ui, sans-serif)";
 
+/* ── Festival photo backgrounds by category ────────────────────────
+   Each ticket category maps to one of the 3 festival photos.
+   A dark gradient overlay is always layered on top so text stays legible. */
+const CAT_BG: Partial<Record<TicketCategory, { src: string; pos: string }>> = {
+  [TicketCategory.WEEKEND]:         { src: "/ticket-bg-1.jpg", pos: "center 35%" },
+  [TicketCategory.SATURDAY]:        { src: "/ticket-bg-2.jpg", pos: "center 40%" },
+  [TicketCategory.SUNDAY]:          { src: "/ticket-bg-3.jpg", pos: "center 55%" },
+  [TicketCategory.CAMPING]:         { src: "/ticket-bg-1.jpg", pos: "center 50%" },
+  [TicketCategory.COMFORT_CAMPING]: { src: "/ticket-bg-2.jpg", pos: "center 50%" },
+  [TicketCategory.CAR_CAMPING]:     { src: "/ticket-bg-3.jpg", pos: "center 50%" },
+  [TicketCategory.PREMIUM]:         { src: "/ticket-bg-1.jpg", pos: "center 30%" },
+  [TicketCategory.ACCOMMODATION]:   { src: "/ticket-bg-2.jpg", pos: "center 50%" },
+};
+
 /* ── Category labels (text only — no per-category colours) ────────── */
 const CAT_LABELS: Partial<Record<TicketCategory, string>> = {
   [TicketCategory.WEEKEND]:         "Weekend Pass",
@@ -121,6 +135,8 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
     };
   };
 
+  const bg = CAT_BG[ticket.category] ?? { src: "/ticket-bg-1.jpg", pos: "center 40%" };
+
   return (
     <motion.article
       onClick={go}
@@ -131,14 +147,19 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
       aria-label={`${ticket.name}, ${formatPrice(ticket.resalePrice, ticket.currency)}${!isAvail ? ", sold out" : ""}`}
       className="relative flex flex-col overflow-hidden cursor-pointer select-none"
       style={{
-        background:   hovered ? "#18191E" : "#141418",
-        border:       "1px solid rgba(255,255,255,0.08)",
+        background: [
+          hovered && isAvail
+            ? "linear-gradient(175deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.80) 55%, rgba(0,0,0,0.93) 100%)"
+            : "linear-gradient(175deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.86) 55%, rgba(0,0,0,0.96) 100%)",
+          `url('${bg.src}') ${bg.pos} / cover no-repeat`,
+        ].join(", "),
+        border:       `1px solid ${hovered && isAvail ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.09)"}`,
         borderRadius: "12px",
         boxShadow:    hovered && isAvail
-          ? "0 8px 28px rgba(0,0,0,0.50), 0 2px 8px rgba(0,0,0,0.22)"
-          : "0 1px 4px rgba(0,0,0,0.20)",
-        opacity:      !isAvail ? 0.50 : 1,
-        transition:   "background 0.18s ease, box-shadow 0.18s ease",
+          ? "0 0 0 1px rgba(6,182,212,0.12), 0 12px 40px rgba(0,0,0,0.65)"
+          : "0 4px 20px rgba(0,0,0,0.50)",
+        opacity:      !isAvail ? 0.55 : 1,
+        transition:   "border-color 0.18s ease, box-shadow 0.18s ease",
       }}
     >
 
@@ -149,7 +170,10 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
         <span style={{
           fontFamily: F, fontSize: "9.5px", fontWeight: 700,
           letterSpacing: "0.08em", textTransform: "uppercase" as const,
-          color: MUTED,
+          color: "rgba(255,255,255,0.55)",
+          background: "rgba(0,0,0,0.35)",
+          padding: "2px 7px", borderRadius: "4px",
+          backdropFilter: "blur(4px)",
         }}>
           {catLabel(ticket.category)}
         </span>
@@ -184,8 +208,9 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
 
         {/* Date */}
         <p style={{
-          fontFamily: F, fontSize: "12px", color: MUTED,
+          fontFamily: F, fontSize: "12px", color: "rgba(255,255,255,0.50)",
           margin: "0 0 16px", minHeight: "17px",
+          textShadow: "0 1px 3px rgba(0,0,0,0.6)",
         }}>
           {ticket.dayLabel ?? ""}
         </p>
@@ -237,8 +262,9 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
       <div
         className="flex items-center gap-3 px-5 py-3"
         style={{
-          borderTop:  "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(0,0,0,0.16)",
+          borderTop:  "1px solid rgba(255,255,255,0.12)",
+          background: "rgba(0,0,0,0.40)",
+          backdropFilter: "blur(8px)",
         }}
       >
         <motion.button

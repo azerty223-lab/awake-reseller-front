@@ -774,18 +774,17 @@ export function LineupSection() {
 {/* ── Hero: video + canvas background ─────────────────────── */}
       <div className="relative h-[70vh] min-h-[480px] max-h-[680px]">
 
-        {/* Layer -1: Static concert image — always visible on all devices/browsers.
-            Canvas and YouTube render on top; this guarantees a real background
-            even when YouTube autoplay is blocked on desktop. */}
-        <img
-          src="/bg-lineup.jpg"
-          alt=""
+        {/* Layer -1: Deep dark base — canvas projector beams render on top */}
+        <div
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ zIndex: -1, objectPosition: "center 25%" }}
+          className="absolute inset-0"
+          style={{
+            zIndex: -1,
+            background: "linear-gradient(180deg, #030305 0%, #050508 60%, #030305 100%)",
+          }}
         />
 
-        {/* Layer 0: Canvas — always rendered, video-independent fallback */}
+        {/* Layer 0: Canvas projector beam animation — primary background */}
         {!shouldReduce && (
           <canvas
             ref={canvasRef}
