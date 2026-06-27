@@ -90,9 +90,29 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
     setTimeout(() => setAdded(false), 2000);
   };
 
+  const bgImage = ticket.category === TicketCategory.CAR_CAMPING
+    ? "/bg-car-camping.jpg"
+    : null;
+
   return (
-    <div className="min-h-screen bg-[#030305] py-10 px-4">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#030305] py-10 px-4" style={{ position: "relative" }}>
+
+      {/* Category-specific background photo */}
+      {bgImage && (
+        <>
+          <div aria-hidden="true" style={{
+            position: "fixed", inset: 0, zIndex: 0,
+            backgroundImage: `url(${bgImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center 40%",
+          }} />
+          <div aria-hidden="true" style={{
+            position: "fixed", inset: 0, zIndex: 1,
+            background: "rgba(3,3,5,0.78)",
+          }} />
+        </>
+      )}
+      <div className="max-w-5xl mx-auto" style={{ position: "relative", zIndex: 2 }}>
 
         <Link
           href="/tickets"
