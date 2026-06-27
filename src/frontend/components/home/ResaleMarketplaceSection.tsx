@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -81,20 +82,229 @@ const REVIEWS = [
   },
 ];
 
+/* ── Subcomponents ────────────────────────────────────────────── */
+
 function StarRating({ count }: { count: number }) {
   return (
-    <span style={{ display: "inline-flex", gap: "2px" }} aria-label={`${count} out of 5 stars`}>
+    <span
+      role="img"
+      aria-label={`${count} out of 5 stars`}
+      style={{ display: "inline-flex", gap: "3px" }}
+    >
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
-          size={11}
-          strokeWidth={i < count ? 0 : 1.25}
+          size={13}
+          strokeWidth={i < count ? 0 : 1.5}
           fill={i < count ? "#F59E0B" : "rgba(255,255,255,0.08)"}
-          color={i < count ? "#F59E0B" : "rgba(255,255,255,0.15)"}
+          color={i < count ? "#F59E0B" : "rgba(255,255,255,0.12)"}
           aria-hidden="true"
         />
       ))}
     </span>
+  );
+}
+
+function VerifiedBadge() {
+  return (
+    <span
+      style={{
+        marginLeft:    "auto",
+        display:       "inline-flex",
+        alignItems:    "center",
+        gap:           "4px",
+        fontFamily:    I,
+        fontSize:      "9px",
+        fontWeight:    600,
+        letterSpacing: "0.10em",
+        textTransform: "uppercase" as const,
+        color:         "rgba(6,182,212,0.72)",
+      }}
+    >
+      <CheckCircle2 size={10} strokeWidth={2} aria-hidden="true" />
+      Verified
+    </span>
+  );
+}
+
+function StatItem({ value, label, Icon }: { value: string; label: string; Icon: React.ElementType }) {
+  return (
+    <div style={{
+      display:        "flex",
+      flexDirection:  "column" as const,
+      alignItems:     "center",
+      gap:            "10px",
+      textAlign:      "center" as const,
+    }}>
+      <div style={{
+        width:          "36px",
+        height:         "36px",
+        borderRadius:   "50%",
+        background:     "rgba(6,182,212,0.07)",
+        border:         "1px solid rgba(6,182,212,0.14)",
+        display:        "flex",
+        alignItems:     "center",
+        justifyContent: "center",
+      }}>
+        <Icon size={15} strokeWidth={1.5} color="rgba(6,182,212,0.75)" aria-hidden="true" />
+      </div>
+      <div>
+        <span style={{
+          display:       "block",
+          fontFamily:    I,
+          fontWeight:    700,
+          fontSize:      "clamp(1.5rem, 3vw, 2rem)",
+          color:         "#EDE9E1",
+          letterSpacing: "-0.02em",
+          lineHeight:    1,
+          marginBottom:  "5px",
+        }}>
+          {value}
+        </span>
+        <span style={{
+          fontFamily:    I,
+          fontSize:      "9.5px",
+          fontWeight:    500,
+          letterSpacing: "0.16em",
+          textTransform: "uppercase" as const,
+          color:         "rgba(237,233,225,0.30)",
+          lineHeight:    1.3,
+        }}>
+          {label}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ReviewCard({ r, index }: { r: typeof REVIEWS[0]; index: number }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: 0.2 + index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position:     "relative",
+        background:   hovered ? "rgba(237,233,225,0.045)" : "rgba(237,233,225,0.028)",
+        border:       `1px solid ${hovered ? "rgba(237,233,225,0.13)" : "rgba(237,233,225,0.08)"}`,
+        borderTop:    `2px solid ${hovered ? "rgba(6,182,212,0.50)" : "rgba(6,182,212,0.18)"}`,
+        borderRadius: "8px",
+        padding:      "1.375rem 1.25rem 1.125rem",
+        transition:   "background 0.25s ease, border-color 0.25s ease",
+        overflow:     "hidden",
+      }}
+    >
+      {/* Decorative background quote mark */}
+      <span
+        aria-hidden="true"
+        style={{
+          position:      "absolute",
+          top:           "0.625rem",
+          right:         "1rem",
+          fontFamily:    "Georgia, serif",
+          fontSize:      "5rem",
+          lineHeight:    1,
+          color:         "rgba(237,233,225,0.04)",
+          userSelect:    "none",
+          pointerEvents: "none",
+        }}
+      >
+        &ldquo;
+      </span>
+
+      {/* Stars + ticket label */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+        <StarRating count={r.stars} />
+        <span style={{
+          fontFamily:    I,
+          fontSize:      "9px",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase" as const,
+          color:         "rgba(6,182,212,0.70)",
+          fontWeight:    600,
+          background:    "rgba(6,182,212,0.07)",
+          border:        "1px solid rgba(6,182,212,0.16)",
+          padding:       "2px 7px",
+          borderRadius:  "4px",
+        }}>
+          {r.ticket}
+        </span>
+      </div>
+
+      {/* Review text */}
+      <p style={{
+        fontFamily: I,
+        fontSize:   "0.875rem",
+        lineHeight: 1.72,
+        color:      "rgba(237,233,225,0.72)",
+        margin:     "0 0 1rem",
+      }}>
+        &ldquo;{r.text}&rdquo;
+      </p>
+
+      {/* Reviewer footer */}
+      <div style={{
+        display:    "flex",
+        alignItems: "center",
+        gap:        "10px",
+        paddingTop: "0.75rem",
+        borderTop:  "1px solid rgba(237,233,225,0.06)",
+      }}>
+        {/* Avatar */}
+        <div
+          aria-hidden="true"
+          style={{
+            width:          "32px",
+            height:         "32px",
+            borderRadius:   "50%",
+            background:     "linear-gradient(135deg, rgba(6,182,212,0.18), rgba(6,182,212,0.07))",
+            border:         "1px solid rgba(6,182,212,0.22)",
+            display:        "flex",
+            alignItems:     "center",
+            justifyContent: "center",
+            flexShrink:     0,
+          }}
+        >
+          <span style={{
+            fontFamily:    I,
+            fontSize:      "10px",
+            fontWeight:    700,
+            color:         "rgba(6,182,212,0.90)",
+            letterSpacing: "0.04em",
+          }}>
+            {r.initials}
+          </span>
+        </div>
+
+        <div>
+          <span style={{
+            fontFamily: I,
+            fontSize:   "12px",
+            fontWeight: 600,
+            color:      "rgba(237,233,225,0.82)",
+            display:    "block",
+            lineHeight: 1.2,
+          }}>
+            {r.name}
+          </span>
+          <span style={{
+            fontFamily:    I,
+            fontSize:      "10px",
+            color:         "rgba(237,233,225,0.32)",
+            letterSpacing: "0.04em",
+          }}>
+            {r.city}
+          </span>
+        </div>
+
+        <VerifiedBadge />
+      </div>
+    </motion.article>
   );
 }
 
@@ -275,41 +485,18 @@ export function ResaleMarketplaceSection() {
           className="mt-10 pt-8"
           style={{ borderTop: "1px solid rgba(237,233,225,0.07)" }}
         >
-          <div style={{
-            display:        "flex",
-            justifyContent: "space-between",
-            flexWrap:       "wrap",
-            gap:            "clamp(1rem, 3vw, 2rem)",
-          }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px"
+            style={{ background: "rgba(237,233,225,0.07)" }}
+          >
             {STATS.map(({ value, label, Icon }) => (
-              <div key={label} style={{ textAlign: "center", flex: "1 1 60px", display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-                <Icon
-                  size={16}
-                  strokeWidth={1.5}
-                  style={{ color: "rgba(6,182,212,0.55)" }}
-                  aria-hidden="true"
-                />
-                <span style={{
-                  display:       "block",
-                  fontFamily:    I,
-                  fontWeight:    700,
-                  fontSize:      "clamp(1.375rem, 2.5vw, 1.875rem)",
-                  color:         "#EDE9E1",
-                  letterSpacing: "-0.01em",
-                  lineHeight:    1,
-                }}>
-                  {value}
-                </span>
-                <span style={{
-                  fontFamily:    I,
-                  fontSize:      "10px",
-                  fontWeight:    500,
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color:         "rgba(237,233,225,0.30)",
-                }}>
-                  {label}
-                </span>
+              <div
+                key={label}
+                style={{
+                  background: "#050507",
+                  padding:    "1.25rem 0.5rem",
+                }}
+              >
+                <StatItem value={value} label={label} Icon={Icon} />
               </div>
             ))}
           </div>
@@ -323,118 +510,52 @@ export function ResaleMarketplaceSection() {
           transition={{ duration: 0.8, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
           className="mt-8"
         >
-          <p style={{
-            fontFamily:    I,
-            fontSize:      "9.5px",
-            fontWeight:    600,
-            letterSpacing: "0.24em",
-            textTransform: "uppercase",
-            color:         "rgba(6,182,212,0.50)",
-            marginBottom:  "1.25rem",
+          {/* Section header with aggregate rating */}
+          <div style={{
+            display:       "flex",
+            alignItems:    "flex-end",
+            justifyContent:"space-between",
+            flexWrap:      "wrap",
+            gap:           "0.75rem",
+            marginBottom:  "1.5rem",
           }}>
-            Verified buyer reviews
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {REVIEWS.map((r, i) => (
-              <motion.div
-                key={r.name}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                style={{
-                  background:   "rgba(237,233,225,0.025)",
-                  border:       "1px solid rgba(237,233,225,0.08)",
-                  borderRadius: "6px",
-                  padding:      "1.125rem 1.125rem 1rem",
-                }}
-              >
-                {/* Stars + ticket type */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.625rem" }}>
-                  <StarRating count={r.stars} />
-                  <span style={{
-                    fontFamily:    I,
-                    fontSize:      "9px",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color:         "rgba(6,182,212,0.55)",
-                    fontWeight:    600,
-                  }}>
-                    {r.ticket}
-                  </span>
-                </div>
-
-                {/* Review text */}
-                <p style={{
-                  fontFamily:   I,
-                  fontSize:     "0.8125rem",
-                  lineHeight:   1.70,
-                  color:        "rgba(237,233,225,0.68)",
-                  marginBottom: "0.875rem",
-                  margin:       "0 0 0.875rem",
+            <div>
+              <p style={{
+                fontFamily:    I,
+                fontSize:      "9.5px",
+                fontWeight:    600,
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                color:         "rgba(6,182,212,0.55)",
+                marginBottom:  "0.4rem",
+              }}>
+                Verified buyer reviews
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <StarRating count={5} />
+                <span style={{
+                  fontFamily:    I,
+                  fontSize:      "13px",
+                  fontWeight:    700,
+                  color:         "rgba(237,233,225,0.80)",
+                  letterSpacing: "-0.01em",
                 }}>
-                  "{r.text}"
-                </p>
+                  4.9
+                </span>
+                <span style={{
+                  fontFamily: I,
+                  fontSize:   "11px",
+                  color:      "rgba(237,233,225,0.28)",
+                }}>
+                  · 3 verified reviews
+                </span>
+              </div>
+            </div>
+          </div>
 
-                {/* Reviewer */}
-                <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
-                  {/* Initials avatar */}
-                  <div style={{
-                    width:          "26px",
-                    height:         "26px",
-                    borderRadius:   "50%",
-                    background:     "rgba(6,182,212,0.10)",
-                    border:         "1px solid rgba(6,182,212,0.20)",
-                    display:        "flex",
-                    alignItems:     "center",
-                    justifyContent: "center",
-                    flexShrink:     0,
-                  }}>
-                    <span style={{
-                      fontFamily:    I,
-                      fontSize:      "9px",
-                      fontWeight:    700,
-                      color:         "rgba(6,182,212,0.80)",
-                      letterSpacing: "0.05em",
-                    }}>
-                      {r.initials}
-                    </span>
-                  </div>
-                  <div>
-                    <span style={{
-                      fontFamily:    I,
-                      fontSize:      "12px",
-                      fontWeight:    600,
-                      color:         "rgba(237,233,225,0.75)",
-                      display:       "block",
-                      lineHeight:    1.2,
-                    }}>
-                      {r.name}
-                    </span>
-                    <span style={{
-                      fontFamily:    I,
-                      fontSize:      "10px",
-                      color:         "rgba(237,233,225,0.28)",
-                      letterSpacing: "0.04em",
-                    }}>
-                      {r.city}
-                    </span>
-                  </div>
-                  {/* Verified badge */}
-                  <span style={{
-                    marginLeft:    "auto",
-                    fontFamily:    I,
-                    fontSize:      "9px",
-                    fontWeight:    600,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color:         "rgba(6,182,212,0.45)",
-                  }}>
-                    Verified
-                  </span>
-                </div>
-              </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {REVIEWS.map((r, i) => (
+              <ReviewCard key={r.name} r={r} index={i} />
             ))}
           </div>
         </motion.div>
