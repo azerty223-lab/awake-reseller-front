@@ -22,7 +22,7 @@ export default function PublicLayout({
       <Navbar onCartOpen={() => setCartOpen(true)} />
       {/* pb-16 reserves space so the fixed sticky buy bar never covers the last row */}
       <main id="main-content" className="flex-1 pt-16 sm:pt-20 pb-16">{children}</main>
-      <Footer />
+      <div style={{ position: "relative", zIndex: 10 }}><Footer /></div>
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <StickyBuyBar />
       <VisitorTracker />
