@@ -82,6 +82,13 @@ const REVIEWS = [
   },
 ];
 
+/* ── Per-card festival background images ─────────────────────── */
+const REVIEW_BGS = [
+  { src: "/review-bg-1.jpg", position: "center 42%" }, // daytime crowd + stage
+  { src: "/review-bg-2.jpg", position: "center 50%" }, // purple evening lights
+  { src: "/review-bg-3.jpg", position: "center 58%" }, // nighttime laser beams
+];
+
 /* ── Subcomponents ────────────────────────────────────────────── */
 
 function StarRating({ count }: { count: number }) {
@@ -184,11 +191,11 @@ function ReviewCard({ r, index, onSelect, isSelected }: {
   isSelected: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
+  const bg = REVIEW_BGS[index];
 
   return (
     <motion.article
       layoutId={`review-card-${index}`}
-      /* scroll-in animation runs once; layout system takes over after */
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -199,41 +206,38 @@ function ReviewCard({ r, index, onSelect, isSelected }: {
       style={{
         cursor:        "pointer",
         position:      "relative",
-        /* Festival-night layered background:
-           1. subtle dot grid (rave floor / stage lights)
-           2. diagonal cyan beam from top-left corner
-           3. deep dark-navy base gradient */
+        /* Festival photo + two-stop dark overlay so text is always legible.
+           Overlay lightens slightly on hover to let more image breathe. */
         background: [
-          "radial-gradient(circle, rgba(6,182,212,0.055) 1px, transparent 1px) 0 0 / 22px 22px",
-          "linear-gradient(140deg, rgba(6,182,212,0.10) 0%, transparent 42%)",
           hovered && !isSelected
-            ? "linear-gradient(155deg, rgba(10,15,30,1) 0%, rgba(6,8,16,1) 100%)"
-            : "linear-gradient(155deg, rgba(7,11,22,1) 0%, rgba(4,5,10,1) 100%)",
+            ? "linear-gradient(175deg, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.78) 60%, rgba(0,0,0,0.90) 100%)"
+            : "linear-gradient(175deg, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.84) 60%, rgba(0,0,0,0.94) 100%)",
+          `url('${bg.src}') ${bg.position} / cover no-repeat`,
         ].join(", "),
-        border:        `1px solid ${hovered && !isSelected ? "rgba(6,182,212,0.22)" : "rgba(6,182,212,0.10)"}`,
-        borderTop:     `2px solid ${hovered && !isSelected ? "rgba(6,182,212,0.70)" : "rgba(6,182,212,0.35)"}`,
+        border:        `1px solid ${hovered && !isSelected ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.10)"}`,
+        borderTop:     `2px solid ${hovered && !isSelected ? "rgba(6,182,212,0.80)" : "rgba(6,182,212,0.45)"}`,
         borderRadius:  "10px",
         padding:       "1.375rem 1.25rem 1.125rem",
-        transition:    "background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease",
+        transition:    "border-color 0.28s ease, box-shadow 0.28s ease",
         boxShadow:     hovered && !isSelected
-          ? "0 0 0 1px rgba(6,182,212,0.14), 0 8px 40px rgba(0,0,0,0.55), 0 0 28px rgba(6,182,212,0.06)"
-          : "0 4px 20px rgba(0,0,0,0.45)",
+          ? "0 0 0 1px rgba(6,182,212,0.18), 0 12px 48px rgba(0,0,0,0.65)"
+          : "0 4px 24px rgba(0,0,0,0.55)",
         overflow:      "hidden",
         opacity:       isSelected ? 0 : 1,
         pointerEvents: isSelected ? "none" : "auto",
       }}
     >
-      {/* Decorative background quote mark */}
+      {/* Decorative quote mark — white on photo */}
       <span
         aria-hidden="true"
         style={{
           position:      "absolute",
-          top:           "0.625rem",
-          right:         "1rem",
+          top:           "0.5rem",
+          right:         "0.875rem",
           fontFamily:    "Georgia, serif",
           fontSize:      "5rem",
           lineHeight:    1,
-          color:         "rgba(237,233,225,0.04)",
+          color:         "rgba(255,255,255,0.07)",
           userSelect:    "none",
           pointerEvents: "none",
         }}
@@ -244,17 +248,19 @@ function ReviewCard({ r, index, onSelect, isSelected }: {
       {/* Stars + ticket label */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
         <StarRating count={r.stars} />
+        {/* Dark pill so ticket label pops on any photo */}
         <span style={{
           fontFamily:    I,
           fontSize:      "9px",
           letterSpacing: "0.12em",
           textTransform: "uppercase" as const,
-          color:         "rgba(6,182,212,0.70)",
-          fontWeight:    600,
-          background:    "rgba(6,182,212,0.07)",
-          border:        "1px solid rgba(6,182,212,0.16)",
-          padding:       "2px 7px",
+          color:         "#06B6D4",
+          fontWeight:    700,
+          background:    "rgba(0,0,0,0.45)",
+          border:        "1px solid rgba(6,182,212,0.45)",
+          padding:       "2px 8px",
           borderRadius:  "4px",
+          backdropFilter: "blur(4px)",
         }}>
           {r.ticket}
         </span>
@@ -262,11 +268,12 @@ function ReviewCard({ r, index, onSelect, isSelected }: {
 
       {/* Review text */}
       <p style={{
-        fontFamily: I,
-        fontSize:   "0.875rem",
-        lineHeight: 1.72,
-        color:      "rgba(237,233,225,0.80)",
-        margin:     "0 0 1rem",
+        fontFamily:  I,
+        fontSize:    "0.875rem",
+        lineHeight:  1.72,
+        color:       "rgba(255,255,255,0.88)",
+        margin:      "0 0 1rem",
+        textShadow:  "0 1px 3px rgba(0,0,0,0.6)",
       }}>
         &ldquo;{r.text}&rdquo;
       </p>
@@ -277,35 +284,61 @@ function ReviewCard({ r, index, onSelect, isSelected }: {
         alignItems: "center",
         gap:        "10px",
         paddingTop: "0.75rem",
-        borderTop:  "1px solid rgba(6,182,212,0.10)",
+        borderTop:  "1px solid rgba(255,255,255,0.12)",
       }}>
+        {/* Avatar — frosted dark pill on photo */}
         <div
           aria-hidden="true"
           style={{
             width:          "32px",
             height:         "32px",
             borderRadius:   "50%",
-            background:     "linear-gradient(135deg, rgba(6,182,212,0.18), rgba(6,182,212,0.07))",
-            border:         "1px solid rgba(6,182,212,0.22)",
+            background:     "rgba(6,182,212,0.22)",
+            border:         "1.5px solid rgba(6,182,212,0.55)",
+            backdropFilter: "blur(6px)",
             display:        "flex",
             alignItems:     "center",
             justifyContent: "center",
             flexShrink:     0,
           }}
         >
-          <span style={{ fontFamily: I, fontSize: "10px", fontWeight: 700, color: "rgba(6,182,212,0.90)", letterSpacing: "0.04em" }}>
+          <span style={{ fontFamily: I, fontSize: "10px", fontWeight: 700, color: "#fff", letterSpacing: "0.04em" }}>
             {r.initials}
           </span>
         </div>
+
         <div>
-          <span style={{ fontFamily: I, fontSize: "12px", fontWeight: 600, color: "rgba(237,233,225,0.82)", display: "block", lineHeight: 1.2 }}>
+          <span style={{ fontFamily: I, fontSize: "12px", fontWeight: 700, color: "#FFFFFF", display: "block", lineHeight: 1.2, textShadow: "0 1px 4px rgba(0,0,0,0.7)" }}>
             {r.name}
           </span>
-          <span style={{ fontFamily: I, fontSize: "10px", color: "rgba(237,233,225,0.32)", letterSpacing: "0.04em" }}>
+          <span style={{ fontFamily: I, fontSize: "10px", color: "rgba(255,255,255,0.55)", letterSpacing: "0.04em" }}>
             {r.city}
           </span>
         </div>
-        <VerifiedBadge />
+
+        {/* Verified badge with dark pill for photo readability */}
+        <span
+          style={{
+            marginLeft:     "auto",
+            display:        "inline-flex",
+            alignItems:     "center",
+            gap:            "4px",
+            fontFamily:     I,
+            fontSize:       "9px",
+            fontWeight:     600,
+            letterSpacing:  "0.10em",
+            textTransform:  "uppercase" as const,
+            color:          "#06B6D4",
+            background:     "rgba(0,0,0,0.40)",
+            border:         "1px solid rgba(6,182,212,0.40)",
+            padding:        "2px 7px",
+            borderRadius:   "20px",
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          <CheckCircle2 size={10} strokeWidth={2} aria-hidden="true" />
+          Verified
+        </span>
       </div>
     </motion.article>
   );
@@ -628,19 +661,16 @@ export function ResaleMarketplaceSection() {
                         position:     "relative",
                         width:        "100%",
                         maxWidth:     "460px",
-                        /* Expanded festival card — more dramatic version:
-                           dot grid + cyan top-left beam + purple bottom-right bloom */
+                        /* Same festival photo, heavier overlay for comfortable reading */
                         background: [
-                          "radial-gradient(circle, rgba(6,182,212,0.06) 1px, transparent 1px) 0 0 / 22px 22px",
-                          "radial-gradient(ellipse at 0% 0%, rgba(6,182,212,0.18) 0%, transparent 55%)",
-                          "radial-gradient(ellipse at 100% 100%, rgba(120,40,220,0.10) 0%, transparent 55%)",
-                          "linear-gradient(155deg, rgba(8,13,26,1) 0%, rgba(4,4,10,1) 100%)",
+                          "linear-gradient(175deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.88) 55%, rgba(0,0,0,0.96) 100%)",
+                          `url('${REVIEW_BGS[selectedReview].src}') ${REVIEW_BGS[selectedReview].position} / cover no-repeat`,
                         ].join(", "),
-                        border:       "1px solid rgba(6,182,212,0.18)",
-                        borderTop:    "2px solid rgba(6,182,212,0.75)",
+                        border:       "1px solid rgba(255,255,255,0.14)",
+                        borderTop:    "2px solid rgba(6,182,212,0.80)",
                         borderRadius: "12px",
                         padding:      "2rem",
-                        boxShadow:    "0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(6,182,212,0.08), 0 0 60px rgba(6,182,212,0.06)",
+                        boxShadow:    "0 40px 100px rgba(0,0,0,0.80), 0 0 0 1px rgba(6,182,212,0.10), 0 0 60px rgba(6,182,212,0.07)",
                         pointerEvents: "auto",
                         overflow:     "hidden",
                       }}
@@ -695,10 +725,10 @@ export function ResaleMarketplaceSection() {
                             </span>
                           </div>
                           <div>
-                            <p style={{ fontFamily: I, fontSize: "15px", fontWeight: 700, color: "#EDE9E1", lineHeight: 1.2, marginBottom: "3px" }}>
+                            <p style={{ fontFamily: I, fontSize: "15px", fontWeight: 700, color: "#FFFFFF", lineHeight: 1.2, marginBottom: "3px", textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}>
                               {r.name}
                             </p>
-                            <p style={{ fontFamily: I, fontSize: "11px", color: "rgba(237,233,225,0.35)" }}>
+                            <p style={{ fontFamily: I, fontSize: "11px", color: "rgba(255,255,255,0.50)" }}>
                               Verified buyer
                             </p>
                           </div>
@@ -723,32 +753,32 @@ export function ResaleMarketplaceSection() {
                         </div>
 
                         {/* Divider */}
-                        <div style={{ height: "1px", background: "rgba(237,233,225,0.07)", marginBottom: "1.375rem" }} />
+                        <div style={{ height: "1px", background: "rgba(255,255,255,0.12)", marginBottom: "1.375rem" }} />
 
                         {/* Review text */}
-                        <p style={{ fontFamily: I, fontSize: "0.9375rem", lineHeight: 1.75, color: "rgba(237,233,225,0.78)", marginBottom: "1.5rem", fontStyle: "italic" }}>
+                        <p style={{ fontFamily: I, fontSize: "0.9375rem", lineHeight: 1.75, color: "rgba(255,255,255,0.90)", marginBottom: "1.5rem", fontStyle: "italic", textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>
                           &ldquo;{r.text}&rdquo;
                         </p>
 
                         {/* Stars */}
                         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "1.375rem" }}>
                           <StarRating count={r.stars} />
-                          <span style={{ fontFamily: I, fontSize: "11px", color: "rgba(237,233,225,0.35)" }}>
+                          <span style={{ fontFamily: I, fontSize: "11px", color: "rgba(255,255,255,0.45)" }}>
                             ({r.stars} stars)
                           </span>
                         </div>
 
                         {/* Footer meta */}
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontFamily: I, fontSize: "10px", color: "rgba(237,233,225,0.32)", letterSpacing: "0.04em" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontFamily: I, fontSize: "10px", color: "rgba(255,255,255,0.50)", letterSpacing: "0.04em" }}>
                             <Calendar size={11} strokeWidth={1.5} aria-hidden="true" />
                             Awakenings 2026
                           </span>
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontFamily: I, fontSize: "10px", color: "rgba(237,233,225,0.32)", letterSpacing: "0.04em" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontFamily: I, fontSize: "10px", color: "rgba(255,255,255,0.50)", letterSpacing: "0.04em" }}>
                             <MapPin size={11} strokeWidth={1.5} aria-hidden="true" />
                             {r.city}
                           </span>
-                          <span style={{ fontFamily: I, fontSize: "9px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(6,182,212,0.55)", background: "rgba(6,182,212,0.07)", border: "1px solid rgba(6,182,212,0.14)", padding: "2px 8px", borderRadius: "4px" }}>
+                          <span style={{ fontFamily: I, fontSize: "9px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#06B6D4", background: "rgba(0,0,0,0.40)", border: "1px solid rgba(6,182,212,0.45)", padding: "2px 8px", borderRadius: "4px", backdropFilter: "blur(4px)" }}>
                             {r.ticket}
                           </span>
                         </div>
