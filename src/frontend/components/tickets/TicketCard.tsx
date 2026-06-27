@@ -29,7 +29,7 @@ const CAT_BG: Partial<Record<TicketCategory, { src: string; pos: string }>> = {
   [TicketCategory.SATURDAY]:        { src: "/ticket-bg-2.jpg", pos: "center 40%" },
   [TicketCategory.SUNDAY]:          { src: "/ticket-bg-3.jpg", pos: "center 55%" },
   [TicketCategory.CAMPING]:         { src: "/ticket-bg-1.jpg", pos: "center 50%" },
-  [TicketCategory.COMFORT_CAMPING]: { src: "/ticket-bg-2.jpg", pos: "center 50%" },
+  [TicketCategory.COMFORT_CAMPING]: { src: "/bg-comfort-camping.jpg", pos: "center 40%" },
   [TicketCategory.CAR_CAMPING]:     { src: "/bg-car-camping.jpg", pos: "center 45%" },
   [TicketCategory.PREMIUM]:         { src: "/ticket-bg-1.jpg", pos: "center 30%" },
   [TicketCategory.ACCOMMODATION]:   { src: "/ticket-bg-2.jpg", pos: "center 50%" },

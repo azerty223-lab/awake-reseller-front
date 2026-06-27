@@ -90,9 +90,10 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const bgImage = ticket.category === TicketCategory.CAR_CAMPING
-    ? "/bg-car-camping.jpg"
-    : null;
+  const bgImage =
+    ticket.category === TicketCategory.CAR_CAMPING     ? "/bg-car-camping.jpg"     :
+    ticket.category === TicketCategory.COMFORT_CAMPING ? "/bg-comfort-camping.jpg" :
+    null;
 
   return (
     <div className="min-h-screen bg-[#030305] py-10 px-4" style={{ position: "relative" }}>
