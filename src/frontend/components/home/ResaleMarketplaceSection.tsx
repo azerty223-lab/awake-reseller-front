@@ -1,13 +1,13 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
-  ArrowRight, CheckCircle2, Star,
+  ArrowRight, CheckCircle2, Star, X,
   Ticket, ShieldCheck, PackageCheck,
-  ClipboardCheck, UserCheck, Mail,
+  ClipboardCheck, UserCheck, Mail, MapPin, Calendar,
   type LucideIcon,
 } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
@@ -177,7 +177,7 @@ function StatItem({ value, label, Icon }: { value: string; label: string; Icon: 
   );
 }
 
-function ReviewCard({ r, index }: { r: typeof REVIEWS[0]; index: number }) {
+function ReviewCard({ r, index, onSelect }: { r: typeof REVIEWS[0]; index: number; onSelect: () => void }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -186,16 +186,20 @@ function ReviewCard({ r, index }: { r: typeof REVIEWS[0]; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: 0.2 + index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      onClick={onSelect}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
+        cursor:       "pointer",
         position:     "relative",
-        background:   hovered ? "rgba(237,233,225,0.045)" : "rgba(237,233,225,0.028)",
-        border:       `1px solid ${hovered ? "rgba(237,233,225,0.13)" : "rgba(237,233,225,0.08)"}`,
-        borderTop:    `2px solid ${hovered ? "rgba(6,182,212,0.50)" : "rgba(6,182,212,0.18)"}`,
+        background:   hovered ? "rgba(237,233,225,0.050)" : "rgba(237,233,225,0.028)",
+        border:       `1px solid ${hovered ? "rgba(237,233,225,0.14)" : "rgba(237,233,225,0.08)"}`,
+        borderTop:    `2px solid ${hovered ? "rgba(6,182,212,0.55)" : "rgba(6,182,212,0.18)"}`,
         borderRadius: "8px",
         padding:      "1.375rem 1.25rem 1.125rem",
-        transition:   "background 0.25s ease, border-color 0.25s ease",
+        transition:   "background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease",
+        transform:    hovered ? "translateY(-3px)" : "translateY(0)",
+        boxShadow:    hovered ? "0 12px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(6,182,212,0.08)" : "none",
         overflow:     "hidden",
       }}
     >
@@ -310,7 +314,16 @@ function ReviewCard({ r, index }: { r: typeof REVIEWS[0]; index: number }) {
 
 /* ── Section ──────────────────────────────────────────────────── */
 export function ResaleMarketplaceSection() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen,       setModalOpen]       = useState(false);
+  const [selectedReview,  setSelectedReview]  = useState<number | null>(null);
+
+  const closeReview = useCallback(() => setSelectedReview(null), []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeReview(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [closeReview]);
 
   return (
     <section className="relative py-5 overflow-hidden">
@@ -555,10 +568,216 @@ export function ResaleMarketplaceSection() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {REVIEWS.map((r, i) => (
-              <ReviewCard key={r.name} r={r} index={i} />
+              <ReviewCard key={r.name} r={r} index={i} onSelect={() => setSelectedReview(i)} />
             ))}
           </div>
         </motion.div>
+
+        {/* ── Review focus overlay ─────────────────── */}
+        <AnimatePresence>
+          {selectedReview !== null && (() => {
+            const r = REVIEWS[selectedReview];
+            return (
+              <motion.div
+                key="review-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22 }}
+                onClick={closeReview}
+                style={{
+                  position:       "fixed",
+                  inset:          0,
+                  zIndex:         60,
+                  display:        "flex",
+                  alignItems:     "center",
+                  justifyContent: "center",
+                  padding:        "1.5rem",
+                  backdropFilter: "blur(14px) saturate(0.7)",
+                  WebkitBackdropFilter: "blur(14px) saturate(0.7)",
+                  background:     "rgba(5,5,7,0.72)",
+                }}
+              >
+                <motion.div
+                  key="review-card"
+                  initial={{ opacity: 0, scale: 0.93, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.93, y: 20 }}
+                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                  onClick={e => e.stopPropagation()}
+                  style={{
+                    position:     "relative",
+                    width:        "100%",
+                    maxWidth:     "460px",
+                    background:   "rgba(12,12,16,0.98)",
+                    border:       "1px solid rgba(237,233,225,0.12)",
+                    borderTop:    "2px solid rgba(6,182,212,0.60)",
+                    borderRadius: "12px",
+                    padding:      "2rem",
+                    boxShadow:    "0 40px 100px rgba(0,0,0,0.70), 0 0 0 1px rgba(237,233,225,0.05)",
+                  }}
+                >
+                  {/* Close button */}
+                  <button
+                    onClick={closeReview}
+                    aria-label="Close review"
+                    style={{
+                      position:       "absolute",
+                      top:            "1rem",
+                      right:          "1rem",
+                      width:          "28px",
+                      height:         "28px",
+                      borderRadius:   "50%",
+                      background:     "rgba(237,233,225,0.06)",
+                      border:         "1px solid rgba(237,233,225,0.10)",
+                      display:        "flex",
+                      alignItems:     "center",
+                      justifyContent: "center",
+                      cursor:         "pointer",
+                      transition:     "background 0.18s ease, border-color 0.18s ease",
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(237,233,225,0.12)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(237,233,225,0.06)"; }}
+                  >
+                    <X size={12} color="rgba(237,233,225,0.55)" strokeWidth={2} aria-hidden="true" />
+                  </button>
+
+                  {/* Avatar + identity */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.375rem" }}>
+                    <div style={{
+                      width:          "52px",
+                      height:         "52px",
+                      borderRadius:   "50%",
+                      background:     "linear-gradient(135deg, rgba(6,182,212,0.25), rgba(6,182,212,0.08))",
+                      border:         "1.5px solid rgba(6,182,212,0.30)",
+                      display:        "flex",
+                      alignItems:     "center",
+                      justifyContent: "center",
+                      flexShrink:     0,
+                    }}>
+                      <span style={{
+                        fontFamily:    I,
+                        fontSize:      "15px",
+                        fontWeight:    700,
+                        color:         "rgba(6,182,212,0.95)",
+                        letterSpacing: "0.04em",
+                      }}>
+                        {r.initials}
+                      </span>
+                    </div>
+                    <div>
+                      <p style={{
+                        fontFamily:   I,
+                        fontSize:     "15px",
+                        fontWeight:   700,
+                        color:        "#EDE9E1",
+                        lineHeight:   1.2,
+                        marginBottom: "3px",
+                      }}>
+                        {r.name}
+                      </p>
+                      <p style={{
+                        fontFamily: I,
+                        fontSize:   "11px",
+                        color:      "rgba(237,233,225,0.35)",
+                      }}>
+                        Verified buyer
+                      </p>
+                    </div>
+                    {/* Verified badge — top right of identity block */}
+                    <span style={{
+                      marginLeft:    "auto",
+                      display:       "inline-flex",
+                      alignItems:    "center",
+                      gap:           "5px",
+                      fontFamily:    I,
+                      fontSize:      "10px",
+                      fontWeight:    600,
+                      letterSpacing: "0.08em",
+                      color:         "rgba(6,182,212,0.85)",
+                      background:    "rgba(6,182,212,0.09)",
+                      border:        "1px solid rgba(6,182,212,0.22)",
+                      padding:       "3px 9px",
+                      borderRadius:  "20px",
+                    }}>
+                      <CheckCircle2 size={10} strokeWidth={2} aria-hidden="true" />
+                      Verified
+                    </span>
+                  </div>
+
+                  {/* Divider */}
+                  <div style={{ height: "1px", background: "rgba(237,233,225,0.07)", marginBottom: "1.375rem" }} />
+
+                  {/* Review text */}
+                  <p style={{
+                    fontFamily:   I,
+                    fontSize:     "0.9375rem",
+                    lineHeight:   1.75,
+                    color:        "rgba(237,233,225,0.78)",
+                    marginBottom: "1.5rem",
+                    fontStyle:    "italic",
+                  }}>
+                    &ldquo;{r.text}&rdquo;
+                  </p>
+
+                  {/* Stars */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "1.375rem" }}>
+                    <StarRating count={r.stars} />
+                    <span style={{
+                      fontFamily: I,
+                      fontSize:   "11px",
+                      color:      "rgba(237,233,225,0.35)",
+                    }}>
+                      ({r.stars} stars)
+                    </span>
+                  </div>
+
+                  {/* Footer meta */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <span style={{
+                      display:     "inline-flex",
+                      alignItems:  "center",
+                      gap:         "5px",
+                      fontFamily:  I,
+                      fontSize:    "10px",
+                      color:       "rgba(237,233,225,0.32)",
+                      letterSpacing: "0.04em",
+                    }}>
+                      <Calendar size={11} strokeWidth={1.5} aria-hidden="true" />
+                      Awakenings 2026
+                    </span>
+                    <span style={{
+                      display:       "inline-flex",
+                      alignItems:    "center",
+                      gap:           "5px",
+                      fontFamily:    I,
+                      fontSize:      "10px",
+                      color:         "rgba(237,233,225,0.32)",
+                      letterSpacing: "0.04em",
+                    }}>
+                      <MapPin size={11} strokeWidth={1.5} aria-hidden="true" />
+                      {r.city}
+                    </span>
+                    <span style={{
+                      fontFamily:    I,
+                      fontSize:      "9px",
+                      fontWeight:    600,
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      color:         "rgba(6,182,212,0.55)",
+                      background:    "rgba(6,182,212,0.07)",
+                      border:        "1px solid rgba(6,182,212,0.14)",
+                      padding:       "2px 8px",
+                      borderRadius:  "4px",
+                    }}>
+                      {r.ticket}
+                    </span>
+                  </div>
+                </motion.div>
+              </motion.div>
+            );
+          })()}
+        </AnimatePresence>
 
         {/* ── How verified resale works ─────────────── */}
         <motion.div
