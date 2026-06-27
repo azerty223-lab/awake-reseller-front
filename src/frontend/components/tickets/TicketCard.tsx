@@ -147,21 +147,42 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
       aria-label={`${ticket.name}, ${formatPrice(ticket.resalePrice, ticket.currency)}${!isAvail ? ", sold out" : ""}`}
       className="relative flex flex-col overflow-hidden cursor-pointer select-none"
       style={{
-        background: [
-          hovered && isAvail
-            ? "linear-gradient(175deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.80) 55%, rgba(0,0,0,0.93) 100%)"
-            : "linear-gradient(175deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.86) 55%, rgba(0,0,0,0.96) 100%)",
-          `url('${bg.src}') ${bg.pos} / cover no-repeat`,
-        ].join(", "),
-        border:       `1px solid ${hovered && isAvail ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.09)"}`,
+        border:       `1px solid ${hovered && isAvail ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.10)"}`,
         borderRadius: "12px",
         boxShadow:    hovered && isAvail
-          ? "0 0 0 1px rgba(6,182,212,0.12), 0 12px 40px rgba(0,0,0,0.65)"
+          ? "0 0 0 1px rgba(6,182,212,0.14), 0 12px 40px rgba(0,0,0,0.65)"
           : "0 4px 20px rgba(0,0,0,0.50)",
         opacity:      !isAvail ? 0.55 : 1,
         transition:   "border-color 0.18s ease, box-shadow 0.18s ease",
       }}
     >
+      {/* ── Festival photo background ─────────────────────────────── */}
+      <div
+        aria-hidden="true"
+        style={{
+          position:           "absolute",
+          inset:              0,
+          backgroundImage:    `url(${bg.src})`,
+          backgroundSize:     "cover",
+          backgroundPosition: bg.pos,
+          zIndex:             0,
+        }}
+      />
+      {/* Dark gradient overlay — lighter at top to reveal photo */}
+      <div
+        aria-hidden="true"
+        style={{
+          position:   "absolute",
+          inset:      0,
+          background: hovered && isAvail
+            ? "linear-gradient(175deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.62) 50%, rgba(0,0,0,0.82) 100%)"
+            : "linear-gradient(175deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.72) 50%, rgba(0,0,0,0.88) 100%)",
+          zIndex:     1,
+          transition: "background 0.22s ease",
+        }}
+      />
+      {/* All card content sits above the photo layers */}
+      <div className="relative flex flex-col flex-1" style={{ zIndex: 2 }}>
 
       {/* ── HEADER — category type + availability ───────────────────
           Both elements use the same muted type scale. Availability
@@ -305,6 +326,7 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
         </button>
       </div>
 
+      </div>{/* end content wrapper */}
     </motion.article>
   );
 }
