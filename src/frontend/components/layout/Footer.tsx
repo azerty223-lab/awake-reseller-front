@@ -1,7 +1,7 @@
 import type React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Ticket, Globe, Share2, ExternalLink, MapPin, Calendar, ShieldCheck } from "lucide-react";
+import { Ticket, Globe, Share2, ExternalLink, MapPin, Calendar } from "lucide-react";
 
 const I = "var(--font-inter, Inter, system-ui, sans-serif)";
 
@@ -13,7 +13,7 @@ const TRUST_BADGES = [
     sub:   "Event cancellation",
   },
   {
-    Icon:  ShieldCheck,
+    img:   "/law-badge.png",
     label: "Dutch consumer law",
     sub:   "Art. 7:5 BW",
   },
