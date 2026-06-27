@@ -197,18 +197,29 @@ function ReviewCard({ r, index, onSelect, isSelected }: {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        cursor:       "pointer",
-        position:     "relative",
-        background:   hovered && !isSelected ? "rgba(237,233,225,0.050)" : "rgba(237,233,225,0.028)",
-        border:       `1px solid ${hovered && !isSelected ? "rgba(237,233,225,0.14)" : "rgba(237,233,225,0.08)"}`,
-        borderTop:    `2px solid ${hovered && !isSelected ? "rgba(6,182,212,0.55)" : "rgba(6,182,212,0.18)"}`,
-        borderRadius: "8px",
-        padding:      "1.375rem 1.25rem 1.125rem",
-        /* No transform here — layoutId owns the transform axis */
-        transition:   "background 0.22s ease, border-color 0.22s ease",
-        overflow:     "hidden",
-        /* Fade out so the modal card "takes over" cleanly */
-        opacity:      isSelected ? 0 : 1,
+        cursor:        "pointer",
+        position:      "relative",
+        /* Festival-night layered background:
+           1. subtle dot grid (rave floor / stage lights)
+           2. diagonal cyan beam from top-left corner
+           3. deep dark-navy base gradient */
+        background: [
+          "radial-gradient(circle, rgba(6,182,212,0.055) 1px, transparent 1px) 0 0 / 22px 22px",
+          "linear-gradient(140deg, rgba(6,182,212,0.10) 0%, transparent 42%)",
+          hovered && !isSelected
+            ? "linear-gradient(155deg, rgba(10,15,30,1) 0%, rgba(6,8,16,1) 100%)"
+            : "linear-gradient(155deg, rgba(7,11,22,1) 0%, rgba(4,5,10,1) 100%)",
+        ].join(", "),
+        border:        `1px solid ${hovered && !isSelected ? "rgba(6,182,212,0.22)" : "rgba(6,182,212,0.10)"}`,
+        borderTop:     `2px solid ${hovered && !isSelected ? "rgba(6,182,212,0.70)" : "rgba(6,182,212,0.35)"}`,
+        borderRadius:  "10px",
+        padding:       "1.375rem 1.25rem 1.125rem",
+        transition:    "background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease",
+        boxShadow:     hovered && !isSelected
+          ? "0 0 0 1px rgba(6,182,212,0.14), 0 8px 40px rgba(0,0,0,0.55), 0 0 28px rgba(6,182,212,0.06)"
+          : "0 4px 20px rgba(0,0,0,0.45)",
+        overflow:      "hidden",
+        opacity:       isSelected ? 0 : 1,
         pointerEvents: isSelected ? "none" : "auto",
       }}
     >
@@ -254,7 +265,7 @@ function ReviewCard({ r, index, onSelect, isSelected }: {
         fontFamily: I,
         fontSize:   "0.875rem",
         lineHeight: 1.72,
-        color:      "rgba(237,233,225,0.72)",
+        color:      "rgba(237,233,225,0.80)",
         margin:     "0 0 1rem",
       }}>
         &ldquo;{r.text}&rdquo;
@@ -266,7 +277,7 @@ function ReviewCard({ r, index, onSelect, isSelected }: {
         alignItems: "center",
         gap:        "10px",
         paddingTop: "0.75rem",
-        borderTop:  "1px solid rgba(237,233,225,0.06)",
+        borderTop:  "1px solid rgba(6,182,212,0.10)",
       }}>
         <div
           aria-hidden="true"
@@ -617,12 +628,19 @@ export function ResaleMarketplaceSection() {
                         position:     "relative",
                         width:        "100%",
                         maxWidth:     "460px",
-                        background:   "rgba(10,10,14,1)",
-                        border:       "1px solid rgba(237,233,225,0.12)",
-                        borderTop:    "2px solid rgba(6,182,212,0.65)",
+                        /* Expanded festival card — more dramatic version:
+                           dot grid + cyan top-left beam + purple bottom-right bloom */
+                        background: [
+                          "radial-gradient(circle, rgba(6,182,212,0.06) 1px, transparent 1px) 0 0 / 22px 22px",
+                          "radial-gradient(ellipse at 0% 0%, rgba(6,182,212,0.18) 0%, transparent 55%)",
+                          "radial-gradient(ellipse at 100% 100%, rgba(120,40,220,0.10) 0%, transparent 55%)",
+                          "linear-gradient(155deg, rgba(8,13,26,1) 0%, rgba(4,4,10,1) 100%)",
+                        ].join(", "),
+                        border:       "1px solid rgba(6,182,212,0.18)",
+                        borderTop:    "2px solid rgba(6,182,212,0.75)",
                         borderRadius: "12px",
                         padding:      "2rem",
-                        boxShadow:    "0 40px 100px rgba(0,0,0,0.72), 0 0 0 1px rgba(237,233,225,0.04)",
+                        boxShadow:    "0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(6,182,212,0.08), 0 0 60px rgba(6,182,212,0.06)",
                         pointerEvents: "auto",
                         overflow:     "hidden",
                       }}
