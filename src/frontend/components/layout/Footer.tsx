@@ -1,15 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Ticket, Globe, Share2, ExternalLink, MapPin, Calendar, ShieldCheck, Lock, RefreshCw } from "lucide-react";
+import { Ticket, Globe, Share2, ExternalLink, MapPin, Calendar, ShieldCheck, RefreshCw } from "lucide-react";
 
 const I = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 /* ── Trust badge row ────────────────────────────────────────────── */
 const TRUST_BADGES = [
-  {
-    Icon:  Lock,
-    label: "SSL Encrypted",
-    sub:   "TLS 1.3",
-  },
   {
     Icon:  ShieldCheck,
     label: "Secured by Stripe",
@@ -176,6 +172,18 @@ export function Footer() {
             flexWrap:       "wrap",
             gap:            "0.75rem",
           }}>
+            {/* SSL badge */}
+            <Image
+              src="/ssl-badge.png"
+              alt="Secure SSL Encryption"
+              width={48}
+              height={48}
+              style={{ display: "block", flexShrink: 0 }}
+            />
+
+            {/* Separator */}
+            <div style={{ width: "1px", height: "24px", background: "rgba(237,233,225,0.08)" }} className="hidden sm:block" />
+
             {/* Stripe badge */}
             <StripeBadge />
 
