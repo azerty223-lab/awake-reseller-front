@@ -140,8 +140,8 @@ export function Footer() {
               <Image
                 src="/ssl-badge.png"
                 alt="Secure SSL Encryption"
-                width={48}
-                height={48}
+                width={22}
+                height={22}
                 style={{ display: "block", flexShrink: 0 }}
               />
               <div>
