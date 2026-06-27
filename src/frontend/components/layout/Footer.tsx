@@ -7,11 +7,6 @@ const I = "var(--font-inter, Inter, system-ui, sans-serif)";
 /* ── Trust badge row ────────────────────────────────────────────── */
 const TRUST_BADGES = [
   {
-    Icon:  ShieldCheck,
-    label: "Secured by Stripe",
-    sub:   "PCI DSS Level 1",
-  },
-  {
     Icon:  RefreshCw,
     label: "Full refund if cancelled",
     sub:   "Event cancellation",
@@ -22,39 +17,6 @@ const TRUST_BADGES = [
     sub:   "Art. 7:5 BW",
   },
 ];
-
-/* ── Stripe wordmark (inline SVG, no external file needed) ─────── */
-function StripeBadge() {
-  return (
-    <div style={{
-      display:        "inline-flex",
-      alignItems:     "center",
-      gap:            "6px",
-      background:     "rgba(99,91,255,0.06)",
-      border:         "1px solid rgba(99,91,255,0.18)",
-      borderRadius:   "6px",
-      padding:        "6px 12px",
-    }}>
-      {/* Stripe "S" approximation */}
-      <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="6" fill="rgba(99,91,255,0.15)" />
-        <path
-          d="M14.5 11.5C14.5 10.7 15.1 10 16 10c.9 0 1.8.4 2.6 1.1l1.4-2.1C18.7 8.4 17.4 8 16 8c-2.5 0-4.2 1.6-4.2 3.7 0 4.2 5.7 3.2 5.7 5.6 0 .9-.8 1.5-1.9 1.5-1.1 0-2.1-.5-2.9-1.4l-1.4 2.1c1.1 1 2.6 1.5 4.2 1.5 2.7 0 4.5-1.5 4.5-3.7C20 13 14.5 13.9 14.5 11.5z"
-          fill="rgba(99,91,255,0.85)"
-        />
-      </svg>
-      <span style={{
-        fontFamily:    I,
-        fontSize:      "10px",
-        fontWeight:    700,
-        letterSpacing: "0.06em",
-        color:         "rgba(99,91,255,0.85)",
-      }}>
-        Stripe
-      </span>
-    </div>
-  );
-}
 
 export function Footer() {
   return (
@@ -173,19 +135,37 @@ export function Footer() {
             gap:            "0.75rem",
           }}>
             {/* SSL badge */}
-            <Image
-              src="/ssl-badge.png"
-              alt="Secure SSL Encryption"
-              width={48}
-              height={48}
-              style={{ display: "block", flexShrink: 0 }}
-            />
-
-            {/* Separator */}
-            <div style={{ width: "1px", height: "24px", background: "rgba(237,233,225,0.08)" }} className="hidden sm:block" />
-
-            {/* Stripe badge */}
-            <StripeBadge />
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+              <Image
+                src="/ssl-badge.png"
+                alt="Secure SSL Encryption"
+                width={48}
+                height={48}
+                style={{ display: "block", flexShrink: 0 }}
+              />
+              <div>
+                <span style={{
+                  display:       "block",
+                  fontFamily:    I,
+                  fontSize:      "11px",
+                  fontWeight:    600,
+                  color:         "rgba(237,233,225,0.65)",
+                  letterSpacing: "0.03em",
+                  lineHeight:    1.1,
+                }}>
+                  Secure SSL Encryption
+                </span>
+                <span style={{
+                  fontFamily:    I,
+                  fontSize:      "9px",
+                  color:         "rgba(237,233,225,0.28)",
+                  letterSpacing: "0.06em",
+                  lineHeight:    1,
+                }}>
+                  TLS 1.3
+                </span>
+              </div>
+            </div>
 
             {/* Separator */}
             <div style={{ width: "1px", height: "24px", background: "rgba(237,233,225,0.08)" }} className="hidden sm:block" />
