@@ -168,26 +168,6 @@ export function AccommodationSection() {
                     : "rgba(0,0,0,0.45)";
                 }}
               >
-                {/* Illustration */}
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={tier.illus}
-                    alt=""
-                    aria-hidden="true"
-                    width={140}
-                    height={140}
-                    style={{
-                      width:        "140px",
-                      height:       "140px",
-                      objectFit:    "contain",
-                      display:      "block",
-                      filter:       "drop-shadow(0 6px 20px rgba(0,0,0,0.45))",
-                      borderRadius: "10px",
-                    }}
-                  />
-                </div>
-
                 {/* Index + label + note */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
                   <span style={{
