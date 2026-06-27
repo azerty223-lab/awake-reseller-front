@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import Link from "next/link";
 import {
   ArrowRight, CheckCircle2, Star, X,
@@ -177,11 +177,18 @@ function StatItem({ value, label, Icon }: { value: string; label: string; Icon: 
   );
 }
 
-function ReviewCard({ r, index, onSelect }: { r: typeof REVIEWS[0]; index: number; onSelect: () => void }) {
+function ReviewCard({ r, index, onSelect, isSelected }: {
+  r: typeof REVIEWS[0];
+  index: number;
+  onSelect: () => void;
+  isSelected: boolean;
+}) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <motion.article
+      layoutId={`review-card-${index}`}
+      /* scroll-in animation runs once; layout system takes over after */
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -192,15 +199,17 @@ function ReviewCard({ r, index, onSelect }: { r: typeof REVIEWS[0]; index: numbe
       style={{
         cursor:       "pointer",
         position:     "relative",
-        background:   hovered ? "rgba(237,233,225,0.050)" : "rgba(237,233,225,0.028)",
-        border:       `1px solid ${hovered ? "rgba(237,233,225,0.14)" : "rgba(237,233,225,0.08)"}`,
-        borderTop:    `2px solid ${hovered ? "rgba(6,182,212,0.55)" : "rgba(6,182,212,0.18)"}`,
+        background:   hovered && !isSelected ? "rgba(237,233,225,0.050)" : "rgba(237,233,225,0.028)",
+        border:       `1px solid ${hovered && !isSelected ? "rgba(237,233,225,0.14)" : "rgba(237,233,225,0.08)"}`,
+        borderTop:    `2px solid ${hovered && !isSelected ? "rgba(6,182,212,0.55)" : "rgba(6,182,212,0.18)"}`,
         borderRadius: "8px",
         padding:      "1.375rem 1.25rem 1.125rem",
-        transition:   "background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease",
-        transform:    hovered ? "translateY(-3px)" : "translateY(0)",
-        boxShadow:    hovered ? "0 12px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(6,182,212,0.08)" : "none",
+        /* No transform here — layoutId owns the transform axis */
+        transition:   "background 0.22s ease, border-color 0.22s ease",
         overflow:     "hidden",
+        /* Fade out so the modal card "takes over" cleanly */
+        opacity:      isSelected ? 0 : 1,
+        pointerEvents: isSelected ? "none" : "auto",
       }}
     >
       {/* Decorative background quote mark */}
@@ -259,7 +268,6 @@ function ReviewCard({ r, index, onSelect }: { r: typeof REVIEWS[0]; index: numbe
         paddingTop: "0.75rem",
         borderTop:  "1px solid rgba(237,233,225,0.06)",
       }}>
-        {/* Avatar */}
         <div
           aria-hidden="true"
           style={{
@@ -274,38 +282,18 @@ function ReviewCard({ r, index, onSelect }: { r: typeof REVIEWS[0]; index: numbe
             flexShrink:     0,
           }}
         >
-          <span style={{
-            fontFamily:    I,
-            fontSize:      "10px",
-            fontWeight:    700,
-            color:         "rgba(6,182,212,0.90)",
-            letterSpacing: "0.04em",
-          }}>
+          <span style={{ fontFamily: I, fontSize: "10px", fontWeight: 700, color: "rgba(6,182,212,0.90)", letterSpacing: "0.04em" }}>
             {r.initials}
           </span>
         </div>
-
         <div>
-          <span style={{
-            fontFamily: I,
-            fontSize:   "12px",
-            fontWeight: 600,
-            color:      "rgba(237,233,225,0.82)",
-            display:    "block",
-            lineHeight: 1.2,
-          }}>
+          <span style={{ fontFamily: I, fontSize: "12px", fontWeight: 600, color: "rgba(237,233,225,0.82)", display: "block", lineHeight: 1.2 }}>
             {r.name}
           </span>
-          <span style={{
-            fontFamily:    I,
-            fontSize:      "10px",
-            color:         "rgba(237,233,225,0.32)",
-            letterSpacing: "0.04em",
-          }}>
+          <span style={{ fontFamily: I, fontSize: "10px", color: "rgba(237,233,225,0.32)", letterSpacing: "0.04em" }}>
             {r.city}
           </span>
         </div>
-
         <VerifiedBadge />
       </div>
     </motion.article>
@@ -566,218 +554,194 @@ export function ResaleMarketplaceSection() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {REVIEWS.map((r, i) => (
-              <ReviewCard key={r.name} r={r} index={i} onSelect={() => setSelectedReview(i)} />
-            ))}
-          </div>
-        </motion.div>
+          <LayoutGroup>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {REVIEWS.map((r, i) => (
+                <ReviewCard
+                  key={r.name}
+                  r={r}
+                  index={i}
+                  onSelect={() => setSelectedReview(i)}
+                  isSelected={selectedReview === i}
+                />
+              ))}
+            </div>
 
-        {/* ── Review focus overlay ─────────────────── */}
-        <AnimatePresence>
-          {selectedReview !== null && (() => {
-            const r = REVIEWS[selectedReview];
-            return (
-              <motion.div
-                key="review-overlay"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                onClick={closeReview}
-                style={{
-                  position:       "fixed",
-                  inset:          0,
-                  zIndex:         60,
-                  display:        "flex",
-                  alignItems:     "center",
-                  justifyContent: "center",
-                  padding:        "1.5rem",
-                  backdropFilter: "blur(14px) saturate(0.7)",
-                  WebkitBackdropFilter: "blur(14px) saturate(0.7)",
-                  background:     "rgba(5,5,7,0.72)",
-                }}
-              >
+            {/* Backdrop — fades independently from the card morph */}
+            <AnimatePresence>
+              {selectedReview !== null && (
                 <motion.div
-                  key="review-card"
-                  initial={{ opacity: 0, scale: 0.93, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.93, y: 20 }}
-                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                  onClick={e => e.stopPropagation()}
+                  key="review-backdrop"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  onClick={closeReview}
                   style={{
-                    position:     "relative",
-                    width:        "100%",
-                    maxWidth:     "460px",
-                    background:   "rgba(12,12,16,0.98)",
-                    border:       "1px solid rgba(237,233,225,0.12)",
-                    borderTop:    "2px solid rgba(6,182,212,0.60)",
-                    borderRadius: "12px",
-                    padding:      "2rem",
-                    boxShadow:    "0 40px 100px rgba(0,0,0,0.70), 0 0 0 1px rgba(237,233,225,0.05)",
+                    position:             "fixed",
+                    inset:                0,
+                    zIndex:               60,
+                    backdropFilter:       "blur(16px) saturate(0.6)",
+                    WebkitBackdropFilter: "blur(16px) saturate(0.6)",
+                    background:           "rgba(5,5,7,0.75)",
                   }}
-                >
-                  {/* Close button */}
-                  <button
-                    onClick={closeReview}
-                    aria-label="Close review"
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Expanded card — morphs from grid via layoutId */}
+            <AnimatePresence>
+              {selectedReview !== null && (() => {
+                const r = REVIEWS[selectedReview];
+                return (
+                  /* Non-animated centering shell — layoutId card inside controls its own position */
+                  <div
+                    key={`modal-shell-${selectedReview}`}
                     style={{
-                      position:       "absolute",
-                      top:            "1rem",
-                      right:          "1rem",
-                      width:          "28px",
-                      height:         "28px",
-                      borderRadius:   "50%",
-                      background:     "rgba(237,233,225,0.06)",
-                      border:         "1px solid rgba(237,233,225,0.10)",
+                      position:       "fixed",
+                      inset:          0,
+                      zIndex:         70,
                       display:        "flex",
                       alignItems:     "center",
                       justifyContent: "center",
-                      cursor:         "pointer",
-                      transition:     "background 0.18s ease, border-color 0.18s ease",
+                      padding:        "1.5rem",
+                      pointerEvents:  "none",
                     }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(237,233,225,0.12)"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(237,233,225,0.06)"; }}
                   >
-                    <X size={12} color="rgba(237,233,225,0.55)" strokeWidth={2} aria-hidden="true" />
-                  </button>
+                    <motion.div
+                      layoutId={`review-card-${selectedReview}`}
+                      /* layout transition: spring feel matching the card shape */
+                      transition={{ type: "spring", stiffness: 340, damping: 30 }}
+                      onClick={e => e.stopPropagation()}
+                      style={{
+                        position:     "relative",
+                        width:        "100%",
+                        maxWidth:     "460px",
+                        background:   "rgba(10,10,14,1)",
+                        border:       "1px solid rgba(237,233,225,0.12)",
+                        borderTop:    "2px solid rgba(6,182,212,0.65)",
+                        borderRadius: "12px",
+                        padding:      "2rem",
+                        boxShadow:    "0 40px 100px rgba(0,0,0,0.72), 0 0 0 1px rgba(237,233,225,0.04)",
+                        pointerEvents: "auto",
+                        overflow:     "hidden",
+                      }}
+                    >
+                      {/* Content fades in after the morph animation is underway */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2, delay: 0.15 }}
+                      >
+                        {/* Close */}
+                        <button
+                          onClick={closeReview}
+                          aria-label="Close review"
+                          style={{
+                            position:       "absolute",
+                            top:            "1rem",
+                            right:          "1rem",
+                            width:          "28px",
+                            height:         "28px",
+                            borderRadius:   "50%",
+                            background:     "rgba(237,233,225,0.06)",
+                            border:         "1px solid rgba(237,233,225,0.10)",
+                            display:        "flex",
+                            alignItems:     "center",
+                            justifyContent: "center",
+                            cursor:         "pointer",
+                            transition:     "background 0.18s ease",
+                          }}
+                          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(237,233,225,0.13)"; }}
+                          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(237,233,225,0.06)"; }}
+                        >
+                          <X size={12} color="rgba(237,233,225,0.55)" strokeWidth={2} aria-hidden="true" />
+                        </button>
 
-                  {/* Avatar + identity */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.375rem" }}>
-                    <div style={{
-                      width:          "52px",
-                      height:         "52px",
-                      borderRadius:   "50%",
-                      background:     "linear-gradient(135deg, rgba(6,182,212,0.25), rgba(6,182,212,0.08))",
-                      border:         "1.5px solid rgba(6,182,212,0.30)",
-                      display:        "flex",
-                      alignItems:     "center",
-                      justifyContent: "center",
-                      flexShrink:     0,
-                    }}>
-                      <span style={{
-                        fontFamily:    I,
-                        fontSize:      "15px",
-                        fontWeight:    700,
-                        color:         "rgba(6,182,212,0.95)",
-                        letterSpacing: "0.04em",
-                      }}>
-                        {r.initials}
-                      </span>
-                    </div>
-                    <div>
-                      <p style={{
-                        fontFamily:   I,
-                        fontSize:     "15px",
-                        fontWeight:   700,
-                        color:        "#EDE9E1",
-                        lineHeight:   1.2,
-                        marginBottom: "3px",
-                      }}>
-                        {r.name}
-                      </p>
-                      <p style={{
-                        fontFamily: I,
-                        fontSize:   "11px",
-                        color:      "rgba(237,233,225,0.35)",
-                      }}>
-                        Verified buyer
-                      </p>
-                    </div>
-                    {/* Verified badge — top right of identity block */}
-                    <span style={{
-                      marginLeft:    "auto",
-                      display:       "inline-flex",
-                      alignItems:    "center",
-                      gap:           "5px",
-                      fontFamily:    I,
-                      fontSize:      "10px",
-                      fontWeight:    600,
-                      letterSpacing: "0.08em",
-                      color:         "rgba(6,182,212,0.85)",
-                      background:    "rgba(6,182,212,0.09)",
-                      border:        "1px solid rgba(6,182,212,0.22)",
-                      padding:       "3px 9px",
-                      borderRadius:  "20px",
-                    }}>
-                      <CheckCircle2 size={10} strokeWidth={2} aria-hidden="true" />
-                      Verified
-                    </span>
+                        {/* Avatar + identity */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.375rem" }}>
+                          <div style={{
+                            width:          "52px",
+                            height:         "52px",
+                            borderRadius:   "50%",
+                            background:     "linear-gradient(135deg, rgba(6,182,212,0.25), rgba(6,182,212,0.08))",
+                            border:         "1.5px solid rgba(6,182,212,0.30)",
+                            display:        "flex",
+                            alignItems:     "center",
+                            justifyContent: "center",
+                            flexShrink:     0,
+                          }}>
+                            <span style={{ fontFamily: I, fontSize: "15px", fontWeight: 700, color: "rgba(6,182,212,0.95)", letterSpacing: "0.04em" }}>
+                              {r.initials}
+                            </span>
+                          </div>
+                          <div>
+                            <p style={{ fontFamily: I, fontSize: "15px", fontWeight: 700, color: "#EDE9E1", lineHeight: 1.2, marginBottom: "3px" }}>
+                              {r.name}
+                            </p>
+                            <p style={{ fontFamily: I, fontSize: "11px", color: "rgba(237,233,225,0.35)" }}>
+                              Verified buyer
+                            </p>
+                          </div>
+                          <span style={{
+                            marginLeft:    "auto",
+                            display:       "inline-flex",
+                            alignItems:    "center",
+                            gap:           "5px",
+                            fontFamily:    I,
+                            fontSize:      "10px",
+                            fontWeight:    600,
+                            letterSpacing: "0.08em",
+                            color:         "rgba(6,182,212,0.85)",
+                            background:    "rgba(6,182,212,0.09)",
+                            border:        "1px solid rgba(6,182,212,0.22)",
+                            padding:       "3px 9px",
+                            borderRadius:  "20px",
+                          }}>
+                            <CheckCircle2 size={10} strokeWidth={2} aria-hidden="true" />
+                            Verified
+                          </span>
+                        </div>
+
+                        {/* Divider */}
+                        <div style={{ height: "1px", background: "rgba(237,233,225,0.07)", marginBottom: "1.375rem" }} />
+
+                        {/* Review text */}
+                        <p style={{ fontFamily: I, fontSize: "0.9375rem", lineHeight: 1.75, color: "rgba(237,233,225,0.78)", marginBottom: "1.5rem", fontStyle: "italic" }}>
+                          &ldquo;{r.text}&rdquo;
+                        </p>
+
+                        {/* Stars */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "1.375rem" }}>
+                          <StarRating count={r.stars} />
+                          <span style={{ fontFamily: I, fontSize: "11px", color: "rgba(237,233,225,0.35)" }}>
+                            ({r.stars} stars)
+                          </span>
+                        </div>
+
+                        {/* Footer meta */}
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontFamily: I, fontSize: "10px", color: "rgba(237,233,225,0.32)", letterSpacing: "0.04em" }}>
+                            <Calendar size={11} strokeWidth={1.5} aria-hidden="true" />
+                            Awakenings 2026
+                          </span>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontFamily: I, fontSize: "10px", color: "rgba(237,233,225,0.32)", letterSpacing: "0.04em" }}>
+                            <MapPin size={11} strokeWidth={1.5} aria-hidden="true" />
+                            {r.city}
+                          </span>
+                          <span style={{ fontFamily: I, fontSize: "9px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(6,182,212,0.55)", background: "rgba(6,182,212,0.07)", border: "1px solid rgba(6,182,212,0.14)", padding: "2px 8px", borderRadius: "4px" }}>
+                            {r.ticket}
+                          </span>
+                        </div>
+                      </motion.div>
+                    </motion.div>
                   </div>
-
-                  {/* Divider */}
-                  <div style={{ height: "1px", background: "rgba(237,233,225,0.07)", marginBottom: "1.375rem" }} />
-
-                  {/* Review text */}
-                  <p style={{
-                    fontFamily:   I,
-                    fontSize:     "0.9375rem",
-                    lineHeight:   1.75,
-                    color:        "rgba(237,233,225,0.78)",
-                    marginBottom: "1.5rem",
-                    fontStyle:    "italic",
-                  }}>
-                    &ldquo;{r.text}&rdquo;
-                  </p>
-
-                  {/* Stars */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "1.375rem" }}>
-                    <StarRating count={r.stars} />
-                    <span style={{
-                      fontFamily: I,
-                      fontSize:   "11px",
-                      color:      "rgba(237,233,225,0.35)",
-                    }}>
-                      ({r.stars} stars)
-                    </span>
-                  </div>
-
-                  {/* Footer meta */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
-                    <span style={{
-                      display:     "inline-flex",
-                      alignItems:  "center",
-                      gap:         "5px",
-                      fontFamily:  I,
-                      fontSize:    "10px",
-                      color:       "rgba(237,233,225,0.32)",
-                      letterSpacing: "0.04em",
-                    }}>
-                      <Calendar size={11} strokeWidth={1.5} aria-hidden="true" />
-                      Awakenings 2026
-                    </span>
-                    <span style={{
-                      display:       "inline-flex",
-                      alignItems:    "center",
-                      gap:           "5px",
-                      fontFamily:    I,
-                      fontSize:      "10px",
-                      color:         "rgba(237,233,225,0.32)",
-                      letterSpacing: "0.04em",
-                    }}>
-                      <MapPin size={11} strokeWidth={1.5} aria-hidden="true" />
-                      {r.city}
-                    </span>
-                    <span style={{
-                      fontFamily:    I,
-                      fontSize:      "9px",
-                      fontWeight:    600,
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      color:         "rgba(6,182,212,0.55)",
-                      background:    "rgba(6,182,212,0.07)",
-                      border:        "1px solid rgba(6,182,212,0.14)",
-                      padding:       "2px 8px",
-                      borderRadius:  "4px",
-                    }}>
-                      {r.ticket}
-                    </span>
-                  </div>
-                </motion.div>
-              </motion.div>
-            );
-          })()}
-        </AnimatePresence>
+                );
+              })()}
+            </AnimatePresence>
+          </LayoutGroup>
+        </motion.div>
 
         {/* ── How verified resale works ─────────────── */}
         <motion.div
