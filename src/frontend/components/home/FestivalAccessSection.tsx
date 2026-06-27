@@ -40,11 +40,11 @@ const PASSES = [
   },
 ];
 
-/* ── Per-card color themes (kept for ghost number / border colours) ─────── */
+/* ── Single cyan theme applied to all cards ─────────────────────────────── */
 const THEMES = [
   { stage: "#06B6D4", beams: ["#22D3EE", "#06B6D4", "#67E8F9"], ambient: "#0E7490" },
-  { stage: "#3C82DC", beams: ["#50A0FF", "#3C82DC", "#64C8FF"], ambient: "#1E5AB4" },
-  { stage: "#9B40C8", beams: ["#C060F0", "#9B40C8", "#D480FF"], ambient: "#6E1EA0" },
+  { stage: "#06B6D4", beams: ["#22D3EE", "#06B6D4", "#67E8F9"], ambient: "#0E7490" },
+  { stage: "#06B6D4", beams: ["#22D3EE", "#06B6D4", "#67E8F9"], ambient: "#0E7490" },
 ];
 
 /* ── Festival photo backgrounds — one per pass ────────────────────────── */
