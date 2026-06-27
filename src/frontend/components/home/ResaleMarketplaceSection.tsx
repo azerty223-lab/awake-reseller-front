@@ -7,7 +7,7 @@ import Link from "next/link";
 import {
   ArrowRight, CheckCircle2, Star, X,
   Ticket, ShieldCheck, PackageCheck,
-  ClipboardCheck, UserCheck, Mail, MapPin, Calendar,
+  MapPin, Calendar,
   type LucideIcon,
 } from "lucide-react";
 import { LineReveal } from "@/frontend/components/ui/LineReveal";
@@ -22,22 +22,22 @@ const PROTECTIONS = [
 ];
 
 /* ── Process steps ────────────────────────────────────────────── */
-const STEPS: Array<{ num: string; Icon: LucideIcon; title: string; body: string }> = [
+const STEPS: Array<{ num: string; illus: string; title: string; body: string }> = [
   {
     num:   "1",
-    Icon:  ClipboardCheck,
+    illus: "/illus-order.svg",
     title: "Order review",
     body:  "We check the resale order and ticket details before beginning the transfer.",
   },
   {
     num:   "2",
-    Icon:  UserCheck,
+    illus: "/illus-transfer.svg",
     title: "Name transfer",
     body:  "The ticket is transferred through the authorized process so it is issued in the buyer's name.",
   },
   {
     num:   "3",
-    Icon:  Mail,
+    illus: "/illus-delivery.svg",
     title: "Delivery",
     body:  "The personalized e-ticket is sent by email before the festival, ready to present at the gate.",
   },
@@ -792,67 +792,122 @@ export function ResaleMarketplaceSection() {
         </motion.div>
 
         {/* ── How verified resale works ─────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        <div
           className="mt-12 pt-10"
           style={{ borderTop: "1px solid rgba(237,233,225,0.07)" }}
         >
-          <p style={{ fontFamily: I, fontSize: "9.5px", fontWeight: 600, letterSpacing: "0.26em", textTransform: "uppercase", color: "rgba(6,182,212,0.50)", marginBottom: "2rem", textAlign: "center" }}>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            style={{ fontFamily: I, fontSize: "9.5px", fontWeight: 600, letterSpacing: "0.26em", textTransform: "uppercase", color: "rgba(6,182,212,0.50)", marginBottom: "3rem", textAlign: "center" }}
+          >
             How verified resale works
-          </p>
+          </motion.p>
 
-          {/* Desktop: horizontal with rail. Mobile: vertical stepper. */}
           <div className="relative">
-
-            {/* Desktop connecting rail */}
+            {/* Connecting rail between illustrations on desktop */}
             <motion.div
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 1.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 1.4, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="hidden md:block"
-              style={{ position: "absolute", top: "13px", left: "calc(100%/6)", right: "calc(100%/6)", height: "1px", background: "linear-gradient(to right, rgba(6,182,212,0.28), rgba(6,182,212,0.10), rgba(6,182,212,0.28))", transformOrigin: "left", zIndex: 0 }}
+              style={{
+                position:        "absolute",
+                top:             "80px",
+                left:            "calc(100% / 6)",
+                right:           "calc(100% / 6)",
+                height:          "1px",
+                background:      "linear-gradient(to right, rgba(6,182,212,0.30), rgba(6,182,212,0.08), rgba(6,182,212,0.30))",
+                transformOrigin: "left",
+                zIndex:          0,
+              }}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
               {STEPS.map((step, i) => (
-                <div key={step.num} className="flex md:flex-col gap-4 md:gap-0 items-start md:items-center">
-
-                  {/* Mobile node + connector */}
-                  <div className="flex md:hidden flex-col items-center shrink-0" style={{ width: "30px" }}>
-                    <div style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1.5px solid rgba(6,182,212,0.38)", background: "rgba(6,182,212,0.07)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
-                      <step.Icon size={13} strokeWidth={1.75} color="rgba(6,182,212,0.80)" aria-hidden="true" />
+                <motion.div
+                  key={step.num}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.75, delay: 0.15 + i * 0.14, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-col items-center text-center"
+                >
+                  {/* Illustration */}
+                  <div style={{ position: "relative", marginBottom: "1.5rem", zIndex: 1 }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={step.illus}
+                      alt=""
+                      aria-hidden="true"
+                      width={160}
+                      height={160}
+                      style={{
+                        width:       "160px",
+                        height:      "160px",
+                        objectFit:   "contain",
+                        display:     "block",
+                        filter:      "drop-shadow(0 8px 28px rgba(0,0,0,0.50))",
+                        borderRadius: "12px",
+                      }}
+                    />
+                    {/* Step number badge */}
+                    <div
+                      aria-label={`Step ${step.num}`}
+                      style={{
+                        position:       "absolute",
+                        bottom:         "-6px",
+                        right:          "-6px",
+                        width:          "24px",
+                        height:         "24px",
+                        borderRadius:   "50%",
+                        background:     "#06B6D4",
+                        border:         "2px solid #050507",
+                        display:        "flex",
+                        alignItems:     "center",
+                        justifyContent: "center",
+                        fontFamily:     I,
+                        fontSize:       "11px",
+                        fontWeight:     800,
+                        color:          "#000",
+                        lineHeight:     1,
+                      }}
+                    >
+                      {step.num}
                     </div>
-                    {i < STEPS.length - 1 && (
-                      <div style={{ width: "1px", flex: 1, minHeight: "2rem", margin: "4px 0", background: "linear-gradient(to bottom, rgba(6,182,212,0.18), rgba(6,182,212,0.03))" }} />
-                    )}
                   </div>
 
-                  {/* Desktop node */}
-                  <div className="hidden md:flex flex-col items-center mb-4 relative z-10">
-                    <div style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1.5px solid rgba(6,182,212,0.38)", background: "rgba(6,182,212,0.07)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <step.Icon size={13} strokeWidth={1.75} color="rgba(6,182,212,0.80)" aria-hidden="true" />
-                    </div>
-                  </div>
+                  {/* Title */}
+                  <h4 style={{
+                    fontFamily:   I,
+                    fontWeight:   700,
+                    fontSize:     "0.9375rem",
+                    color:        "rgba(237,233,225,0.92)",
+                    marginBottom: "0.5rem",
+                    lineHeight:   1.2,
+                  }}>
+                    {step.title}
+                  </h4>
 
-                  {/* Step content */}
-                  <div className="md:text-center flex-1" style={{ paddingTop: "2px" }}>
-                    <h4 style={{ fontFamily: I, fontWeight: 600, fontSize: "0.9375rem", color: "rgba(237,233,225,0.90)", marginBottom: "0.375rem", lineHeight: 1.2 }}>
-                      {step.title}
-                    </h4>
-                    <p style={{ fontFamily: I, fontSize: "0.8125rem", lineHeight: 1.7, color: "rgba(161,161,170,0.55)", margin: 0 }}>
-                      {step.body}
-                    </p>
-                  </div>
-
-                </div>
+                  {/* Description */}
+                  <p style={{
+                    fontFamily: I,
+                    fontSize:   "0.8125rem",
+                    lineHeight: 1.72,
+                    color:      "rgba(161,161,170,0.58)",
+                    margin:     0,
+                    maxWidth:   "200px",
+                  }}>
+                    {step.body}
+                  </p>
+                </motion.div>
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
       </div>
     </section>
