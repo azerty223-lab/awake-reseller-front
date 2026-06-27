@@ -769,12 +769,22 @@ export function LineupSection() {
   const mobileArea = areas.find(a => a.id === activeArea) ?? areas[0];
 
   return (
-    <section className="relative bg-[#030305] overflow-hidden">
+    <section className="relative overflow-hidden">
+
+      {/* ── Full-section photo background — covers hero + schedule ── */}
+      <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: 0 }}>
+        <img
+          src="/bg-lineup.jpg"
+          alt=""
+          className="w-full h-full object-cover"
+          style={{ objectPosition: "center 30%", filter: "brightness(0.28) saturate(0.75)" }}
+        />
+      </div>
 
 {/* ── Hero: video + canvas background ─────────────────────── */}
-      <div className="relative h-[70vh] min-h-[480px] max-h-[680px]">
+      <div className="relative h-[70vh] min-h-[480px] max-h-[680px]" style={{ zIndex: 1 }}>
 
-        {/* Layer -1: Forest stage photo */}
+        {/* Layer -1: Lighter version of same photo just for hero area */}
         <img
           src="/bg-lineup.jpg"
           alt=""
@@ -880,8 +890,13 @@ export function LineupSection() {
       </div>
 
       {/* ── Schedule ─────────────────────────────────────────────── */}
-      <div className="relative z-10 pt-4 pb-4 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="relative pt-4 pb-4 px-4 sm:px-6 lg:px-8" style={{ zIndex: 10 }}>
+        {/* Dark scrim so schedule text reads against the photo */}
+        <div aria-hidden="true" className="absolute inset-0" style={{
+          background: "linear-gradient(to bottom, rgba(3,3,5,0.72) 0%, rgba(3,3,5,0.82) 100%)",
+          zIndex: 0,
+        }} />
+        <div className="max-w-7xl mx-auto relative" style={{ zIndex: 1 }}>
 
           {/* ── Day selector ────────────────────────────────────────
               Two large cards — impossible to miss, immediately obvious */}
