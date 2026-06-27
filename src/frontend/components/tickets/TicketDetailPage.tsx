@@ -91,8 +91,9 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
   };
 
   const bgImage =
-    ticket.category === TicketCategory.CAR_CAMPING     ? "/bg-car-camping.jpg"     :
-    ticket.category === TicketCategory.COMFORT_CAMPING ? "/bg-comfort-camping.jpg" :
+    ticket.category === TicketCategory.CAR_CAMPING     ? "/bg-car-camping.jpg"      :
+    ticket.category === TicketCategory.COMFORT_CAMPING ? "/bg-comfort-camping.jpg"  :
+    ticket.category === TicketCategory.CAMPING         ? "/bg-weekend-camping.jpg"  :
     null;
 
   return (
