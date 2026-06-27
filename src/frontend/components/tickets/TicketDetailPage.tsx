@@ -113,10 +113,12 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
             backgroundImage: `url(${bgImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center 40%",
+            pointerEvents: "none",
           }} />
           <div aria-hidden="true" style={{
             position: "fixed", inset: 0, zIndex: 1,
             background: "rgba(3,3,5,0.78)",
+            pointerEvents: "none",
           }} />
         </>
       )}
