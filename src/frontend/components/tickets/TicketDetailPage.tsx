@@ -103,26 +103,26 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
   const bgImage = BG_MAP[ticket.category] ?? null;
 
   return (
-    <div className="min-h-screen bg-[#030305] py-10 px-4" style={{ position: "relative" }}>
+    <div className="min-h-screen bg-[#030305] py-10 px-4">
 
       {/* Category-specific background photo */}
       {bgImage && (
         <>
           <div aria-hidden="true" style={{
-            position: "fixed", inset: 0, zIndex: 0,
+            position: "fixed", inset: 0, zIndex: -2,
             backgroundImage: `url(${bgImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center 40%",
             pointerEvents: "none",
           }} />
           <div aria-hidden="true" style={{
-            position: "fixed", inset: 0, zIndex: 1,
+            position: "fixed", inset: 0, zIndex: -1,
             background: "rgba(3,3,5,0.78)",
             pointerEvents: "none",
           }} />
         </>
       )}
-      <div className="max-w-5xl mx-auto" style={{ position: "relative", zIndex: 2 }}>
+      <div className="max-w-5xl mx-auto">
 
         <Link
           href="/tickets"
