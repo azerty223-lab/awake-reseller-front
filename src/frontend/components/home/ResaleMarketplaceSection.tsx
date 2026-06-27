@@ -361,10 +361,10 @@ export function ResaleMarketplaceSection() {
     <section className="relative py-5 overflow-hidden">
       <NameTransferModal open={modalOpen} onClose={() => setModalOpen(false)} />
 
-      {/* Subtle festival photo — 88% overlay keeps content fully readable */}
+      {/* Festival photo background */}
       <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-        <img src="/review-bg-3.jpg" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 55%" }} />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(3,3,5,0.88)" }} />
+        <img src="/ticket-bg-1.jpg" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 32%" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(3,3,5,0.82) 0%, rgba(3,3,5,0.72) 50%, rgba(3,3,5,0.88) 100%)" }} />
       </div>
 
       <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20" style={{ position: "relative", zIndex: 1 }}>
@@ -538,19 +538,37 @@ export function ResaleMarketplaceSection() {
           style={{ borderTop: "1px solid rgba(237,233,225,0.07)" }}
         >
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-px"
-            style={{ background: "rgba(237,233,225,0.07)" }}
+            style={{ background: "rgba(237,233,225,0.10)", borderRadius: "10px", overflow: "hidden" }}
           >
-            {STATS.map(({ value, label, Icon }) => (
-              <div
-                key={label}
-                style={{
-                  background: "#050507",
-                  padding:    "1.25rem 0.5rem",
-                }}
-              >
-                <StatItem value={value} label={label} Icon={Icon} />
-              </div>
-            ))}
+            {STATS.map(({ value, label, Icon }, i) => {
+              const bgs = [
+                { src: "/ticket-bg-1.jpg", pos: "center 35%" },
+                { src: "/review-bg-2.jpg", pos: "center 40%" },
+                { src: "/review-bg-3.jpg", pos: "center 55%" },
+                { src: "/ticket-bg-3.jpg", pos: "center 45%" },
+              ];
+              const bg = bgs[i];
+              return (
+                <div
+                  key={label}
+                  style={{ position: "relative", padding: "1.5rem 0.5rem", overflow: "hidden" }}
+                >
+                  {/* Cell photo */}
+                  <img src={bg.src} alt="" aria-hidden="true" style={{
+                    position: "absolute", inset: 0, width: "100%", height: "100%",
+                    objectFit: "cover", objectPosition: bg.pos, zIndex: 0,
+                  }} />
+                  {/* Dark overlay — strong enough to keep numbers legible */}
+                  <div aria-hidden="true" style={{
+                    position: "absolute", inset: 0, zIndex: 1,
+                    background: "rgba(3,3,5,0.68)",
+                  }} />
+                  <div style={{ position: "relative", zIndex: 2 }}>
+                    <StatItem value={value} label={label} Icon={Icon} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </motion.div>
 
