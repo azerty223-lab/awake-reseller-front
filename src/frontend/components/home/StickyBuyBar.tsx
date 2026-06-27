@@ -36,7 +36,7 @@ export function StickyBuyBar() {
     if (hasCart) setDismissed(false);
   }, [hasCart]);
 
-  if (dismissed) return null;
+  if (dismissed || !hasCart) return null;
 
   return (
     <AnimatePresence>
