@@ -110,48 +110,54 @@ export function TicketGrid({ tickets }: { tickets: Ticket[] }) {
 
         {/* ── Category filter pills ─────────────────────────────── */}
         <div
-          className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-4 sm:px-6 lg:px-8 py-3"
+          className="flex items-stretch"
           style={{
             background:   "#050507",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
           }}
         >
-          {TABS.map(tab => {
-            const count    = tabCounts[tab.value] ?? 0;
-            const isActive = category === tab.value;
-            if (tab.value !== "ALL" && count === 0) return null;
+          {/* Scrollable tabs — takes all remaining width */}
+          <div className="relative flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-4 sm:px-6 lg:px-8 py-3 pr-10">
+              {TABS.map(tab => {
+                const count    = tabCounts[tab.value] ?? 0;
+                const isActive = category === tab.value;
+                if (tab.value !== "ALL" && count === 0) return null;
 
-            return (
-              <button
-                key={tab.value}
-                onClick={() => setCategory(tab.value)}
-                className={[
-                  "flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full",
-                  "text-xs font-medium whitespace-nowrap",
-                  "transition-all duration-150 select-none cursor-pointer",
-                  isActive
-                    ? "bg-white/[0.14] text-white border border-white/[0.18]"
-                    : "text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] border border-transparent",
-                ].join(" ")}
-              >
-                {tab.label}
-                {tab.value !== "ALL" && count > 0 && (
-                  <span
+                return (
+                  <button
+                    key={tab.value}
+                    onClick={() => setCategory(tab.value)}
                     className={[
-                      "text-[10px] font-semibold tabular-nums px-1.5 py-0.5 rounded-full leading-none",
-                      isActive ? "bg-white/[0.14] text-zinc-300" : "bg-white/[0.06] text-zinc-600",
+                      "flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full",
+                      "text-xs font-medium whitespace-nowrap",
+                      "transition-all duration-150 select-none cursor-pointer",
+                      isActive
+                        ? "bg-white/[0.14] text-white border border-white/[0.18]"
+                        : "text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] border border-transparent",
                     ].join(" ")}
                   >
-                    {count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+                    {tab.label}
+                    {tab.value !== "ALL" && count > 0 && (
+                      <span
+                        className={[
+                          "text-[10px] font-semibold tabular-nums px-1.5 py-0.5 rounded-full leading-none",
+                          isActive ? "bg-white/[0.14] text-zinc-300" : "bg-white/[0.06] text-zinc-600",
+                        ].join(" ")}
+                      >
+                        {count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            {/* Fade gradient — hints that more tabs exist on mobile */}
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-[#050507] to-transparent" />
+          </div>
 
-          {/* Push-right: sort control */}
-          <div className="flex-1 min-w-[1rem]" />
-          <div className="relative shrink-0" ref={sortRef}>
+          {/* Sort control — always visible, never scrolls away */}
+          <div className="relative shrink-0 flex items-center px-3 border-l border-white/[0.06]" ref={sortRef}>
             <button
               onClick={() => setSortOpen(v => !v)}
               className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-200 transition-colors py-1.5 px-2 rounded-lg hover:bg-white/[0.05] select-none cursor-pointer"
