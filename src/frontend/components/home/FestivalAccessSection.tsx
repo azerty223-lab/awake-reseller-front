@@ -321,33 +321,64 @@ export function FestivalAccessSection() {
                       {/* Content — sits above photo and overlay */}
                       <div style={{ position: "relative", zIndex: 20, display: "flex", flexDirection: "column", height: "100%" }}>
                         {/* Label */}
-                        <span style={{ fontFamily: INTER, fontSize: "9px", fontWeight: 400, letterSpacing: "0.36em", textTransform: "uppercase", color: isActive ? `${THEMES[i].stage}CC` : "rgba(237,233,225,0.20)", display: "block", marginBottom: "0.75rem" }}>
+                        <span style={{
+                          fontFamily: INTER, fontSize: "9px", fontWeight: 700,
+                          letterSpacing: "0.36em", textTransform: "uppercase",
+                          color: isActive ? THEMES[i].stage : "rgba(255,255,255,0.35)",
+                          display: "block", marginBottom: "0.75rem",
+                          textShadow: "0 1px 4px rgba(0,0,0,0.7)",
+                        }}>
                           {pass.label}
                         </span>
 
                         {/* Title */}
-                        <h3 style={{ fontFamily: INTER, fontWeight: 800, fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)", letterSpacing: "0.08em", lineHeight: 1, textTransform: "uppercase", color: isActive ? "rgba(237,233,225,0.96)" : "rgba(237,233,225,0.32)", marginBottom: "0.625rem" }}>
+                        <h3 style={{
+                          fontFamily: INTER, fontWeight: 800,
+                          fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)",
+                          letterSpacing: "0.08em", lineHeight: 1,
+                          textTransform: "uppercase",
+                          color: isActive ? "#FFFFFF" : "rgba(255,255,255,0.45)",
+                          marginBottom: "0.625rem",
+                          textShadow: "0 2px 8px rgba(0,0,0,0.8)",
+                        }}>
                           {pass.title}
                         </h3>
 
                         {/* Dates */}
-                        <span style={{ fontFamily: INTER, fontSize: "11px", letterSpacing: "0.20em", textTransform: "uppercase", color: isActive ? `${THEMES[i].stage}99` : "rgba(237,233,225,0.16)", display: "block", marginBottom: "1.75rem" }}>
+                        <span style={{
+                          fontFamily: INTER, fontSize: "11px",
+                          letterSpacing: "0.20em", textTransform: "uppercase",
+                          color: isActive ? THEMES[i].stage : "rgba(255,255,255,0.28)",
+                          display: "block", marginBottom: "1.75rem",
+                          textShadow: "0 1px 4px rgba(0,0,0,0.7)",
+                        }}>
                           {pass.dates}
                         </span>
 
                         {/* Divider */}
-                        <div style={{ width: "100%", height: "1px", background: "rgba(237,233,225,0.08)", marginBottom: "1.5rem" }} />
+                        <div style={{ width: "100%", height: "1px", background: "rgba(255,255,255,0.18)", marginBottom: "1.5rem" }} />
 
                         {/* Description */}
-                        <p style={{ fontFamily: INTER, fontSize: "0.875rem", lineHeight: 1.8, color: isActive ? "rgba(161,161,170,0.88)" : "rgba(161,161,170,0.24)", marginBottom: "1.5rem", flex: 1 }}>
+                        <p style={{
+                          fontFamily: INTER, fontSize: "0.875rem", lineHeight: 1.8,
+                          color: isActive ? "rgba(255,255,255,0.88)" : "rgba(255,255,255,0.30)",
+                          marginBottom: "1.5rem", flex: 1,
+                          textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+                        }}>
                           {pass.description}
                         </p>
 
                         {/* Features */}
                         <ul style={{ listStyle: "none", padding: 0, margin: 0, marginBottom: "2rem" }}>
                           {pass.includes.map(f => (
-                            <li key={f} style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", paddingBottom: "0.45rem", fontFamily: INTER, fontSize: "13px", color: isActive ? "rgba(237,233,225,0.52)" : "rgba(237,233,225,0.12)" }}>
-                              <span style={{ color: isActive ? `${THEMES[i].stage}99` : "rgba(6,182,212,0.12)", flexShrink: 0 }}>—</span>
+                            <li key={f} style={{
+                              display: "flex", alignItems: "baseline", gap: "0.75rem",
+                              paddingBottom: "0.45rem",
+                              fontFamily: INTER, fontSize: "13px",
+                              color: isActive ? "rgba(255,255,255,0.82)" : "rgba(255,255,255,0.20)",
+                              textShadow: "0 1px 3px rgba(0,0,0,0.6)",
+                            }}>
+                              <span style={{ color: isActive ? THEMES[i].stage : "rgba(255,255,255,0.20)", flexShrink: 0 }}>—</span>
                               {f}
                             </li>
                           ))}
@@ -356,13 +387,24 @@ export function FestivalAccessSection() {
                         {/* Footer */}
                         {isActive && (
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                            <span style={{ fontFamily: INTER, fontSize: "9px", letterSpacing: "0.26em", textTransform: "uppercase", color: `${THEMES[i].stage}88` }}>
+                            <span style={{
+                              fontFamily: INTER, fontSize: "9px",
+                              letterSpacing: "0.26em", textTransform: "uppercase",
+                              color: THEMES[i].stage,
+                              textShadow: "0 1px 4px rgba(0,0,0,0.7)",
+                            }}>
                               {pass.note ?? ""}
                             </span>
                             <Link href="/tickets" className="group/b inline-flex items-center gap-2"
-                              style={{ fontFamily: INTER, fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(237,233,225,0.42)", transition: "color 0.3s ease" }}
-                              onMouseEnter={e => (e.currentTarget.style.color = `${THEMES[i].stage}EE`)}
-                              onMouseLeave={e => (e.currentTarget.style.color = "rgba(237,233,225,0.42)")}
+                              style={{
+                                fontFamily: INTER, fontSize: "10px",
+                                letterSpacing: "0.24em", textTransform: "uppercase",
+                                color: "rgba(255,255,255,0.80)",
+                                transition: "color 0.3s ease",
+                                textShadow: "0 1px 4px rgba(0,0,0,0.7)",
+                              }}
+                              onMouseEnter={e => (e.currentTarget.style.color = THEMES[i].stage)}
+                              onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.80)")}
                             >
                               Browse tickets
                               <ArrowRight className="group-hover/b:translate-x-0.5 transition-transform duration-300" style={{ width: "10px", height: "10px" }} />
