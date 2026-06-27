@@ -40,11 +40,18 @@ const PASSES = [
   },
 ];
 
-/* ── Per-card color themes ────────────────────────────────────────────── */
+/* ── Per-card color themes (kept for ghost number / border colours) ─────── */
 const THEMES = [
-  { stage: "#06B6D4", beams: ["#22D3EE", "#06B6D4", "#67E8F9"], ambient: "#0E7490" }, // gold
-  { stage: "#3C82DC", beams: ["#50A0FF", "#3C82DC", "#64C8FF"], ambient: "#1E5AB4" }, // blue
-  { stage: "#9B40C8", beams: ["#C060F0", "#9B40C8", "#D480FF"], ambient: "#6E1EA0" }, // purple
+  { stage: "#06B6D4", beams: ["#22D3EE", "#06B6D4", "#67E8F9"], ambient: "#0E7490" },
+  { stage: "#3C82DC", beams: ["#50A0FF", "#3C82DC", "#64C8FF"], ambient: "#1E5AB4" },
+  { stage: "#9B40C8", beams: ["#C060F0", "#9B40C8", "#D480FF"], ambient: "#6E1EA0" },
+];
+
+/* ── Festival photo backgrounds — one per pass ────────────────────────── */
+const PASS_BGS = [
+  { src: "/ticket-bg-1.jpg", pos: "center 35%" }, // Weekend — DJ on stage
+  { src: "/ticket-bg-2.jpg", pos: "center 45%" }, // Saturday — aerial crowd
+  { src: "/ticket-bg-3.jpg", pos: "center 55%" }, // Sunday   — stage towers
 ];
 
 /* ── Animated festival stage background ──────────────────────────────── */
@@ -256,10 +263,7 @@ export function FestivalAccessSection() {
                       borderRadius: "20px",
                       border: isActive
                         ? "1.5px solid rgba(6,182,212,0.55)"
-                        : "1px solid rgba(237,233,225,0.09)",
-                      background: isActive
-                        ? "linear-gradient(160deg, rgba(6,182,212,0.05) 0%, #0b090d 35%)"
-                        : "#0b090d",
+                        : "1px solid rgba(255,255,255,0.10)",
                       boxShadow: isActive
                         ? [
                             "0 0 0 1px rgba(6,182,212,0.12)",
@@ -273,15 +277,32 @@ export function FestivalAccessSection() {
                       userSelect: "none",
                     }}>
 
-                      {/* ── Animated festival background ── */}
-                      <FestivalBg ti={i} active={isActive} />
+                      {/* ── Festival photo background ── */}
+                      <div aria-hidden="true" style={{
+                        position: "absolute", inset: 0,
+                        backgroundImage: `url(${PASS_BGS[i].src})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: PASS_BGS[i].pos,
+                        zIndex: 0,
+                      }} />
+
+                      {/* ── Dark overlay — lighter when active ── */}
+                      <div aria-hidden="true" style={{
+                        position: "absolute", inset: 0,
+                        background: isActive
+                          ? "linear-gradient(175deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.60) 45%, rgba(0,0,0,0.82) 100%)"
+                          : "linear-gradient(175deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.78) 50%, rgba(0,0,0,0.92) 100%)",
+                        transition: "background 0.4s ease",
+                        zIndex: 1,
+                      }} />
 
                       {/* Top gradient line */}
                       <div style={{
                         position: "absolute", top: 0, left: 0, right: 0, height: "1px",
+                        zIndex: 10,
                         background: isActive
                           ? `linear-gradient(90deg, transparent, ${THEMES[i].stage}CC 35%, ${THEMES[i].stage}CC 65%, transparent)`
-                          : "rgba(237,233,225,0.05)",
+                          : "rgba(255,255,255,0.08)",
                       }} />
 
                       {/* Ghost index number */}
@@ -290,14 +311,15 @@ export function FestivalAccessSection() {
                         fontFamily: SERIF, fontWeight: 900,
                         fontSize: "clamp(6rem, 16vw, 10rem)",
                         lineHeight: 1, letterSpacing: "-0.06em",
-                        color: isActive ? `${THEMES[i].stage}12` : "rgba(237,233,225,0.03)",
+                        color: isActive ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.03)",
                         pointerEvents: "none",
+                        zIndex: 10,
                       }}>
                         {pass.index}
                       </span>
 
-                      {/* Content — relative to sit above SVG background */}
-                      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", height: "100%" }}>
+                      {/* Content — sits above photo and overlay */}
+                      <div style={{ position: "relative", zIndex: 20, display: "flex", flexDirection: "column", height: "100%" }}>
                         {/* Label */}
                         <span style={{ fontFamily: INTER, fontSize: "9px", fontWeight: 400, letterSpacing: "0.36em", textTransform: "uppercase", color: isActive ? `${THEMES[i].stage}CC` : "rgba(237,233,225,0.20)", display: "block", marginBottom: "0.75rem" }}>
                           {pass.label}
