@@ -1,13 +1,14 @@
+import type React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Ticket, Globe, Share2, ExternalLink, MapPin, Calendar, ShieldCheck, RefreshCw } from "lucide-react";
+import { Ticket, Globe, Share2, ExternalLink, MapPin, Calendar, ShieldCheck } from "lucide-react";
 
 const I = "var(--font-inter, Inter, system-ui, sans-serif)";
 
 /* ── Trust badge row ────────────────────────────────────────────── */
 const TRUST_BADGES = [
   {
-    Icon:  RefreshCw,
+    img:   "/refund-badge.png",
     label: "Full refund if cancelled",
     sub:   "Event cancellation",
   },
@@ -16,7 +17,7 @@ const TRUST_BADGES = [
     label: "Dutch consumer law",
     sub:   "Art. 7:5 BW",
   },
-];
+] as const as { img?: string; Icon?: React.ElementType; label: string; sub: string }[];
 
 export function Footer() {
   return (
@@ -171,7 +172,7 @@ export function Footer() {
             <div style={{ width: "1px", height: "24px", background: "rgba(237,233,225,0.08)" }} className="hidden sm:block" />
 
             {/* Trust badges */}
-            {TRUST_BADGES.map(({ Icon, label, sub }) => (
+            {TRUST_BADGES.map(({ Icon, img, label, sub }) => (
               <div
                 key={label}
                 style={{
@@ -180,10 +181,14 @@ export function Footer() {
                   gap:         "7px",
                 }}
               >
-                <Icon
-                  style={{ width: "13px", height: "13px", color: "rgba(6,182,212,0.60)", flexShrink: 0 }}
-                  strokeWidth={1.75}
-                />
+                {img ? (
+                  <Image src={img} alt={label} width={22} height={22} style={{ flexShrink: 0 }} />
+                ) : Icon ? (
+                  <Icon
+                    style={{ width: "13px", height: "13px", color: "rgba(6,182,212,0.60)", flexShrink: 0 }}
+                    strokeWidth={1.75}
+                  />
+                ) : null}
                 <div>
                   <span style={{
                     display:       "block",
