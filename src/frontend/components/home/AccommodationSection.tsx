@@ -10,6 +10,7 @@ const TIERS = [
     id:     "grand",
     index:  "01",
     label:  "Outdoor",
+    illus:  "/illus-camping.svg",
     title:  "Grand Camping",
     spec:   "Personal tent space · Shared facilities",
     dates:  "Thu check-in · Mon checkout",
@@ -20,6 +21,7 @@ const TIERS = [
     id:     "comfort",
     index:  "02",
     label:  "Equipped",
+    illus:  "/illus-bell-tent.svg",
     title:  "Comfort Camping",
     spec:   "Pre-pitched bell tent · Beds & bedding",
     dates:  "Fri check-in · Mon checkout",
@@ -30,6 +32,7 @@ const TIERS = [
     id:     "resort",
     index:  "03",
     label:  "Luxury",
+    illus:  "/illus-glamping.svg",
     title:  "Relax Resort",
     spec:   "Private glamping pod · A/C & concierge",
     dates:  "Fri check-in · Mon checkout",
@@ -111,7 +114,7 @@ export function AccommodationSection() {
                     ? "1px solid rgba(6,182,212,0.18)"
                     : "1px solid rgba(237,233,225,0.07)",
                   borderRadius:  "8px",
-                  padding:       "1rem 1.125rem",
+                  padding:       "1.25rem 1.125rem 1rem",
                   textDecoration: "none",
                   display:       "block",
                   transition:    "border-color 0.25s ease, background 0.25s ease",
@@ -135,6 +138,26 @@ export function AccommodationSection() {
                     : "rgba(237,233,225,0.018)";
                 }}
               >
+                {/* Illustration */}
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={tier.illus}
+                    alt=""
+                    aria-hidden="true"
+                    width={140}
+                    height={140}
+                    style={{
+                      width:        "140px",
+                      height:       "140px",
+                      objectFit:    "contain",
+                      display:      "block",
+                      filter:       "drop-shadow(0 6px 20px rgba(0,0,0,0.45))",
+                      borderRadius: "10px",
+                    }}
+                  />
+                </div>
+
                 {/* Index + label + note */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
                   <span style={{
