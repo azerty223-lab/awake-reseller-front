@@ -774,13 +774,13 @@ export function LineupSection() {
 {/* ── Hero: video + canvas background ─────────────────────── */}
       <div className="relative h-[70vh] min-h-[480px] max-h-[680px]">
 
-        {/* Layer -1: Static concert image — canvas renders on top */}
+        {/* Layer -1: Forest stage photo */}
         <img
           src="/bg-lineup.jpg"
           alt=""
           aria-hidden="true"
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ zIndex: -1, objectPosition: "center 25%" }}
+          style={{ zIndex: -1, objectPosition: "center 30%", filter: "brightness(0.75) saturate(0.90)" }}
         />
 
         {/* Layer 0: Canvas projector beam animation — primary background */}
@@ -834,11 +834,15 @@ export function LineupSection() {
           </div>
         )}
 
-        {/* Layer 2: Cinematic dark overlays — readability + atmosphere */}
-        {/* Top darkening for text legibility */}
-        <div className="absolute inset-0 z-20 bg-gradient-to-b from-[#030305]/70 via-[#030305]/25 to-[#030305]" />
-        {/* Side vignette */}
-        <div className="absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_50%_50%,transparent_40%,rgba(3,3,5,0.5)_100%)]" />
+        {/* Layer 2: Cinematic overlays tailored for the forest-stage photo */}
+        {/* Top → mid dark for text legibility, opens up toward stage, seals bottom */}
+        <div className="absolute inset-0 z-20" style={{
+          background: "linear-gradient(to bottom, rgba(3,3,5,0.72) 0%, rgba(3,3,5,0.20) 38%, rgba(3,3,5,0.15) 55%, rgba(3,3,5,0.75) 100%)",
+        }} />
+        {/* Edge vignette — keeps focus on the tower */}
+        <div className="absolute inset-0 z-20" style={{
+          background: "radial-gradient(ellipse 70% 80% at 50% 45%, transparent 40%, rgba(3,3,5,0.55) 100%)",
+        }} />
 
         {/* Layer 3: Hero copy */}
         <div className="relative z-30 h-full flex flex-col items-center justify-center text-center px-6">
