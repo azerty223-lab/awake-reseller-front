@@ -771,27 +771,22 @@ export function LineupSection() {
   return (
     <section className="relative overflow-hidden">
 
-      {/* ── Full-section photo background — covers hero + schedule ── */}
+      {/* ── Single full-section photo — no filter, gradient overlays do the work ── */}
       <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: 0 }}>
         <img
           src="/bg-lineup.jpg"
           alt=""
           className="w-full h-full object-cover"
-          style={{ objectPosition: "center 30%", filter: "brightness(0.28) saturate(0.75)" }}
+          style={{ objectPosition: "center 28%" }}
         />
+        {/* Base darkening layer — anchors photo so it never bleeds bright */}
+        <div className="absolute inset-0" style={{ background: "rgba(3,3,5,0.52)" }} />
       </div>
 
 {/* ── Hero: video + canvas background ─────────────────────── */}
       <div className="relative h-[70vh] min-h-[480px] max-h-[680px]" style={{ zIndex: 1 }}>
 
-        {/* Layer -1: Lighter version of same photo just for hero area */}
-        <img
-          src="/bg-lineup.jpg"
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ zIndex: -1, objectPosition: "center 30%", filter: "brightness(0.75) saturate(0.90)" }}
-        />
+        {/* No duplicate photo here — section-level image shows through */}
 
         {/* Layer 0: Canvas projector beam animation — primary background */}
         {!shouldReduce && (
@@ -844,14 +839,18 @@ export function LineupSection() {
           </div>
         )}
 
-        {/* Layer 2: Cinematic overlays tailored for the forest-stage photo */}
-        {/* Top → mid dark for text legibility, opens up toward stage, seals bottom */}
+        {/* Layer 2: Cinematic overlay stack */}
+        {/* a) top bar — hero text readable */}
         <div className="absolute inset-0 z-20" style={{
-          background: "linear-gradient(to bottom, rgba(3,3,5,0.72) 0%, rgba(3,3,5,0.20) 38%, rgba(3,3,5,0.15) 55%, rgba(3,3,5,0.75) 100%)",
+          background: "linear-gradient(to bottom, rgba(3,3,5,0.88) 0%, rgba(3,3,5,0.35) 30%, rgba(3,3,5,0.08) 55%, rgba(3,3,5,0.70) 85%, rgba(3,3,5,0.95) 100%)",
         }} />
-        {/* Edge vignette — keeps focus on the tower */}
+        {/* b) edge vignette — draws eye to the glass tower */}
         <div className="absolute inset-0 z-20" style={{
-          background: "radial-gradient(ellipse 70% 80% at 50% 45%, transparent 40%, rgba(3,3,5,0.55) 100%)",
+          background: "radial-gradient(ellipse 65% 75% at 50% 42%, transparent 35%, rgba(3,3,5,0.60) 100%)",
+        }} />
+        {/* c) subtle cyan stage-floor glow — ties in brand colour */}
+        <div className="absolute inset-0 z-20" style={{
+          background: "radial-gradient(ellipse 55% 30% at 50% 92%, rgba(6,182,212,0.09) 0%, transparent 100%)",
         }} />
 
         {/* Layer 3: Hero copy */}
@@ -891,9 +890,9 @@ export function LineupSection() {
 
       {/* ── Schedule ─────────────────────────────────────────────── */}
       <div className="relative pt-4 pb-4 px-4 sm:px-6 lg:px-8" style={{ zIndex: 10 }}>
-        {/* Dark scrim so schedule text reads against the photo */}
+        {/* Schedule scrim — dark enough to read, subtle photo still present */}
         <div aria-hidden="true" className="absolute inset-0" style={{
-          background: "linear-gradient(to bottom, rgba(3,3,5,0.72) 0%, rgba(3,3,5,0.82) 100%)",
+          background: "linear-gradient(to bottom, rgba(3,3,5,0.80) 0%, rgba(3,3,5,0.90) 40%, rgba(3,3,5,0.95) 100%)",
           zIndex: 0,
         }} />
         <div className="max-w-7xl mx-auto relative" style={{ zIndex: 1 }}>
