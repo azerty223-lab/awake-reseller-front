@@ -66,7 +66,6 @@ export default async function TicketsPage() {
           >
             {[
               { text: "Sourced from Awakenings.nl" },
-              { text: "Full refund if cancelled" },
             ].map(({ text }) => (
               <span
                 key={text}
