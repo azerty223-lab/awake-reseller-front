@@ -50,7 +50,36 @@ const I = "var(--font-inter, Inter, system-ui, sans-serif)";
 export function AccommodationSection() {
   return (
     <section className="relative overflow-hidden" style={{ paddingTop: "clamp(1.5rem, 3vw, 2.5rem)", paddingBottom: "clamp(1.5rem, 3vw, 2.5rem)" }}>
-      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
+
+      {/* ── Video background ─────────────────────────────────────── */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden="true"
+        style={{
+          position:   "absolute",
+          inset:      0,
+          width:      "100%",
+          height:     "100%",
+          objectFit:  "cover",
+          objectPosition: "center center",
+          zIndex:     0,
+        }}
+      >
+        <source src="/camping-bg.mp4" type="video/mp4" />
+      </video>
+
+      {/* Dark overlay — keeps text readable over the video */}
+      <div aria-hidden="true" style={{
+        position:   "absolute",
+        inset:      0,
+        background: "linear-gradient(to bottom, rgba(3,3,5,0.72) 0%, rgba(3,3,5,0.60) 50%, rgba(3,3,5,0.78) 100%)",
+        zIndex:     1,
+      }} />
+
+      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20" style={{ position: "relative", zIndex: 2 }}>
 
         {/* ── Compact header ──────────────────────────────── */}
         <motion.div
@@ -108,11 +137,12 @@ export function AccommodationSection() {
                 className="group block"
                 style={{
                   background:    tier.cyan
-                    ? "rgba(6,182,212,0.04)"
-                    : "rgba(237,233,225,0.018)",
+                    ? "rgba(6,182,212,0.10)"
+                    : "rgba(0,0,0,0.45)",
                   border:        tier.cyan
-                    ? "1px solid rgba(6,182,212,0.18)"
-                    : "1px solid rgba(237,233,225,0.07)",
+                    ? "1px solid rgba(6,182,212,0.35)"
+                    : "1px solid rgba(255,255,255,0.12)",
+                  backdropFilter: "blur(10px)",
                   borderRadius:  "8px",
                   padding:       "1.25rem 1.125rem 1rem",
                   textDecoration: "none",
@@ -122,20 +152,20 @@ export function AccommodationSection() {
                 onMouseEnter={e => {
                   const el = e.currentTarget;
                   el.style.borderColor = tier.cyan
-                    ? "rgba(6,182,212,0.40)"
-                    : "rgba(237,233,225,0.14)";
+                    ? "rgba(6,182,212,0.60)"
+                    : "rgba(255,255,255,0.22)";
                   el.style.background = tier.cyan
-                    ? "rgba(6,182,212,0.07)"
-                    : "rgba(237,233,225,0.030)";
+                    ? "rgba(6,182,212,0.15)"
+                    : "rgba(0,0,0,0.55)";
                 }}
                 onMouseLeave={e => {
                   const el = e.currentTarget;
                   el.style.borderColor = tier.cyan
-                    ? "rgba(6,182,212,0.18)"
-                    : "rgba(237,233,225,0.07)";
+                    ? "rgba(6,182,212,0.35)"
+                    : "rgba(255,255,255,0.12)";
                   el.style.background = tier.cyan
-                    ? "rgba(6,182,212,0.04)"
-                    : "rgba(237,233,225,0.018)";
+                    ? "rgba(6,182,212,0.10)"
+                    : "rgba(0,0,0,0.45)";
                 }}
               >
                 {/* Illustration */}
@@ -205,10 +235,11 @@ export function AccommodationSection() {
                 <p style={{
                   fontFamily:    I,
                   fontSize:      "12px",
-                  color:         "rgba(161,161,170,0.55)",
+                  color:         "rgba(255,255,255,0.58)",
                   lineHeight:    1.4,
                   marginBottom:  "0.625rem",
                   margin:        "0 0 0.625rem",
+                  textShadow:    "0 1px 3px rgba(0,0,0,0.5)",
                 }}>
                   {tier.spec}
                 </p>
@@ -218,7 +249,7 @@ export function AccommodationSection() {
                   <span style={{
                     fontFamily:    I,
                     fontSize:      "10px",
-                    color:         "rgba(237,233,225,0.22)",
+                    color:         "rgba(255,255,255,0.45)",
                     letterSpacing: "0.06em",
                   }}>
                     {tier.dates}
