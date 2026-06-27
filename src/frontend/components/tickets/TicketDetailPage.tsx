@@ -90,11 +90,17 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const bgImage =
-    ticket.category === TicketCategory.CAR_CAMPING     ? "/bg-car-camping.jpg"      :
-    ticket.category === TicketCategory.COMFORT_CAMPING ? "/bg-comfort-camping.jpg"  :
-    ticket.category === TicketCategory.CAMPING         ? "/bg-weekend-camping.jpg"  :
-    null;
+  const BG_MAP: Partial<Record<TicketCategory, string>> = {
+    [TicketCategory.WEEKEND]:         "/bg-weekend.jpg",
+    [TicketCategory.SATURDAY]:        "/bg-saturday.jpg",
+    [TicketCategory.SUNDAY]:          "/bg-sunday.jpg",
+    [TicketCategory.CAMPING]:         "/bg-weekend-camping.jpg",
+    [TicketCategory.COMFORT_CAMPING]: "/bg-comfort-camping.jpg",
+    [TicketCategory.CAR_CAMPING]:     "/bg-car-camping.jpg",
+    [TicketCategory.PREMIUM]:         "/bg-premium.jpg",
+    [TicketCategory.ACCOMMODATION]:   "/bg-accommodation.jpg",
+  };
+  const bgImage = BG_MAP[ticket.category] ?? null;
 
   return (
     <div className="min-h-screen bg-[#030305] py-10 px-4" style={{ position: "relative" }}>

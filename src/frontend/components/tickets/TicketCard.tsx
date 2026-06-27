@@ -25,14 +25,14 @@ const F       = "var(--font-inter, Inter, system-ui, sans-serif)";
    Each ticket category maps to one of the 3 festival photos.
    A dark gradient overlay is always layered on top so text stays legible. */
 const CAT_BG: Partial<Record<TicketCategory, { src: string; pos: string }>> = {
-  [TicketCategory.WEEKEND]:         { src: "/ticket-bg-1.jpg", pos: "center 35%" },
-  [TicketCategory.SATURDAY]:        { src: "/ticket-bg-2.jpg", pos: "center 40%" },
-  [TicketCategory.SUNDAY]:          { src: "/ticket-bg-3.jpg", pos: "center 55%" },
-  [TicketCategory.CAMPING]:         { src: "/bg-weekend-camping.jpg", pos: "center 45%" },
-  [TicketCategory.COMFORT_CAMPING]: { src: "/bg-comfort-camping.jpg", pos: "center 40%" },
-  [TicketCategory.CAR_CAMPING]:     { src: "/bg-car-camping.jpg", pos: "center 45%" },
-  [TicketCategory.PREMIUM]:         { src: "/ticket-bg-1.jpg", pos: "center 30%" },
-  [TicketCategory.ACCOMMODATION]:   { src: "/ticket-bg-2.jpg", pos: "center 50%" },
+  [TicketCategory.WEEKEND]:         { src: "/bg-weekend.jpg",        pos: "center 40%" },
+  [TicketCategory.SATURDAY]:        { src: "/bg-saturday.jpg",       pos: "center 38%" },
+  [TicketCategory.SUNDAY]:          { src: "/bg-sunday.jpg",         pos: "center 50%" },
+  [TicketCategory.CAMPING]:         { src: "/bg-weekend-camping.jpg",pos: "center 45%" },
+  [TicketCategory.COMFORT_CAMPING]: { src: "/bg-comfort-camping.jpg",pos: "center 40%" },
+  [TicketCategory.CAR_CAMPING]:     { src: "/bg-car-camping.jpg",    pos: "center 45%" },
+  [TicketCategory.PREMIUM]:         { src: "/bg-premium.jpg",        pos: "center 35%" },
+  [TicketCategory.ACCOMMODATION]:   { src: "/bg-accommodation.jpg",  pos: "center 45%" },
 };
 
 /* ── Category labels (text only — no per-category colours) ────────── */
