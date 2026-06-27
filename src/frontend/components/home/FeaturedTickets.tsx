@@ -485,7 +485,13 @@ export function FeaturedTickets() {
   return (
     <section className="relative py-5 overflow-hidden">
 
-      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20">
+      {/* Subtle festival photo — 88% overlay keeps ticket table fully readable */}
+      <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+        <img src="/review-bg-2.jpg" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%" }} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,3,5,0.88)" }} />
+      </div>
+
+      <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20" style={{ position: "relative", zIndex: 1 }}>
 
         {/* Section header */}
         <motion.div
