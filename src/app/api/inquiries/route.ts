@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Invalid email address" }, { status: 400 });
   }
 
-  const inquiry = await prisma.inquiry.create({
+  await prisma.inquiry.create({
     data: { name, email, subject, message },
   });
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     console.error("Failed to send inquiry confirmation:", err);
   }
 
-  return Response.json(inquiry, { status: 201 });
+  return Response.json({ success: true }, { status: 201 });
 }
 
 export async function GET(request: NextRequest) {

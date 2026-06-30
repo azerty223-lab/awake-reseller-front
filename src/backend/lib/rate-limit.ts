@@ -6,20 +6,7 @@ interface Config {
   maxRequests:   number;
 }
 
-/* ── IP extraction ──────────────────────────────────────────────────
-   Priority order:
-   1. CF-Connecting-IP  — set by Cloudflare, cannot be forged by the
-                          client because Cloudflare strips it from
-                          incoming requests before adding its own value.
-   2. X-Real-IP         — set by Nginx/proxy, single trusted IP.
-   3. X-Forwarded-For   — we take the LAST entry (rightmost), which is
-                          added by the nearest trusted proxy.
-                          The FIRST entry can be forged by the client.
 
-   Note: If the app is deployed behind multiple untrusted proxies (rare
-   for this use-case), further configuration at the infrastructure level
-   is required. The rightmost XFF value is safe for single-proxy setups
-   (Vercel, Fly.io, Render, etc.).                                   */
 export function getIp(request: NextRequest): string {
   const cf = request.headers.get("cf-connecting-ip");
   if (cf?.trim()) return cf.trim();

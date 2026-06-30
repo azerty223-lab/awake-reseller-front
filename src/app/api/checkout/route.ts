@@ -9,7 +9,7 @@ const schema = z.object({
   items: z.array(z.object({
     ticketId: z.string().min(1),
     quantity: z.number().int().positive(),
-  }).passthrough()).min(1),
+  }).strict()).min(1),
   customerEmail: z.string().email().optional(),
   customerName: z.string().max(100).optional(),
   customerPhone: z.string().max(50).optional(),

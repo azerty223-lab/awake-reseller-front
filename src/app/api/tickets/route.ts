@@ -24,6 +24,15 @@ export async function GET(request: NextRequest) {
   const tickets = await prisma.ticket.findMany({
     where,
     orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+    select: {
+      id: true, name: true, slug: true, description: true,
+      category: true, dayLabel: true, originalPrice: true,
+      resalePrice: true, currency: true, quantity: true,
+      sold: true, isVisible: true, isFeatured: true,
+      deliveryMethod: true, includes: true, imageUrl: true,
+      createdAt: true, updatedAt: true,
+      // stripeProductId, stripePriceId, pdfUrl, personalizationStatus omitted — internal only
+    },
   });
 
   return Response.json(tickets);

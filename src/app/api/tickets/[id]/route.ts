@@ -10,7 +10,18 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const ticket = await prisma.ticket.findUnique({ where: { id } });
+  const ticket = await prisma.ticket.findUnique({
+    where: { id },
+    select: {
+      id: true, name: true, slug: true, description: true,
+      category: true, dayLabel: true, originalPrice: true,
+      resalePrice: true, currency: true, quantity: true,
+      sold: true, isVisible: true, isFeatured: true,
+      deliveryMethod: true, includes: true, imageUrl: true,
+      createdAt: true, updatedAt: true,
+      // stripeProductId, stripePriceId, pdfUrl, personalizationStatus omitted — internal only
+    },
+  });
   if (!ticket) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }

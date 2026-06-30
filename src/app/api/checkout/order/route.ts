@@ -63,9 +63,6 @@ export async function POST(req: NextRequest) {
     return Response.json({ orderId: order.id, orderNumber: order.orderNumber });
   } catch (err) {
     console.error("[POST /api/checkout/order]", err);
-    return Response.json(
-      { error: err instanceof Error ? err.message : "Internal server error" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

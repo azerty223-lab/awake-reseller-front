@@ -4,7 +4,7 @@ import { z } from "zod/v4";
 import { auth } from "@/backend/lib/auth";
 import { PaymentService } from "@/backend/payments/service";
 import { RateLimitError } from "@/backend/payments/errors";
-import { getIp } from "@/backend/lib/rate-limit";
+import { getIp, rateLimit, tooManyRequests } from "@/backend/lib/rate-limit";
 
 const createInvoiceSchema = z.object({
   orderId: z.string().min(1, "orderId is required"),
@@ -15,6 +15,11 @@ const createInvoiceSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  // 5 invoice creations per IP per minute — independent of Redis/service layer
+  const ip = getIp(req);
+  const { allowed } = await rateLimit(`crypto-invoice:${ip}`, { windowSeconds: 60, maxRequests: 5 });
+  if (!allowed) return tooManyRequests();
+
   try {
     const body = await req.json() as unknown;
     const parsed = createInvoiceSchema.safeParse(body);
@@ -29,7 +34,6 @@ export async function POST(req: NextRequest) {
     const { orderId, preferredCurrency, preferredNetwork, fiatAmount, customerEmail } = parsed.data;
 
     await headers(); // required to opt into dynamic rendering
-    const ip = getIp(req);
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -62,9 +66,6 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Too many requests" }, { status: 429 });
     }
     console.error("[POST /api/payments/create]", err);
-    return Response.json(
-      { error: err instanceof Error ? err.message : "Internal server error" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

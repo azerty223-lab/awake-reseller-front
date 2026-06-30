@@ -52,7 +52,7 @@ export async function POST(
     });
   } catch (err) {
     console.error("[send-ticket] Email failed:", err);
-    emailError = err instanceof Error ? err.message : "Email sending failed";
+    emailError = "Email sending failed";
   }
 
   // Always mark as delivered even if email failed

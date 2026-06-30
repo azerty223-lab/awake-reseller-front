@@ -43,9 +43,6 @@ export async function GET(
       return Response.json({ error: "Invoice not found" }, { status: 404 });
     }
     console.error("[GET /api/payments/[invoiceId]/status]", err);
-    return Response.json(
-      { error: err instanceof Error ? err.message : "Internal server error" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

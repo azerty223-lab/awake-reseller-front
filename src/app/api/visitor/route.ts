@@ -22,12 +22,20 @@ export async function POST(request: NextRequest) {
   const { userAgent, language, timezone, screen, referrer, page } = body as Record<string, string>;
 
   // Geolocate IP
+  // In production behind Cloudflare, cf-ipcountry gives the country code
+  // for free with no outbound HTTP request. Fall back to ip-api.com only
+  // in dev (where CF headers are absent). ip-api.com free plan is HTTP-only.
   let geo: Record<string, string> = {};
-  try {
-    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,isp,org,query`, { signal: AbortSignal.timeout(3000) });
-    const data = await res.json() as Record<string, string>;
-    if (data.status === "success") geo = data;
-  } catch { /* fail silently */ }
+  const cfCountry = request.headers.get("cf-ipcountry");
+  if (cfCountry && cfCountry !== "XX" && cfCountry !== "T1") {
+    geo = { countryCode: cfCountry, query: ip };
+  } else {
+    try {
+      const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,isp,org,query`, { signal: AbortSignal.timeout(3000) });
+      const data = await res.json() as Record<string, string>;
+      if (data.status === "success") geo = data;
+    } catch { /* fail silently */ }
+  }
 
   const now = new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC";
   const emoji = flag(geo.countryCode ?? "");
