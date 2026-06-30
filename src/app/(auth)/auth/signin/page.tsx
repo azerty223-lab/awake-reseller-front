@@ -44,13 +44,23 @@ function SignInForm() {
     }
   };
 
-  const handleGoogle = () => {
+  const handleGoogle = async () => {
     setGoogleLoading(true);
-    // Replace instead of push so the signin page + OAuth screens don't
-    // pile up in history — back button returns to the page before login.
-    const url = new URL("/api/auth/signin/google", window.location.origin);
-    url.searchParams.set("callbackUrl", callbackUrl);
-    window.location.replace(url.toString());
+    // Fetch the Google OAuth URL from NextAuth, then navigate with replace()
+    // so the signin page is removed from history — back button skips it.
+    try {
+      const csrf = await fetch("/api/auth/csrf").then(r => r.json()) as { csrfToken: string };
+      const res  = await fetch("/api/auth/signin/google", {
+        method:  "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "X-Auth-Return-Redirect": "1" },
+        body:    new URLSearchParams({ csrfToken: csrf.csrfToken, callbackUrl }),
+      });
+      const data = await res.json() as { url?: string };
+      window.location.replace(data.url ?? callbackUrl);
+    } catch {
+      // Fallback: standard signIn (push navigation)
+      await signIn("google", { callbackUrl });
+    }
   };
 
   return (
