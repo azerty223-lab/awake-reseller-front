@@ -1,7 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
+import { rateLimit, getIp, tooManyRequests } from "@/backend/lib/rate-limit";
 
 const client = new Anthropic();
+
+const MAX_MESSAGES   = 10;   // max conversation history sent to API
+const MAX_MSG_LENGTH = 500;  // max chars per message
 
 const SYSTEM = `You are a helpful customer support assistant for Awakenings Resale — a verified ticket resale platform for Awakenings Festival 2026.
 
@@ -39,6 +43,11 @@ REFUND POLICY:
 Keep answers concise (2–3 sentences). Be warm, direct, and helpful. If asked about specific ticket prices, direct users to browse the listings on the platform.`;
 
 export async function POST(req: NextRequest) {
+  // 15 messages per hour per IP
+  const ip = getIp(req);
+  const { allowed } = await rateLimit(`chat:${ip}`, { windowSeconds: 3600, maxRequests: 15 });
+  if (!allowed) return tooManyRequests();
+
   try {
     const { messages } = await req.json();
 
@@ -46,12 +55,26 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Messages required" }, { status: 400 });
     }
 
+    // Validate and sanitize: only user/assistant roles, cap length and history size
+    const safe = messages
+      .filter((m): m is { role: "user" | "assistant"; content: string } =>
+        (m.role === "user" || m.role === "assistant") &&
+        typeof m.content === "string" &&
+        m.content.trim().length > 0
+      )
+      .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_MSG_LENGTH) }))
+      .slice(-MAX_MESSAGES); // keep only the last N messages
+
+    if (safe.length === 0) {
+      return Response.json({ error: "No valid messages" }, { status: 400 });
+    }
+
     // Stream the response
     const stream = client.messages.stream({
       model: "claude-haiku-4-5",
       max_tokens: 400,
       system: SYSTEM,
-      messages,
+      messages: safe,
     });
 
     const encoder = new TextEncoder();
