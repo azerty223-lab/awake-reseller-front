@@ -5,17 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Ticket, ShoppingBag, MessageSquare,
-  Menu, X, LogOut, Ticket as TicketIcon
+  Menu, X, LogOut, Ticket as TicketIcon, Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/backend/lib/utils";
 import { signOut } from "next-auth/react";
 
 const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/tickets", label: "Tickets", icon: Ticket },
-  { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
+  { href: "/admin",           label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/tickets",   label: "Tickets",   icon: Ticket },
+  { href: "/admin/orders",    label: "Orders",    icon: ShoppingBag },
   { href: "/admin/inquiries", label: "Inquiries", icon: MessageSquare },
+  { href: "/admin/users",     label: "Users",     icon: Users },
 ];
 
 interface SidebarContentProps {

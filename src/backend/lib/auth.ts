@@ -1,5 +1,8 @@
 ﻿import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { prisma } from "@/backend/lib/prisma";
 import { getRedis } from "@/backend/payments/queues/connection";
@@ -8,13 +11,24 @@ const MAX_ATTEMPTS = 5;
 const LOCKOUT_SECONDS = 15 * 60;
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/admin/login",
+    signIn: "/auth/signin",
   },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
+    }),
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID!,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -49,14 +63,14 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           }
 
           await redis.del(failKey, lockKey);
-          return { id: user.id, email: user.email, name: user.name, role: user.role };
+          return { id: user.id, email: user.email, name: user.name, role: user.role, image: user.image };
         } catch {
           // Redis unavailable — fall back to auth without lockout
           const user = await prisma.user.findUnique({ where: { email } });
           if (!user || !user.password) return null;
           const passwordMatches = await compare(credentials.password as string, user.password);
           if (!passwordMatches) return null;
-          return { id: user.id, email: user.email, name: user.name, role: user.role };
+          return { id: user.id, email: user.email, name: user.name, role: user.role, image: user.image };
         }
       },
     }),
@@ -64,8 +78,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as { role?: string }).role;
         token.id = user.id;
+        token.role = (user as { role?: string }).role ?? "CUSTOMER";
+        token.image = user.image ?? null;
       }
       return token;
     },
@@ -73,6 +88,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (token) {
         session.user.id = token.id as string;
         (session.user as { role?: string }).role = token.role as string;
+        session.user.image = token.image as string | null | undefined;
       }
       return session;
     },
