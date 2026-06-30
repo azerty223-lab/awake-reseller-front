@@ -194,34 +194,30 @@ export function CinematicHero() {
           {/* Line 2: festival identity (secondary, muted)           */}
           <div style={{ marginBottom: "clamp(0.625rem, 1.2vw, 1rem)" }}>
             <motion.h1 {...reveal(0.28)} style={{ margin: 0, padding: 0, overflow: "hidden" }}>
-              {/* "The last verified tickets" */}
               <span style={{
                 display:       "block",
                 fontFamily:    I,
                 fontWeight:    800,
-                fontSize:      "clamp(2rem, 5.5vw, 5.25rem)",
+                fontSize:      "clamp(1.75rem, 5vw, 5.25rem)",
                 lineHeight:    0.92,
                 letterSpacing: "0.03em",
                 textTransform: "uppercase",
                 color:         W,
               }}>
-                The last verified tickets
+                Verified Tickets
               </span>
             </motion.h1>
 
-            {/* "for Awakenings 2026" — muted, secondary rhythm */}
             <motion.div {...reveal(0.38)} style={{ overflow: "hidden" }}>
               <span style={{
                 display:       "block",
                 fontFamily:    I,
                 fontWeight:    800,
-                fontSize:      "clamp(2rem, 5.5vw, 5.25rem)",
+                fontSize:      "clamp(1.75rem, 5vw, 5.25rem)",
                 lineHeight:    0.92,
                 letterSpacing: "0.03em",
                 textTransform: "uppercase",
-                /* Muted so "Awakenings 2026" reads as qualifier,     */
-                /* not competing with the scarcity claim on line 1.   */
-                color:         "rgba(237,233,225,0.42)",
+                color:         "rgba(6,182,212,0.85)",
               }}>
                 for Awakenings 2026
               </span>
