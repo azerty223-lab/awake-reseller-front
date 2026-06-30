@@ -759,7 +759,16 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         type="button"
-                        onClick={() => { setPaymentState("idle"); setError(""); }}
+                        onClick={() => {
+                        setPaymentState("idle");
+                        setError("");
+                        setCardNumber("");
+                        setCardExpiry("");
+                        setCardCvc("");
+                        setCardName("");
+                        setCardNumberError(null);
+                        setCardExpiryError(null);
+                      }}
                         className="flex items-center justify-center gap-2 py-3 rounded-lg border border-white/[0.12] text-sm font-medium text-zinc-300 hover:bg-white/[0.06] transition-all duration-150"
                       >
                         <CreditCard className="w-4 h-4" aria-hidden="true" />
