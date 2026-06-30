@@ -7,7 +7,7 @@ import Link from "next/link";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Mail, Lock, Eye, EyeOff, Ticket, CheckCircle2 } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { Button } from "@/frontend/components/ui/Button";
 
@@ -98,12 +98,9 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full">
       {/* Branding */}
-      <div className="text-center mb-8">
-        <div className="w-14 h-14 rounded-2xl bg-[#06B6D4]/10 border border-[#06B6D4]/25 flex items-center justify-center mx-auto mb-4">
-          <Ticket className="w-7 h-7 text-[#06B6D4]" />
-        </div>
+      <div className="mb-8">
         <h1 className="text-white font-bold text-2xl mb-1">Create an account</h1>
         <p className="text-zinc-500 text-sm">Join AW Tickets — track and manage your orders</p>
       </div>

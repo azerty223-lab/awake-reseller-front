@@ -7,7 +7,7 @@ import Link from "next/link";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Lock, Eye, EyeOff, Ticket } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { Button } from "@/frontend/components/ui/Button";
 
@@ -50,14 +50,11 @@ function SignInForm() {
   };
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full">
       {/* Branding */}
-      <div className="text-center mb-8">
-        <div className="w-14 h-14 rounded-2xl bg-[#06B6D4]/10 border border-[#06B6D4]/25 flex items-center justify-center mx-auto mb-4">
-          <Ticket className="w-7 h-7 text-[#06B6D4]" />
-        </div>
+      <div className="mb-8">
         <h1 className="text-white font-bold text-2xl mb-1">Welcome back</h1>
-        <p className="text-zinc-500 text-sm">Sign in to your AW Tickets account</p>
+        <p className="text-zinc-500 text-sm">Sign in to continue to AW Tickets</p>
       </div>
 
       {/* Google */}
