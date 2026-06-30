@@ -97,11 +97,11 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       {/* ── Right panel — auth form ─────────────────────────────────── */}
       <div className="flex-1 bg-[#080809] flex flex-col items-center justify-center px-6 py-12 overflow-y-auto min-h-screen">
         {/* Mobile logo — only visible when left panel is hidden */}
-        <div className="flex lg:hidden items-center gap-2 mb-8">
+        <Link href="/" className="flex lg:hidden items-center gap-2 mb-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand/awtickets-mark.svg" alt="AW Tickets" style={{ height: "28px", width: "auto" }} />
           <span className="font-black text-white/90 tracking-[0.18em] text-xs">AW TICKETS</span>
-        </div>
+        </Link>
 
         {/* Form slot */}
         <div className="w-full max-w-[380px]">
