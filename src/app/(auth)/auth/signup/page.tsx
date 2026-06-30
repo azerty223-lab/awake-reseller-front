@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User, Mail, Lock, Eye, EyeOff, Ticket } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
 import { Button } from "@/frontend/components/ui/Button";
 
 const schema = z
@@ -34,7 +33,7 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [serverError, setServerError] = useState("");
-  const [oauthLoading, setOauthLoading] = useState<"google" | "facebook" | null>(null);
+  const [oauthLoading, setOauthLoading] = useState<"google" | null>(null);
 
   const {
     register,
@@ -64,7 +63,7 @@ export default function SignUpPage() {
     router.push("/auth/signin?registered=1");
   };
 
-  const handleOAuth = async (provider: "google" | "facebook") => {
+  const handleOAuth = async (provider: "google") => {
     setOauthLoading(provider);
     await signIn(provider, { callbackUrl: "/" });
   };
@@ -81,7 +80,7 @@ export default function SignUpPage() {
       </div>
 
       {/* OAuth buttons */}
-      <div className="space-y-3 mb-6">
+      <div className="mb-6">
         <button
           type="button"
           onClick={() => handleOAuth("google")}
@@ -94,20 +93,6 @@ export default function SignUpPage() {
             <FcGoogle className="w-5 h-5 shrink-0" />
           )}
           Continue with Google
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleOAuth("facebook")}
-          disabled={!!oauthLoading}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-[#1877F2] hover:bg-[#166FE5] text-white font-medium text-sm rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {oauthLoading === "facebook" ? (
-            <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          ) : (
-            <FaFacebook className="w-5 h-5 shrink-0" />
-          )}
-          Continue with Facebook
         </button>
       </div>
 

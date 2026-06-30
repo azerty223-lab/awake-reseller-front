@@ -5,7 +5,7 @@ const CSP = [
   // Next.js requires unsafe-inline for its inline hydration scripts; unsafe-eval for dev HMR
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://js.stripe.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://images.unsplash.com https://plus.unsplash.com https://res.cloudinary.com https://lh3.googleusercontent.com https://graph.facebook.com https://platform-lookaside.fbsbx.com",
+  "img-src 'self' data: blob: https://images.unsplash.com https://plus.unsplash.com https://res.cloudinary.com https://lh3.googleusercontent.com",
   "font-src 'self' data:",
   // Turnstile and Stripe embed iframes
   "frame-src https://challenges.cloudflare.com https://js.stripe.com",
@@ -24,8 +24,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "plus.unsplash.com" },
       { protocol: "https", hostname: "res.cloudinary.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
-      { protocol: "https", hostname: "graph.facebook.com" },
-      { protocol: "https", hostname: "platform-lookaside.fbsbx.com" },
     ],
   },
 
