@@ -5,19 +5,25 @@ export const dynamic = "force-dynamic";
 import Image from "next/image";
 import { TicketGrid } from "@/frontend/components/tickets/TicketGrid";
 
+const _TICKETS_BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://awtickets.nl";
+
 export const metadata: Metadata = {
   title: "All Available Tickets — Verified Resale",
   description:
     "Buy verified resale tickets for Awakenings Festival 2026 — July 10–12, Beekse Bergen. Weekend, Saturday and Sunday day passes, camping. Name transfer included. Only 8 left.",
+  alternates: { canonical: `${_TICKETS_BASE}/tickets` },
   openGraph: {
+    type:        "website",
+    url:         `${_TICKETS_BASE}/tickets`,
     title:       "Awakenings 2026 Tickets — All Available | AW Tickets",
     description: "Verified resale tickets with official name transfer. E-ticket July 8. Stripe secured. Only 8 left.",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    images: [{ url: `${_TICKETS_BASE}/festival-hero.png`, width: 1200, height: 630, alt: "Awakenings Festival 2026 — Available Tickets" }],
   },
   twitter: {
     card:        "summary_large_image",
     title:       "Awakenings 2026 — Browse All Tickets | AW Tickets",
     description: "Verified resale. Name transfer included. Only 8 tickets left.",
+    images:      [`${_TICKETS_BASE}/festival-hero.png`],
   },
 };
 

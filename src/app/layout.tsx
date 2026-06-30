@@ -20,6 +20,8 @@ const inter = Inter({
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://awtickets.nl";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+
   /* ── Title ──────────────────────────────────────────────────── */
   title: {
     default: "Awakenings 2026 Tickets — Verified Resale | AW Tickets",
@@ -70,7 +72,7 @@ export const metadata: Metadata = {
     images: [
       {
         /* Add /public/og-image.jpg (1200×630, festival hero image) */
-        url:    `${SITE_URL}/og-image.jpg`,
+        url:    `${SITE_URL}/festival-hero.png`,
         width:  1200,
         height: 630,
         alt:    "Awakenings Festival 2026 — AW Tickets · Verified Resale",
@@ -83,7 +85,7 @@ export const metadata: Metadata = {
     card:        "summary_large_image",
     title:       "Awakenings 2026 Tickets — Only 8 Left | AW Tickets",
     description: "Verified resale for Awakenings Festival 2026. Name transfer included. E-ticket July 8. Stripe secured.",
-    images:      [`${SITE_URL}/og-image.jpg`],
+    images:      [`${SITE_URL}/festival-hero.png`],
   },
 };
 

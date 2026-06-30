@@ -3,13 +3,14 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Privacy policy for AW Tickets — how we collect, use, and protect your personal data.",
-  robots: { index: true, follow: true },
+  description: "Privacy policy for AW Tickets — how we collect, use, and protect your personal data in accordance with GDPR and Dutch law.",
+  robots: { index: false, follow: true },
+  alternates: { canonical: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://awtickets.nl"}/privacy` },
 };
 
 const CONTACT_EMAIL = "awtickets@outlook.com";
 const SITE_NAME = "AW Tickets";
-const SITE_URL = "https://awake-reseller-front-production.up.railway.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://awtickets.nl";
 const LAST_UPDATED = "30 June 2026";
 
 const Section = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (

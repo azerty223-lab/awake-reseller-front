@@ -89,3 +89,5 @@ Disallow: /checkout/
 Disallow: /ticket/
 Disallow: /_next/
 Crawl-delay: 5
+
+Sitemap: https://awtickets.nl/sitemap.xml

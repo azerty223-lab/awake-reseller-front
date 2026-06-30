@@ -3,9 +3,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { Shield, FileText, RefreshCw, ArrowLeftRight, Lock, CheckCircle, Mail } from "lucide-react";
 
+const _BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://awtickets.nl";
+
 export const metadata: Metadata = {
-  title: "About & Legal",
-  description: "Learn about AW Tickets, our resale policies, refund terms, and how ticket transfers work for Awakenings Festival.",
+  title: "About AW Tickets — Verified Awakenings 2026 Resale",
+  description: "Learn about AW Tickets: our verified resale service for Awakenings Festival 2026, refund policy, name transfer process, and legal terms under Dutch consumer law.",
+  alternates: { canonical: `${_BASE}/about` },
+  openGraph: {
+    type:        "website",
+    url:         `${_BASE}/about`,
+    title:       "About AW Tickets — Verified Awakenings 2026 Resale",
+    description: "Verified resale service for Awakenings Festival 2026. Official name transfer, Stripe-secured payments, Dutch consumer law protection.",
+    images: [{ url: `${_BASE}/festival-hero.png`, width: 1200, height: 630, alt: "Awakenings Festival 2026" }],
+  },
+  twitter: {
+    card:        "summary_large_image",
+    title:       "About AW Tickets — Verified Awakenings 2026 Resale",
+    description: "Trusted resale with official name transfer. Protected by Dutch consumer law.",
+  },
 };
 
 export default function AboutPage() {

@@ -1,9 +1,11 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/backend/lib/prisma";
 import QRCode from "qrcode";
 import { MapPin, Calendar, ExternalLink, Ticket } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 const EVENT_URL = "https://www.awakenings.com/en/events/2026/07/awakenings-festival/378057/";
 

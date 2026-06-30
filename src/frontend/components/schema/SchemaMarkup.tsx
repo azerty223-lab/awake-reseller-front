@@ -116,6 +116,47 @@ const faqSchema = {
   ],
 };
 
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type":    "Organization",
+  "@id":      `${BASE_URL}/#organization`,
+  "name":     "AW Tickets",
+  "url":      BASE_URL,
+  "logo": {
+    "@type": "ImageObject",
+    "url":   `${BASE_URL}/brand/awtickets-logo-horizontal.svg`,
+  },
+  "description": "Verified resale tickets for Awakenings Festival 2026 with official name transfer included.",
+  "contactPoint": {
+    "@type":       "ContactPoint",
+    "contactType": "customer support",
+    "email":       "awtickets@outlook.com",
+    "areaServed":  "NL",
+    "availableLanguage": ["English", "Dutch"],
+  },
+  "sameAs": [],
+};
+
+const webSiteSchema = {
+  "@context": "https://schema.org",
+  "@type":    "WebSite",
+  "@id":      `${BASE_URL}/#website`,
+  "url":      BASE_URL,
+  "name":     "AW Tickets",
+  "description": "Verified resale tickets for Awakenings Festival 2026",
+  "publisher": {
+    "@id": `${BASE_URL}/#organization`,
+  },
+  "potentialAction": {
+    "@type":       "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": `${BASE_URL}/tickets?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
+
 export function SchemaMarkup() {
   return (
     <>
@@ -126,6 +167,14 @@ export function SchemaMarkup() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
       />
     </>
   );
