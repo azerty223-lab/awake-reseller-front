@@ -3,7 +3,9 @@ import { prisma } from "@/backend/lib/prisma";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://awtickets.nl";
 
-export const revalidate = 3600; // regenerate hourly
+// Must be dynamic — the DB is unreachable during the Railway build step.
+// The sitemap is generated on first request and cached by Next.js.
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const tickets = await prisma.ticket.findMany({
