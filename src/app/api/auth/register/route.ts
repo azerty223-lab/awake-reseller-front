@@ -2,19 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/backend/lib/prisma";
+import { rateLimit, getIp, tooManyRequests } from "@/backend/lib/rate-limit";
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters").max(50),
-  email: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(72, "Password too long"),
+  name:     z.string().min(2, "Name must be at least 2 characters").max(50),
+  email:    z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters").max(72),
 });
 
 export async function POST(req: NextRequest) {
+  // 5 registrations per IP per 15 minutes
+  const ip     = getIp(req);
+  const { allowed } = await rateLimit(`register:${ip}`, { windowSeconds: 900, maxRequests: 5 });
+  if (!allowed) return tooManyRequests();
+
   try {
-    const body = await req.json();
+    const body   = await req.json();
     const parsed = registerSchema.safeParse(body);
 
     if (!parsed.success) {
@@ -24,7 +27,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, email, password } = parsed.data;
+    const { name, password } = parsed.data;
+    const email = parsed.data.email.toLowerCase().trim();
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
@@ -36,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     const passwordHash = await hash(password, 12);
     await prisma.user.create({
-      data: { name, email, password: passwordHash, role: "CUSTOMER" },
+      data: { name: name.trim(), email, password: passwordHash, role: "CUSTOMER" },
     });
 
     return NextResponse.json({ success: true }, { status: 201 });

@@ -110,7 +110,7 @@ export function Navbar({ onCartOpen }: NavbarProps) {
                       </span>
                     </div>
                     <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
+                      onClick={() => signOut({ callbackUrl: "/tickets" })}
                       className="flex items-center justify-center w-8 h-8 rounded-full border border-white/[0.07] hover:border-red-400/30 bg-white/[0.04] hover:bg-red-400/10 text-zinc-500 hover:text-red-400 transition-all duration-200"
                       aria-label="Sign out"
                     >
@@ -190,7 +190,7 @@ export function Navbar({ onCartOpen }: NavbarProps) {
               <div className="h-px bg-white/[0.07] my-1" />
               {session ? (
                 <button
-                  onClick={() => { setMobileOpen(false); signOut({ callbackUrl: "/" }); }}
+                  onClick={() => { setMobileOpen(false); signOut({ callbackUrl: "/tickets" }); }}
                   className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:text-red-400 hover:bg-red-400/10 transition-all duration-200 w-full text-left"
                 >
                   <LogOut className="w-4 h-4" />
