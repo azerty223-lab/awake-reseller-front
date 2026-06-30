@@ -51,7 +51,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
               className="font-black text-white leading-[1.1] mb-5"
               style={{ fontSize: "clamp(2rem, 3.2vw, 2.75rem)", letterSpacing: "-0.02em" }}
             >
-              The only verified<br />
+              verified<br />
               resale for<br />
               <span className="text-[#06B6D4]">Awakenings 2026</span>
             </p>
