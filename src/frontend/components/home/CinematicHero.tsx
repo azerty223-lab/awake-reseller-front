@@ -185,7 +185,7 @@ export function CinematicHero() {
               textTransform: "uppercase",
               color:         "rgba(237,233,225,0.65)",
             }}>
-              Official Verified Resale — Awakenings 2026
+               Verified Resale — Awakenings 2026
             </span>
           </motion.div>
 

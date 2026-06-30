@@ -234,7 +234,7 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
                     {ticket.deliveryMethod === DeliveryMethod.DIGITAL && "Digital Delivery"}
                     {ticket.deliveryMethod === DeliveryMethod.PHYSICAL && "Physical Delivery"}
                   </p>
-                  <p className="text-xs text-zinc-500 leading-relaxed">
+                  <p className="text-xs text-zinc-400 leading-relaxed">
                     {ticket.deliveryMethod === DeliveryMethod.NAME_CHANGE &&
                       "We manage the official name change directly with Awakenings.nl. After payment, we initiate the transfer process. Your personalised e-ticket arrives by July 8, 2026 — fully registered in your name and gate-ready."}
                     {ticket.deliveryMethod === DeliveryMethod.DIGITAL &&
@@ -264,7 +264,7 @@ export function TicketDetailPage({ ticket }: TicketDetailPageProps) {
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-zinc-300 mb-0.5">{title}</p>
-                      <p className="text-xs text-zinc-600 leading-relaxed">{body}</p>
+                      <p className="text-xs text-zinc-400 leading-relaxed">{body}</p>
                     </div>
                   </div>
                 ))}

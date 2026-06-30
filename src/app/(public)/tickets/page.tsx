@@ -47,7 +47,7 @@ export default async function TicketsPage() {
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <p className="text-[10px] uppercase tracking-[0.28em] font-semibold mb-3"
              style={{ color: "rgba(6,182,212,0.75)", fontFamily: "var(--font-inter)" }}>
-            Official Verified Resale · Awakenings 2026
+             Verified Resale · Awakenings 2026
           </p>
           <h1 className="font-[var(--font-inter)] font-black text-white mb-4 uppercase"
               style={{ fontSize: "clamp(2rem, 5vw, 3.75rem)", letterSpacing: "0.04em", lineHeight: 0.92 }}>
