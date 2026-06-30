@@ -10,8 +10,11 @@ export default async function ProtectedAdminLayout({
   const session = await auth();
   const role = (session?.user as { role?: string } | undefined)?.role;
 
-  if (!session?.user || role !== "ADMIN") {
-    redirect("/admin/login");
+  if (!session?.user) {
+    redirect("/admin/login"); // not logged in → show login
+  }
+  if (role !== "ADMIN") {
+    redirect("/"); // logged in as customer → hide admin existence
   }
 
   return (

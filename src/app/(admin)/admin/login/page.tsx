@@ -1,18 +1,29 @@
 ﻿"use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Ticket, Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/frontend/components/ui/Button";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Redirect away as soon as we know the session state
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session?.user) return; // not logged in → stay on login page
+    const role = (session.user as { role?: string }).role;
+    // Admin already logged in → go straight to dashboard
+    // Non-admin logged in → redirect home (don't reveal admin panel exists)
+    router.replace(role === "ADMIN" ? "/admin" : "/");
+  }, [session, status, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +43,15 @@ export default function AdminLoginPage() {
       router.push("/admin");
     }
   };
+
+  // Blank screen while session loads or redirect is in flight
+  if (status === "loading" || session?.user) {
+    return (
+      <div className="min-h-screen bg-[#080808] flex items-center justify-center">
+        <div className="w-5 h-5 border-2 border-[#c9a84c]/30 border-t-[#c9a84c] rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#080808] flex items-center justify-center px-4">
