@@ -1,12 +1,5 @@
 import { NextRequest } from "next/server";
-
-function getIp(request: NextRequest): string {
-  return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip") ||
-    "unknown"
-  );
-}
+import { rateLimit, getIp } from "@/backend/lib/rate-limit";
 
 function flag(countryCode: string): string {
   if (!countryCode || countryCode.length !== 2) return "🌐";
@@ -16,6 +9,10 @@ function flag(countryCode: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  // 3 pings per minute per IP — return 204 silently so bots don't know they're blocked
+  const { allowed } = await rateLimit(`visitor:${getIp(request)}`, { windowSeconds: 60, maxRequests: 3 });
+  if (!allowed) return new Response(null, { status: 204 });
+
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return new Response(null, { status: 204 });

@@ -1,4 +1,5 @@
 ﻿import { NextRequest } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/backend/lib/prisma";
 import { auth } from "@/backend/lib/auth";
 import { sendInquiryConfirmation } from "@/backend/lib/email";
@@ -31,8 +32,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Message too long" }, { status: 400 });
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
+  if (!z.string().email().safeParse(email).success) {
     return Response.json({ error: "Invalid email address" }, { status: 400 });
   }
 

@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const CSP = [
   "default-src 'self'",
-  // Next.js requires unsafe-inline for its inline hydration scripts; unsafe-eval for dev HMR
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://js.stripe.com",
+  // unsafe-eval only in development (Next.js HMR); stripped in production
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://challenges.cloudflare.com https://js.stripe.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://images.unsplash.com https://plus.unsplash.com https://res.cloudinary.com https://lh3.googleusercontent.com",
   "font-src 'self' data:",

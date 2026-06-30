@@ -15,6 +15,11 @@ export async function PATCH(
   const body = await request.json();
   const { status } = body;
 
+  const existing = await prisma.inquiry.findUnique({ where: { id } });
+  if (!existing) {
+    return Response.json({ error: "Not found" }, { status: 404 });
+  }
+
   const inquiry = await prisma.inquiry.update({
     where: { id },
     data: { status },

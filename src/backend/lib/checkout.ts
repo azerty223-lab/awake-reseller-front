@@ -1,4 +1,7 @@
 import { prisma } from "@/backend/lib/prisma";
+import { getRedis } from "@/backend/payments/queues/connection";
+
+const RESERVATION_TTL = 30 * 60; // 30 minutes — matches Stripe session expiry
 
 export interface CheckoutInputItem {
   ticketId: string;
@@ -55,8 +58,28 @@ export async function resolveCheckoutItems(items: CheckoutInputItem[]): Promise<
       throw new CheckoutValidationError(`Ticket not found: ${ticketId}`, 404);
     }
 
-    if (ticket.quantity - ticket.sold < quantity) {
+    const available = ticket.quantity - ticket.sold;
+
+    if (available < quantity) {
       throw new CheckoutValidationError(`Not enough availability for ${ticket.name}`, 409);
+    }
+
+    // Atomic Redis reservation prevents concurrent checkouts overselling the
+    // same ticket. INCRBY is sequential in Redis, so each caller gets a unique
+    // new total. If the new total exceeds availability we immediately undo.
+    try {
+      const redis = getRedis();
+      const key = `ticket:reserve:${ticketId}`;
+      const newTotal = await redis.incrby(key, quantity);
+      await redis.expire(key, RESERVATION_TTL);
+
+      if (newTotal > available) {
+        await redis.decrby(key, quantity);
+        throw new CheckoutValidationError(`Not enough availability for ${ticket.name}`, 409);
+      }
+    } catch (err) {
+      if (err instanceof CheckoutValidationError) throw err;
+      // Redis unavailable — fall back to the DB-only check above (fail open)
     }
 
     currencies.add(ticket.currency);
