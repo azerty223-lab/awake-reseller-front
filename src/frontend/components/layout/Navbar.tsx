@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, Menu, X } from "lucide-react";
+import { ShoppingCart, Menu, X, LogOut, User } from "lucide-react";
 import { useCartStore } from "@/frontend/store/cart";
 import { cn } from "@/backend/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession, signOut } from "next-auth/react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -24,6 +25,7 @@ export function Navbar({ onCartOpen }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const itemCount = useCartStore((s) => s.itemCount);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -87,7 +89,44 @@ export function Navbar({ onCartOpen }: NavbarProps) {
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              {/* Auth state */}
+              {status !== "loading" && (
+                session ? (
+                  <div className="hidden md:flex items-center gap-2">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.07] bg-white/[0.04] text-zinc-300">
+                      {session.user?.image ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={session.user.image}
+                          alt=""
+                          className="w-5 h-5 rounded-full"
+                        />
+                      ) : (
+                        <User className="w-4 h-4" />
+                      )}
+                      <span className="text-xs font-medium max-w-[100px] truncate">
+                        {session.user?.name?.split(" ")[0] ?? "Account"}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      className="flex items-center justify-center w-8 h-8 rounded-full border border-white/[0.07] hover:border-red-400/30 bg-white/[0.04] hover:bg-red-400/10 text-zinc-500 hover:text-red-400 transition-all duration-200"
+                      aria-label="Sign out"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    href="/auth/signin"
+                    className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/[0.06] hover:bg-[#06B6D4]/[0.12] text-[#06B6D4] text-xs font-medium tracking-wide transition-all duration-200"
+                  >
+                    Sign in
+                  </Link>
+                )
+              )}
+
               {/* Cart pill button */}
               <button
                 onClick={onCartOpen}
@@ -148,6 +187,24 @@ export function Navbar({ onCartOpen }: NavbarProps) {
                   {link.label}
                 </Link>
               ))}
+              <div className="h-px bg-white/[0.07] my-1" />
+              {session ? (
+                <button
+                  onClick={() => { setMobileOpen(false); signOut({ callbackUrl: "/" }); }}
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:text-red-400 hover:bg-red-400/10 transition-all duration-200 w-full text-left"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign out
+                </button>
+              ) : (
+                <Link
+                  href="/auth/signin"
+                  onClick={() => setMobileOpen(false)}
+                  className="px-4 py-3 rounded-xl text-sm font-medium text-[#06B6D4] bg-[#06B6D4]/10 transition-all duration-200"
+                >
+                  Sign in
+                </Link>
+              )}
             </nav>
           </motion.div>
         )}

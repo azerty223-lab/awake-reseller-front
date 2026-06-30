@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/frontend/components/ui/Toaster";
 import { LenisProvider } from "@/frontend/providers/LenisProvider";
+import { AuthProvider } from "@/frontend/providers/AuthProvider";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -115,9 +116,11 @@ export default function RootLayout({
           Skip to main content
         </a>
 
-        <LenisProvider>
-          {children}
-        </LenisProvider>
+        <AuthProvider>
+          <LenisProvider>
+            {children}
+          </LenisProvider>
+        </AuthProvider>
         <Toaster />
       </body>
     </html>

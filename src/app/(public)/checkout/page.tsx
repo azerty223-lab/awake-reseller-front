@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useCartStore } from "@/frontend/store/cart";
 import { formatPrice } from "@/backend/lib/utils";
 import { useForm } from "react-hook-form";
@@ -247,6 +248,7 @@ function OrderSummary({ items, total }: { items: SummaryItem[]; total: number })
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const { items, total, clearCart } = useCartStore();
 
   const [isLoading,      setIsLoading]      = useState(false);
@@ -268,11 +270,27 @@ export default function CheckoutPage() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   const watchedName  = watch("name")  ?? "";
   const watchedEmail = watch("email") ?? "";
+
+  // Redirect to sign-in if not authenticated
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/auth/signin?callbackUrl=/checkout");
+    }
+  }, [status, router]);
+
+  // Pre-fill name + email from Google session
+  useEffect(() => {
+    if (session?.user) {
+      if (session.user.name)  setValue("name",  session.user.name);
+      if (session.user.email) setValue("email", session.user.email);
+    }
+  }, [session, setValue]);
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits    = e.target.value.replace(/\D/g, "").slice(0, 16);
@@ -342,6 +360,16 @@ export default function CheckoutPage() {
       setPaymentState("idle");
     }
   };
+
+  // ── Auth gate ──────────────────────────────────────────────────────────
+
+  if (status === "loading" || status === "unauthenticated") {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#06B6D4]/30 border-t-[#06B6D4] rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   // ── Empty cart ─────────────────────────────────────────────────────────
 
