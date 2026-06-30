@@ -39,14 +39,18 @@ function SignInForm() {
     if (result?.error) {
       setServerError("Incorrect email or password.");
     } else {
-      router.push(callbackUrl);
+      router.replace(callbackUrl);
       router.refresh();
     }
   };
 
-  const handleGoogle = async () => {
+  const handleGoogle = () => {
     setGoogleLoading(true);
-    await signIn("google", { callbackUrl });
+    // Replace instead of push so the signin page + OAuth screens don't
+    // pile up in history — back button returns to the page before login.
+    const url = new URL("/api/auth/signin/google", window.location.origin);
+    url.searchParams.set("callbackUrl", callbackUrl);
+    window.location.replace(url.toString());
   };
 
   return (
